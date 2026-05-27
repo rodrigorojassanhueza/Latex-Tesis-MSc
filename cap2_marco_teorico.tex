@@ -6,8 +6,8 @@
 
 A lo largo de esta sección se utiliza la siguiente notación:
 \begin{itemize}
-    \item \(IM\): medida de intensidad del movimiento del suelo (p.\ ej., \(PGA\), \(SA(T)\)).
-    \item \(im\): umbral de \(IM\).
+    \item \(IM\): medida de intensidad del movimiento del suelo, como \(PGA\) (aceleración máxima absoluta del suelo) o \(SA(T^*)\) (aceleración espectral para un período \(T^*\)).
+    \item \(im\): umbral de \(|IM\).
     \item \(\lambda(IM>im)\): tasa media anual de excedencia del umbral \(im\) \([\text{1/año}]\).
     \item \(T\): horizonte temporal \([\text{años}]\).
     \item \(RP\): periodo de retorno \([\text{años}]\).
@@ -16,7 +16,7 @@ A lo largo de esta sección se utiliza la siguiente notación:
 
 \subsection{Medidas de intensidad del movimiento del suelo}
 
-Una medida de intensidad (\(IM\), \textit{Intensity Measure}) es una variable escalar que resume la severidad del movimiento del suelo relevante para la respuesta estructural \cite{BakerBradleyStafford2021}. Ejemplos habituales incluyen \(PGA\) y \(SA(T)\).
+Una medida de intensidad (\(IM\), \textit{Intensity Measure}) es una variable escalar que resume la severidad del movimiento del suelo relevante para la respuesta estructural \cite{BakerBradleyStafford2021}.
 
 \subsection{Curva de amenaza y relación tasa--probabilidad}
 
@@ -26,12 +26,12 @@ La curva de amenaza se expresa como \cite{Cornell1968}:
 \label{eq:hazard_curve_def}
 \end{equation}
 
-Bajo un supuesto poissoniano para la ocurrencia de excedencias, la probabilidad de exceder \(im\) en un horizonte \(T\) se relaciona con \(\lambda\) mediante \cite{Cornell1968}:
+Bajo un supuesto poissoniano para la ocurrencia de excedencias, la probabilidad de exceder \(im\) en un horizonte temporal \(T\) se relaciona con \(\lambda\) mediante \cite{Cornell1968}:
 \begin{equation}
 P(IM > im \mid T) = 1 - \exp\left[-\lambda(IM > im)\,T\right].
 \label{eq:poe_from_lambda}
 \end{equation}
-donde \(P(IM>im\mid T)\) denota la probabilidad de excedencia del umbral en el periodo \(T\).
+donde \(P(IM>im\mid T)\) denota la probabilidad de excedencia del umbral en un horizonte temporal \(T\).
 
 Invirtiendo la relación anterior, la tasa equivalente asociada a una probabilidad \(P(IM>im\mid T)\) es \cite{McGuire2004}:
 \begin{equation}
@@ -59,7 +59,7 @@ El análisis probabilista de amenaza sísmica (PSHA) estima la tasa o probabilid
 El PSHA combina \cite{Cornell1968}:
 \begin{enumerate}
     \item \textbf{Modelos de fuente}: describen recurrencia (tasa de actividad) y caracterización de rupturas (distribuciones de magnitud, geometría y localización).
-    \item \textbf{GMPEs}: entregan la distribución de \(IM\) condicionada a parámetros de fuente, trayectoria y sitio.
+    \item \textbf{GMM}: entregan la distribución de \(IM\) condicionada a parámetros de fuente, trayectoria y sitio.
 \end{enumerate}
 
 \subsubsection{Formulación discreta por fuentes y rupturas}
@@ -94,9 +94,9 @@ F_{\text{BPT}}(t) = \Phi\left(\frac{t - \mu}{\alpha\sqrt{\mu t}}\right) + \exp \
 \label{eq:bpt_cdf_v2}
 \end{equation}
 
-La probabilidad condicional de ocurrencia de al menos un evento en el intervalo \(\Delta t\), dado que han transcurrido \(t_p\) años desde el último evento, se expresa como \cite{MatthewsEllsworthReasenberg2002}:
+La probabilidad condicional de ocurrencia de al menos un evento en un periodo de tiempo \(T\), dado que han transcurrido \(t_p\) años desde el último evento, se expresa como \cite{MatthewsEllsworthReasenberg2002}:
 \begin{equation}
-P(\Delta t \mid t_p) = \frac{F_{\text{BPT}}(t_p + \Delta t) - F_{\text{BPT}}(t_p)}{1 - F_{\text{BPT}}(t_p)}.
+P(T \mid t_p) = \frac{F_{\text{BPT}}(t_p + T) - F_{\text{BPT}}(t_p)}{1 - F_{\text{BPT}}(t_p)}.
 \label{eq:bpt_conditional_probability_v2}
 \end{equation}
 
@@ -141,7 +141,7 @@ La desagregación identifica qué combinaciones de variables (por ejemplo \(m\),
 w(m,r,\varepsilon \mid im) = \frac{\Delta\lambda(m,r,\varepsilon; IM>im)}{\lambda(IM>im)}.
 \label{eq:hazard_deaggregation_weight}
 \end{equation}
-donde \(\varepsilon\) se interpreta típicamente como \(\varepsilon = \frac{\ln(IM)-\mu_{\ln IM}}{\sigma_{\ln IM}}\) \cite{BakerCornell2005}. Esta herramienta permite interpretar qué escenarios controlan un nivel de amenaza dado \cite{BazzurroCornell1999}.
+donde \(\varepsilon\) se define como \(\varepsilon = \frac{\ln(IM)-\mu_{\ln IM}}{\sigma_{\ln IM}}\) \cite{BakerCornell2005}. Esta herramienta permite interpretar qué escenarios controlan un nivel de amenaza dado \cite{BazzurroCornell1999}.
 
 \subsection{Caracterización de frecuencia de ruptura}
 
