@@ -1,0 +1,175 @@
+% Template:     Tesis LaTeX
+% Documento:    Archivo principal
+% Versión:      3.4.0 (23/08/2024)
+% Codificación: UTF-8
+%
+% Autor: Pablo Pizarro R.
+%        pablo@ppizarror.com
+%
+% Manual template: [https://latex.ppizarror.com/tesis]
+% Licencia MIT:    [https://opensource.org/licenses/MIT]
+
+% CREACIÓN DEL DOCUMENTO
+\documentclass[
+	spanish, % Idioma: spanish, english, etc.	
+	letterpaper, oneside
+]{book}
+% \usepackage{wasysym}
+
+% INFORMACIÓN DEL DOCUMENTO
+\def\documenttitle {ESTUDIO DE AMENAZA Y VULNERABILIDAD SÍSMICA DE FALLA SAN RAMÓN}
+\def\documentsubtitle {}
+\def\degreetitle {
+	TESIS PARA OPTAR AL GRADO DE MAGÍSTER EN CIENCIAS DE LA INGENIERÍA, MENCIÓN INGENIERÍA ESTRUCTURAL, SÍSMICA Y GEOTÉCNICA
+	\bigbreak\vspace{0.3cm}
+	MEMORIA PARA OPTAR AL TÍTULO DE INGENIERO CIVIL
+}
+
+\def\universityname {Universidad de Chile}
+\def\universityfaculty {Facultad de Ciencias Físicas y Matemáticas}
+\def\universitydepartment {Departamento de Ingeniería Civil}
+\def\universitydepartmentimage {departamentos/uchile2}
+\def\universitydepartmentimagecfg {height=3cm}
+\def\universitylocation {Santiago de Chile}
+
+% INTEGRANTES, PROFESORES Y FECHAS
+\def\documentauthor {RODRIGO MATÍAS ROJAS SANHUEZA}
+\def\documentdate {\the\year}
+
+\def\portrait {
+	\begin{center}
+	\vspace{1.5cm} ~ \\
+	\MakeUppercase{\textbf{\documenttitle}} ~ \\
+	\vspace{1.5cm}
+	\MakeUppercase{\degreetitle} ~ \\
+	\vfill
+	\begin{tabular}{c}
+		\MakeUppercase{\textbf{\documentauthor}} \\ \\
+		\vspace{1.0cm} \\
+		PROFESOR GUÍA: \\
+		RUBÉN BOROSCHEK KRAUSKOPF \\
+		\vspace{0.5cm} \\
+		MIEMBROS DE LA COMISIÓN: \\
+        PABLO HERESI VENEGAS\\
+        IVÁN LÓPEZ JARA\\
+        ANA ACEVEDO JARAMILLO
+		\vspace{0.5cm} \\
+		Esta tesis ha sido financiada por el proyecto FONDECYT 1230350
+		\vspace{0.5cm} \\
+		\MakeUppercase{\universitylocation} \\
+		\MakeUppercase{\documentdate}
+	\end{tabular}
+	\end{center}
+}
+\def\abstracttable {
+	\begin{tabular}{l}
+		RESUMEN DE LA TESIS PARA OPTAR AL\\
+        GRADO DE MAGÍSTER EN CIENCIAS DE LA\\
+        INGENIERÍA, MENCIÓN INGENIERÍA\\
+        ESTRUCTURAL, SÍSMICA Y GEOTÉCNICA Y\\
+        AL TÍTULO DE INGENIERO CIVIL\\
+        POR: RODRIGO MATÍAS ROJAS SANHUEZA\\
+        FECHA: 2 DE MARZO DE 2026\\
+        PROFESOR GUÍA: RUBÉN BOROSCHEK KRAUSKOPF
+	\end{tabular}
+}
+
+% IMPORTACIÓN DEL TEMPLATE
+\input{template}
+
+
+%\usepackage{biblatex}
+
+%\usepackage[
+%    backend=biber,
+%    style=apa,
+%  ]{biblatex}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{threeparttable}
+% --- Figura flujo metodológico (TikZ) ---
+\usepackage{tikz}
+\usetikzlibrary{positioning, fit, calc, shapes.geometric, arrows.meta, backgrounds, shadows}
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+  
+% INICIO DE LAS PÁGINAS
+\begin{document}
+
+% PORTADA
+\templatePortrait
+
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\templatePagecfg
+
+%RESUMEN O ABSTRACT
+\begin{abstractd}
+
+La Falla San Ramón (FSR), ubicada en el piedemonte andino de Santiago, constituye una fuente sísmica cortical activa con potencial de generar terremotos de gran magnitud e impacto en áreas densamente urbanizadas. Estudios previos han estimado que podría originar eventos con magnitudes entre Mw 6.8 y 7.5 y registrar aceleraciones del suelo del orden de 0.8 g en sus proximidades. En este contexto, esta investigación analiza escenarios sísmicos asociados a la FSR, evaluando las aceleraciones espectrales máximas esperadas y estimando pérdidas estructurales y económicas.
+
+Para ello, se construyó un modelo tridimensional de la geometría de la falla a partir de registros de sismicidad local y antecedentes geológicos, y se empleó el software OpenQuake para simular escenarios de amenaza y riesgo sísmico. La caracterización del parque estructural se realizó mediante modelos de fragilidad representativos de los principales sistemas constructivos presentes en Santiago.
+
+Los resultados indican que un sismo asociado a la FSR podría inducir aceleraciones espectrales superiores a las observadas durante el terremoto de Maule (2010), especialmente en el sector oriente de Santiago. Asimismo, se identificaron zonas con elevada exposición a daños estructurales y con pérdidas económicas significativas dentro del área de influencia de la falla.
+
+Desde un enfoque probabilístico, la amenaza sísmica en la cuenca de Santiago está controlada principalmente por fuentes interplaca e intraplaca. Sin embargo, bajo un escenario determinista de Mw 7.5, las aceleraciones proyectadas para la FSR exceden los máximos esperados de dichas fuentes en sectores cercanos a la traza, resaltando su relevancia para la evaluación del riesgo a escala local.
+
+Adicionalmente, se incorporó el efecto de memoria sísmica en la recurrencia mediante un modelo Brownian Passage Time (BPT). En comparación con un modelo poissoniano, el BPT estima un incremento cercano al doble en la probabilidad de ocurrencia de un evento en los próximos 50 años, lo que se traduce en aumentos de hasta 0.3 g en la aceleración esperada en áreas próximas a la falla.
+
+En conjunto, los resultados subrayan la importancia de considerar explícitamente los escenarios asociados a la FSR en instrumentos de planificación territorial y en estrategias de mitigación, con énfasis en sectores de alta exposición y vulnerabilidad, particularmente en Santiago Oriente.  
+
+\end{abstractd}
+
+% DEDICATORIA
+\begin{dedicatory}
+	A quienes guiaron mi sendero. \\
+	~ \\
+	\textbf{Gracias.}
+\end{dedicatory}
+
+% AGRADECIMIENTOS
+\begin{acknowledgments}
+
+Dedico este trabajo, a mi familia. En especial a mis papás Lidia y Carlos quienes han sido importantes apoyos a lo largo de todo mi camino académico. A mis hermanos, que me han enseñado tanto y me han regalado una perspectiva diferente de la vida. Gracias por sus consejos, su compañía y por siempre estar ahí.\\
+
+A mis amigos del colegio, Nicolás, Alejandro y tantos más, gracias por todos estos años de amistad. He aprendido mucho de ustedes, y es hermoso saber que mantenemos una bonita relación después de tanto tiempo. También quiero agradecer a mis amigos de Plan Común: Vicente, Benjamín, Sebastián y Rodolfo. Fueron compañeros de muchas experiencias inolvidables, y los quiero un montón. A mis compañeros de Civil, gracias por hacer más llevadero el tiempo en pandemia, especialmente con esas maratones de estudio. Y, por supuesto, a mis compañeros y los funcionarios del cuarto piso de Civil: Felipe, Bas, Lucho, Gabo, Mariela, José y tantos otros. Alegraron mis días durante mi tiempo trabajando en la tesis. Les agradezco infinitamente.\\
+
+No puedo olvidar a los más de mil alumnos que tuve como auxiliar. Creanme que aprendí más de ustedes que de cualquier clase. Algunos, con el tiempo, se convirtieron en grandes amigos. Gracias a todos, de verdad.\\
+
+A todos ustedes, este trabajo también les pertenece.    
+    
+\end{acknowledgments}
+
+% TABLA DE CONTENIDOS - ÍNDICE
+\templateIndex
+
+% CONFIGURACIONES FINALES
+\templateFinalcfg
+
+% ======================= INICIO DEL DOCUMENTO =======================
+
+%\input{example} % Ejemplo, se puede borrar
+
+\input{cap1_introduccion}
+\input{cap2_marco_teorico}
+\input{cap3_contexto_geologico}
+\input{cap4_metodologia}
+\input{cap5_resultados}
+\input{cap7_discusion}
+% \input{cap8_conclusiones}
+\input{cap10_referencias}
+
+
+% \input{Anexos}
+
+
+% FIN DEL DOCUMENTO
+\end{document}

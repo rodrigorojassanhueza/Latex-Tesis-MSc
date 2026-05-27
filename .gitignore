@@ -1,0 +1,26 @@
+# LaTeX build outputs
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex*.gz
+*.toc
+
+# PDFs and generated documents
+*.pdf
+
+# Figures and images excluded from GitHub sync
+figs/
+figuras_tesis/
+img/
+
+# OS/editor files
+desktop.ini
+.DS_Store

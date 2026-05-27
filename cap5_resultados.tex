@@ -1,0 +1,965 @@
+% ======================================================================
+% CAPÍTULO: RESULTADOS — FIGURAS Y TABLAS (REORGANIZADO)
+% Recomendación: (si usas paneles) añade en preámbulo: \usepackage{subcaption}
+% ======================================================================
+
+\chapter{Resultados}
+\label{ch:resultados}
+
+% ----------------------------------------------------------------------
+% SECCIÓN 1 — AMENAZA
+% ----------------------------------------------------------------------
+\section{Amenaza sísmica}
+\label{sec:resultados_amenaza}
+
+% ==============================================================
+% 5.1.1  Amenaza determinista (DSHA)
+% ==============================================================
+\subsection{Amenaza determinista (DSHA)}
+\label{subsec:dsha}
+
+% --------------------------------------------------------------
+% 5.1.1.1  Espectros en sitios
+% --------------------------------------------------------------
+\subsubsection{Espectros de amenaza en sitios de referencia}
+\label{subsubsec:dsha_espectros}
+
+La Figura~\ref{fig:dsha_espectros_5sitios} presenta los espectros en cinco sitios de referencia (Sitios 1 a 5) para las fuentes FSR, interplaca e intraplaca, junto con el espectro elástico de la NCh433. En los Sitios 1, 2, 3 y 5, los máximos espectrales se concentran en periodos cortos (del orden de $0.1$--$0.4$ s), con una disminución progresiva de las ordenadas hacia periodos mayores. El Sitio 4 exhibe un comportamiento distinto en la referencia normativa, con un espectro NCh433 notablemente más elevado en el entorno de periodos cortos a intermedios, en comparación con el resto de los sitios.
+
+La Figura~\ref{fig:dsha_diff_espectros_nch433} muestra la diferencia entre los espectros calculados y el espectro NCh433 para cada sitio. En los Sitios 1 y 2 se aprecian excedencias positivas en el rango de periodos cortos para varias de las curvas, con tendencias que convergen hacia diferencias cercanas a cero a medida que aumenta el periodo. En el Sitio 3 las diferencias se mantienen próximas a cero en la mayor parte del rango de periodos, con variaciones acotadas en torno a periodos muy cortos. En el Sitio 4 predominan diferencias negativas de mayor magnitud, con un mínimo marcado en periodos intermedios, lo que refleja una brecha persistente respecto del nivel normativo. En el Sitio 5 se observan diferencias negativas en periodos cortos a intermedios y una aproximación gradual a cero en periodos mayores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/hazard_espectros_5sitios_COMP_288_292_NCh433_elastico.pdf}
+\caption{Espectros en cinco sitios de referencia para las fuentes FSR, interplaca e intraplaca. Cada subpanel incluye la clase de suelo (según NCh433) y coordenadas del sitio. La banda gris corresponde al rango p16--p84 (FSR multitraza) y se incluye el espectro elástico de la NCh433 (línea discontinua). El subpanel de la derecha muestra la ubicación de los cinco sitios.}
+\label{fig:dsha_espectros_5sitios}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/hazard_espectros_5sitios_COMP_288_292_delta_vs_NCh433_elastico_NO_BAND_ylim_1.pdf}
+\caption{Diferencia entre los espectros calculados y el espectro elástico de la NCh433 para cada sitio, en función del periodo. Valores positivos indican excedencia respecto del nivel normativo y valores negativos indican déficit. El subpanel de la derecha muestra la ubicación de los cinco sitios.}
+\label{fig:dsha_diff_espectros_nch433}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.2  PGA y SA(1.0) en sitios
+% --------------------------------------------------------------
+\subsubsection{Valores puntuales de PGA y SA(1.0) en sitios de referencia}
+\label{subsubsec:dsha_pga_tabla}
+
+La Figura~\ref{fig:dsha_resumen_pga_sa10_sitios} resume, para cada sitio, los valores puntuales de PGA y SA(1.0) para las fuentes consideradas. En PGA, los Sitios 1 y 2 concentran los valores centrales más altos de manera consistente entre curvas, mientras que el Sitio 3 presenta los valores centrales más bajos. El Sitio 4 muestra valores centrales intermedios en PGA, con dispersiones comparables entre fuentes. En SA(1.0), la separación entre sitios es más marcada: los Sitios 1 y 2 mantienen niveles relativamente altos, el Sitio 3 permanece bajo en comparación, y los Sitios 4 y 5 exhiben valores centrales intermedios con rangos p16--p84 que difieren según la fuente. En ambos indicadores, las barras p16--p84 evidencian una variabilidad que cambia entre sitios y entre fuentes, con rangos más amplios en algunos casos para las fuentes de subducción e intraplaca.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/hazard_espectros_5sitios_COMP_288_292_delta_vs_NCh433_elastico_NO_BAND_ylim_1_PGA_SA1p0_resumen_PAPER_v5_FSRcap.pdf}
+\caption{Resumen de PGA y SA(1.0) en cinco sitios de referencia para los escenarios considerados. El marcador representa el valor central (p50) y las barras verticales representan el rango p16--p84.}
+\label{fig:dsha_resumen_pga_sa10_sitios}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.3  Mapas principales: PGA y SA(1.0)
+% --------------------------------------------------------------
+\subsubsection{Mapas DSHA para escenarios principales}
+\label{subsubsec:dsha_mapas_principales}
+
+Las Figuras~\ref{fig:dsha_map_pga_all} y \ref{fig:dsha_map_sa10_all} presentan mapas para los tres escenarios principales (interplaca, FSR e intraplaca), reportando el percentil 50 del conjunto de GMF. En PGA (Figura~\ref{fig:dsha_map_pga_all}), el escenario interplaca muestra un campo relativamente suave con variación espacial moderada, el escenario intraplaca presenta valores más altos y una distribución más homogénea a escala regional, y el escenario FSR exhibe un gradiente longitudinal pronunciado, con valores mínimos hacia el oeste y máximos concentrados hacia el borde oriental del dominio, alineados con la traza representada en rojo. En SA(1.0) (Figura~\ref{fig:dsha_map_sa10_all}), el patrón espacial mantiene diferencias claras entre escenarios: el caso FSR conserva la concentración de valores altos hacia el sector oriental, mientras que interplaca e intraplaca presentan campos de menor contraste espacial relativo.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTER_93_abs_PGA_p50_SHARED.pdf}
+    \caption{Interplaca ($M_w = 9.3$).}
+    \label{fig:dsha_map_pga_inter}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_abs_PGA_p50_SHARED.pdf}
+    \caption{FSR ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_pga_fsr}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_BASE_abs_PGA_p50_SHARED.pdf}
+    \caption{Intraplaca ($M_w = 8.0$).}
+    \label{fig:dsha_map_pga_intra}
+\end{subfigure}
+\caption{Mapas de PGA (p50) para los escenarios interplaca, FSR e intraplaca. La traza de la FSR se muestra en rojo sobre un fondo topográfico. }
+\label{fig:dsha_map_pga_all}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTER_93_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{Interplaca ($M_w = 9.3$).}
+    \label{fig:dsha_map_sa10_inter}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{FSR ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_sa10_fsr}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_BASE_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{Intraplaca ($M_w = 8.0$).}
+    \label{fig:dsha_map_sa10_intra}
+\end{subfigure}
+\caption{Mapas de SA(1.0) (p50) para los escenarios interplaca, FSR e intraplaca. La traza de la FSR se muestra en rojo sobre un fondo topográfico. }
+\label{fig:dsha_map_sa10_all}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.4  Sensibilidad geométrica intraplaca
+% --------------------------------------------------------------
+\subsubsection{Sensibilidad geométrica del escenario Intraplaca (DSHA)}
+\label{subsubsec:dsha_intra_sens}
+
+La Figura~\ref{fig:dsha_map_pga_intra_profundidad} compara mapas de PGA (p50) para el escenario intraplaca bajo tres configuraciones geométricas: una configuración nominal y dos variantes con rotación del dip (20$^\circ$ y 40$^\circ$). Los tres paneles presentan patrones espaciales similares a escala regional, con diferencias localizadas en la intensidad y extensión de las zonas de mayor PGA.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_BASE_INTRA_abs_PGA_p50_SHARED.pdf}
+    \caption{Configuración nominal según la geometría Slab2 de Hayes ($M_w = 8.0$).}
+    \label{fig:dsha_map_pga_intra_base}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_p20_INTRA_abs_PGA_p50_SHARED.pdf}
+    \caption{Dip rotado $20^\circ$ en sentido horario respecto al norte ($M_w = 8.0$).}
+    \label{fig:dsha_map_pga_intra_p20}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_p40_INTRA_abs_PGA_p50_SHARED.pdf}
+    \caption{Dip rotado $40^\circ$ en sentido horario respecto al norte ($M_w = 8.0$).}
+    \label{fig:dsha_map_pga_intra_p40}
+\end{subfigure}
+\caption{Mapas de PGA (p50) para el escenario intraplaca ($M_w = 8.0$) bajo tres configuraciones geométricas. La traza de la FSR se muestra en rojo. Se mantiene una escala de colores compartida entre paneles.}
+\label{fig:dsha_map_pga_intra_profundidad}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.5  Percentiles GMF FSR
+% --------------------------------------------------------------
+\subsubsection{Incertidumbre por percentiles de GMF en FSR (DSHA)}
+\label{subsubsec:dsha_fsr_percentiles}
+
+La Figura~\ref{fig:dsha_map_pga_fsr_percentiles} presenta mapas de PGA para el escenario FSR mediante los percentiles 16, 50 y 84 del conjunto de GMF. Entre percentiles se observa una expansión sistemática de las zonas de mayor PGA hacia el borde oriental del dominio, con máximos más intensos y espacialmente más extensos en p84. El sector occidental mantiene valores bajos en los tres percentiles, mientras que el contraste longitudinal aumenta al pasar de p16 a p84.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_abs_PGA_p16_MODEL_SHARED.pdf}
+    \caption{Percentil 16 — FSR ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_pga_fsr_p16}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_abs_PGA_p50_MODEL_SHARED.pdf}
+    \caption{Percentil 50 — FSR ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_pga_fsr_p50}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_abs_PGA_p84_MODEL_SHARED.pdf}
+    \caption{Percentil 84 — FSR ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_pga_fsr_p84}
+\end{subfigure}
+\caption{Mapas de PGA para el escenario FSR ($M_w = 7.5$, dip $34^\circ$) reportando percentiles 16, 50 y 84 del conjunto de GMF; la traza de la FSR se muestra en rojo.}
+\label{fig:dsha_map_pga_fsr_percentiles}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.6  Traza y dip FSR
+% --------------------------------------------------------------
+\subsubsection{Sensibilidad de traza y dip en FSR (DSHA)}
+\label{subsubsec:dsha_fsr_traza_dip}
+
+Las Figuras~\ref{fig:dsha_map_pga_fsr_dip_traza} y \ref{fig:dsha_map_sa10_fsr_dip_traza} presentan mapas para cuatro combinaciones de traza (T/NT) y dip (34$^\circ$/60$^\circ$) en el escenario FSR, reportando p50. En PGA, los cuatro paneles reproducen el patrón longitudinal con valores bajos al oeste y máximos concentrados hacia el este, con cambios visibles en la amplitud y en la continuidad espacial de las zonas de mayor demanda al variar traza y dip. En SA(1.0) el patrón general se mantiene, con diferencias entre variantes que se concentran principalmente en el sector oriental y en la extensión de los valores altos próximos a la traza.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/T_75_60_TNT_abs_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza T ($M_w = 7.5$, dip $60^\circ$).}
+    \label{fig:dsha_map_pga_fsr_t_60}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_TNT_abs_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza NT ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_pga_fsr_nt_34}
+\end{subfigure}
+\\[0.3cm]
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_60_TNT_abs_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza NT ($M_w = 7.5$, dip $60^\circ$).}
+    \label{fig:dsha_map_pga_fsr_nt_60}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/T_75_34_TNT_abs_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza T ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_pga_fsr_t_34}
+\end{subfigure}
+\caption{Mapas de PGA (p50) para el escenario FSR ($M_w = 7.5$) bajo combinaciones de traza (T/NT) y dip (34$^\circ$/60$^\circ$). La traza de la FSR se muestra en rojo. }
+\label{fig:dsha_map_pga_fsr_dip_traza}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/T_75_60_TNT_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{FSR—Traza T ($M_w = 7.5$, dip $60^\circ$).}
+    \label{fig:dsha_map_sa10_fsr_t_60}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_34_TNT_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{FSR—Traza NT ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_sa10_fsr_nt_34}
+\end{subfigure}
+\\[0.3cm]
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_60_TNT_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{FSR—Traza NT ($M_w = 7.5$, dip $60^\circ$).}
+    \label{fig:dsha_map_sa10_fsr_nt_60}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/T_75_34_TNT_abs_SA_1p0_p50_SHARED.pdf}
+    \caption{FSR—Traza T ($M_w = 7.5$, dip $34^\circ$).}
+    \label{fig:dsha_map_sa10_fsr_t_34}
+\end{subfigure}
+\caption{Mapas de SA(1.0) (p50) para el escenario FSR ($M_w = 7.5$) bajo combinaciones de traza (T/NT) y dip (34$^\circ$/60$^\circ$). La traza de la FSR se muestra en rojo. }
+\label{fig:dsha_map_sa10_fsr_dip_traza}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.7  Diferencias entre escenarios (mapas)
+% --------------------------------------------------------------
+\subsubsection{Diferencias y razones entre escenarios (DSHA)}
+\label{subsubsec:dsha_razones}
+
+La Figura~\ref{fig:dsha_map_pga_diff_subduccion} muestra diferencias de PGA (p50) entre escenarios de subducción y el escenario FSR base (NT $M_w=7.5$, dip 34$^\circ$). El contraste espacial presenta una estructura longitudinal: predominan valores positivos hacia el oeste del dominio y valores negativos en una franja oriental próxima a la traza, con amplitudes que varían entre interplaca e intraplaca y entre las variantes geométricas de intraplaca.
+
+La Figura~\ref{fig:dsha_map_pga_diff_fsr_variantes} presenta diferencias de PGA (p50) entre variantes de FSR y el escenario de referencia (NT $M_w=7.5$, dip 34$^\circ$). La variante NT con dip 60$^\circ$ muestra diferencias cercanas a cero en la mayor parte del dominio, con dispersión espacial acotada. Las variantes con traza T muestran cambios más extendidos espacialmente: en el caso T con dip 34$^\circ$ predominan diferencias negativas, mientras que en T con dip 60$^\circ$ se observa una combinación de zonas con incrementos y disminuciones, con contrastes localizados a lo largo del eje longitudinal.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTER_93_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{Interplaca ($M_w = 9.3$) $-$ FSR base.}
+    \label{fig:dsha_map_pga_diff_inter}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_BASE_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{Intraplaca nominal ($M_w = 8.0$) $-$ FSR base.}
+    \label{fig:dsha_map_pga_diff_intra_base}
+\end{subfigure}
+\\[0.3cm]
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_p20_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{Intraplaca dip +20$^\circ$ ($M_w = 8.0$) $-$ FSR base.}
+    \label{fig:dsha_map_pga_diff_intra_p20}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/INTRA_80_p40_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{Intraplaca dip +40$^\circ$ ($M_w = 8.0$) $-$ FSR base.}
+    \label{fig:dsha_map_pga_diff_intra_p40}
+\end{subfigure}
+\caption{Diferencia de PGA (p50) entre escenarios de subducción (interplaca e intraplaca, con variantes de dip) y el escenario FSR base (NT $M_w = 7.5$, dip 34$^\circ$). Valores positivos indican mayor PGA en el escenario de subducción. }
+\label{fig:dsha_map_pga_diff_subduccion}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/NT_75_60_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza NT ($M_w = 7.5$, dip 60$^\circ$) $-$ FSR base (dip 34$^\circ$).}
+    \label{fig:dsha_map_pga_diff_fsr_nt_60}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/T_75_34_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza T ($M_w = 7.5$, dip 34$^\circ$) $-$ FSR base (Traza NT, dip 34$^\circ$).}
+    \label{fig:dsha_map_pga_diff_fsr_t_34}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DSHA/T_75_60_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf}
+    \caption{FSR—Traza T ($M_w = 7.5$, dip 60$^\circ$) $-$ FSR base (Traza NT, dip 34$^\circ$).}
+    \label{fig:dsha_map_pga_diff_fsr_t_60}
+\end{subfigure}
+\caption{Diferencia de PGA (p50) entre variantes de la FSR (alteraciones de traza y/o dip) y el escenario de referencia (FSR NT $M_w = 7.5$, dip 34$^\circ$). Valores positivos indican mayor PGA en la variante analizada. }
+\label{fig:dsha_map_pga_diff_fsr_variantes}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.8  Perfiles E--O
+% --------------------------------------------------------------
+\subsubsection{Perfiles Este--Oeste (DSHA)}
+\label{subsubsec:dsha_perfiles}
+
+Las Figuras~\ref{fig:dsha_perfiles_ew_pga} y \ref{fig:dsha_perfiles_ew_sa10} presentan perfiles longitudinales a dos latitudes (EW1: $-33.4^\circ$ y EW2: $-33.6^\circ$) para los escenarios interplaca (Inter~93), intraplaca (Intra~80 Base) y FSR (NT~75~60), reportando p50. En PGA (Figura~\ref{fig:dsha_perfiles_ew_pga}), interplaca e intraplaca muestran variaciones suaves con la longitud, mientras que el perfil FSR exhibe un incremento sostenido hacia el este, con transiciones escalonadas en el tramo central y valores máximos hacia el borde oriental. En SA(1.0) (Figura~\ref{fig:dsha_perfiles_ew_sa10}), el patrón relativo es similar: interplaca e intraplaca se mantienen relativamente estables, y FSR presenta un aumento marcado hacia el este, con máximos concentrados en el extremo oriental del dominio. Entre EW1 y EW2, los niveles absolutos difieren, pero la estructura longitudinal de los tres escenarios se conserva.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/compare_p50_PGA_latm33.4.pdf}
+    \caption{Perfil EW1 (Lat $-33.4^\circ$).}
+    \label{fig:dsha_perfil_pga_ew1}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/compare_p50_PGA_latm33.6.pdf}
+    \caption{Perfil EW2 (Lat $-33.6^\circ$).}
+    \label{fig:dsha_perfil_pga_ew2}
+\end{subfigure}
+\caption{Perfiles Este--Oeste (p50) de PGA a dos latitudes, comparando Inter~93 (interplaca), Intra~80 Base (intraplaca) y NT~75~60 (FSR).}
+\label{fig:dsha_perfiles_ew_pga}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/compare_p50_SA_1p0_latm33.4.pdf}
+    \caption{Perfil EW1 (Lat $-33.4^\circ$).}
+    \label{fig:dsha_perfil_sa10_ew1}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/compare_p50_SA_1p0_latm33.6.pdf}
+    \caption{Perfil EW2 (Lat $-33.6^\circ$).}
+    \label{fig:dsha_perfil_sa10_ew2}
+\end{subfigure}
+\caption{Perfiles Este--Oeste (p50) de SA(1.0) a dos latitudes, comparando Inter~93 (interplaca), Intra~80 Base (intraplaca) y NT~75~60 (FSR).}
+\label{fig:dsha_perfiles_ew_sa10}
+\end{figure}
+
+% --------------------------------------------------------------
+% 5.1.1.9  Perfiles con bandas p16--p84
+% --------------------------------------------------------------
+\subsubsection{Perfiles Este--Oeste con percentiles 16 y 84 (DSHA)}
+\label{subsubsec:dsha_perfiles_bandas}
+
+Las Figuras~\ref{fig:dsha_perfiles_ew_pga_bandas_lat33.4} y \ref{fig:dsha_perfiles_ew_pga_bandas_lat33.6} presentan perfiles de PGA por fuente, incorporando la banda p16--p84 y el valor central p50, para EW1 y EW2. En interplaca e intraplaca, las bandas muestran una amplitud relativamente uniforme a lo largo del dominio, con variaciones moderadas entre longitudes. En FSR, la banda se ensancha hacia el este, acompañando el aumento del valor central, con el mayor rango p16--p84 en el extremo oriental. Las Figuras~\ref{fig:dsha_perfiles_ew_sa10_bandas_lat33.4} y \ref{fig:dsha_perfiles_ew_sa10_bandas_lat33.6} presentan el mismo formato para SA(1.0), manteniendo el patrón de bandas más acotadas en subducción/intraplaca y una expansión hacia el este para FSR.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTER_93_band16_84_PGA_latm33.4.pdf}
+    \caption{Interplaca.}
+    \label{fig:dsha_perfil_pga_band_inter_ew1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTRA_80_BASE_band16_84_PGA_latm33.4.pdf}
+    \caption{Intraplaca.}
+    \label{fig:dsha_perfil_pga_band_intra_ew1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/NT_75_60_band16_84_PGA_latm33.4.pdf}
+    \caption{FSR.}
+    \label{fig:dsha_perfil_pga_band_fsr_ew1}
+\end{subfigure}
+\caption{PGA — perfiles Este--Oeste a Lat $-33.4^\circ$ para interplaca, intraplaca y FSR. Se muestra p50 y la banda p16--p84.}
+\label{fig:dsha_perfiles_ew_pga_bandas_lat33.4}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTER_93_band16_84_PGA_latm33.6.pdf}
+    \caption{Interplaca.}
+    \label{fig:dsha_perfil_pga_band_inter_ew2}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTRA_80_BASE_band16_84_PGA_latm33.6.pdf}
+    \caption{Intraplaca.}
+    \label{fig:dsha_perfil_pga_band_intra_ew2}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/NT_75_60_band16_84_PGA_latm33.6.pdf}
+    \caption{FSR.}
+    \label{fig:dsha_perfil_pga_band_fsr_ew2}
+\end{subfigure}
+\caption{PGA — perfiles Este--Oeste a Lat $-33.6^\circ$ para interplaca, intraplaca y FSR. Se muestra p50 y la banda p16--p84.}
+\label{fig:dsha_perfiles_ew_pga_bandas_lat33.6}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTER_93_band16_84_SA_1p0_latm33.4.pdf}
+    \caption{Interplaca.}
+    \label{fig:dsha_perfil_sa10_band_inter_ew1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTRA_80_BASE_band16_84_SA_1p0_latm33.4.pdf}
+    \caption{Intraplaca.}
+    \label{fig:dsha_perfil_sa10_band_intra_ew1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/NT_75_60_band16_84_SA_1p0_latm33.4.pdf}
+    \caption{FSR.}
+    \label{fig:dsha_perfil_sa10_band_fsr_ew1}
+\end{subfigure}
+\caption{SA(1.0) — perfiles Este--Oeste a Lat $-33.4^\circ$ para interplaca, intraplaca y FSR. Se muestra p50 y la banda p16--p84.}
+\label{fig:dsha_perfiles_ew_sa10_bandas_lat33.4}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTER_93_band16_84_SA_1p0_latm33.6.pdf}
+    \caption{Interplaca.}
+    \label{fig:dsha_perfil_sa10_band_inter_ew2}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/INTRA_80_BASE_band16_84_SA_1p0_latm33.6.pdf}
+    \caption{Intraplaca.}
+    \label{fig:dsha_perfil_sa10_band_intra_ew2}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/Perfiles DSHA/NT_75_60_band16_84_SA_1p0_latm33.6.pdf}
+    \caption{FSR.}
+    \label{fig:dsha_perfil_sa10_band_fsr_ew2}
+\end{subfigure}
+\caption{SA(1.0) — perfiles Este--Oeste a Lat $-33.6^\circ$ para interplaca, intraplaca y FSR. Se muestra p50 y la banda p16--p84.}
+\label{fig:dsha_perfiles_ew_sa10_bandas_lat33.6}
+\end{figure}
+
+
+% ==============================================================
+% 1.2 PSHA
+% ==============================================================
+% ==============================================================
+% 1.2 PSHA
+% ==============================================================
+\subsection{Amenaza probabilística (PSHA)}
+\label{subsec:psha}
+
+En esta subsección se presentan (i) curvas de amenaza para PGA y SA(1.0) en cinco sitios de referencia, (ii) desagregación porcentual por fuente para dos niveles de probabilidad de excedencia (PoE 2\% y 10\% en 50 años), y (iii) mapas de PGA para PoE 2\% y 10\% en 50 años, incluyendo el contraste espacial asociado a la inclusión de la FSR.
+
+% ==============================================================
+% 1.2.1 Curvas
+% ==============================================================
+\subsubsection{Curvas de amenaza (PSHA)}
+\label{subsubsec:psha_curvas}
+
+Las Figuras~\ref{fig:psha_curvas_pga_poisson} y \ref{fig:psha_curvas_pga_bpt} muestran las curvas de amenaza para PGA (modelos Poisson y BPT, respectivamente) en los cinco sitios. En todos los sitios, la curva total se ubica por encima de las curvas individuales y sigue de cerca el envolvente definido por las contribuciones de subducción (interplaca e intraplaca), mientras que la curva asociada a la FSR se mantiene en niveles de probabilidad menores dentro del rango de intensidades graficado.
+
+Las Figuras~\ref{fig:psha_curvas_sa10_poisson} y \ref{fig:psha_curvas_sa10_bpt} presentan las curvas equivalentes para SA(1.0). En comparación con PGA, la separación entre las curvas de subducción es más marcada en varios sitios, y la curva total permanece dominada por la componente interplaca en el rango de probabilidad ilustrado, de acuerdo con la desagregación que se presenta más adelante. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/poisson_pga_curvas_1_5.pdf}
+\caption{Curvas de amenaza de PGA en cinco sitios de referencia para los aportes interplaca, intraplaca y FSR, junto con la curva total (modelo Poisson). En cada panel se indican los niveles PoE 10\% y 2\% en 50 años mediante líneas verticales; el círculo y el cuadrado marcan dichas intensidades sobre la curva total.}
+\label{fig:psha_curvas_pga_poisson}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/bpt_pga_curvas_1_5.pdf}
+\caption{Curvas de amenaza de PGA en cinco sitios de referencia para los aportes interplaca, intraplaca y FSR, junto con la curva total (modelo BPT). Se muestran los niveles PoE 10\% y 2\% en 50 años mediante líneas verticales y marcadores sobre la curva total.}
+\label{fig:psha_curvas_pga_bpt}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/poisson_sa10_curvas_1_5.pdf}
+\caption{Curvas de amenaza de SA(1.0) en cinco sitios de referencia para los aportes interplaca, intraplaca y FSR, junto con la curva total (modelo Poisson). Se indican PoE 10\% y 2\% en 50 años mediante líneas verticales y marcadores sobre la curva total.}
+\label{fig:psha_curvas_sa10_poisson}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/bpt_sa10_curvas_1_5.pdf}
+\caption{Curvas de amenaza de SA(1.0) en cinco sitios de referencia para los aportes interplaca, intraplaca y FSR, junto con la curva total (modelo BPT). Se indican PoE 10\% y 2\% en 50 años mediante líneas verticales y marcadores sobre la curva total.}
+\label{fig:psha_curvas_sa10_bpt}
+\end{figure}
+
+% ==============================================================
+% 1.2.2 Desagregación
+% ==============================================================
+\subsubsection{Desagregación de amenaza por fuente (PSHA)}
+\label{subsubsec:psha_desagregacion}
+
+Las Figuras~\ref{fig:psha_disagg_pga_poisson} y \ref{fig:psha_disagg_pga_bpt} presentan la contribución relativa por fuente para PGA, evaluada a PoE 2\% y 10\% en 50 años. En Poisson (Figura~\ref{fig:psha_disagg_pga_poisson}), las contribuciones se reparten principalmente entre interplaca e intraplaca en los Sitios 1, 2 y 3: por ejemplo, para PoE 2\% en 50 años se obtiene (Sitio 1) FSR 2\%, interplaca 47\%, intraplaca 50\%; (Sitio 2) 3\%--42\%--55\%; y (Sitio 3) 1\%--42\%--57\%. En el Sitio 4 la contribución es 0\% FSR, 60\% interplaca y 39\% intraplaca (idéntica para PoE 2\% y 10\% en 50 años). En el Sitio 5 se observa 0\% FSR y un reparto 52\%--48\% (PoE 2\%) y 56\%--43\% (PoE 10\%) entre interplaca e intraplaca. El cambio de PoE 2\% a 10\% produce variaciones moderadas en el reparto interplaca/intraplaca en los Sitios 1, 2, 3 y 5, manteniéndose la contribución FSR en valores nulos o bajos.
+
+En BPT (Figura~\ref{fig:psha_disagg_pga_bpt}), la contribución FSR en PGA aumenta respecto de Poisson en los Sitios 1--3. Para PoE 2\% en 50 años se obtiene (Sitio 1) 5\%--46\%--49\%; (Sitio 2) 6\%--41\%--53\%; y (Sitio 3) 3\%--41\%--56\%. Para PoE 10\% en 50 años, las contribuciones correspondientes son (Sitio 1) 5\%--50\%--46\%; (Sitio 2) 5\%--46\%--48\%; y (Sitio 3) 4\%--47\%--50\%. En los Sitios 4 y 5, los porcentajes interplaca/intraplaca se mantienen iguales a Poisson (Sitio 4: 60\%--39\%; Sitio 5: 52\%--48\% para PoE 2\% y 56\%--43\% para PoE 10\%), con contribución FSR nula o de 1\%.
+
+Las Figuras~\ref{fig:psha_disagg_sa10_poisson} y \ref{fig:psha_disagg_sa10_bpt} presentan la desagregación para SA(1.0). En Poisson (Figura~\ref{fig:psha_disagg_sa10_poisson}), la contribución interplaca domina en los cinco sitios: para PoE 2\% en 50 años se observan valores entre 79\% y 89\% (Sitios 1--5: 81\%, 79\%, 82\%, 89\%, 87\%), mientras que la intraplaca se sitúa típicamente entre 10\% y 16\% y la FSR entre 0\% y 6\% (con valores nulos o cercanos a cero en los Sitios 4 y 5). Para PoE 10\% en 50 años, la interplaca se mantiene en 77\%--85\% y la intraplaca aumenta a 14\%--20\% según el sitio, con cambios menores en la contribución FSR.
+
+En BPT (Figura~\ref{fig:psha_disagg_sa10_bpt}), la contribución FSR en SA(1.0) aumenta de forma apreciable en los Sitios 1 y 2 (PoE 2\%: 13\% en ambos sitios; PoE 10\%: 7\% y 8\%), manteniéndose menor en los Sitios 3--5 (PoE 2\%: 6\%, 3\%, 1\%). La interplaca permanece como aporte mayoritario (PoE 2\%: 73\%--87\%) y la intraplaca se mantiene en rangos de 10\%--15\% (PoE 2\%) y 13\%--20\% (PoE 10\%), dependiendo del sitio.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/disagg_pga_poisson_barras_1_5.pdf}
+\caption{Desagregación de PGA por fuente en cinco sitios de referencia (modelo Poisson). Las barras muestran el aporte relativo (\%) de FSR, interplaca e intraplaca para PoE 2\% y 10\% en 50 años; los porcentajes se indican sobre cada barra.}
+\label{fig:psha_disagg_pga_poisson}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/disagg_pga_bpt_barras_1_5.pdf}
+\caption{Desagregación de PGA por fuente en cinco sitios de referencia (modelo BPT). Las barras muestran el aporte relativo (\%) de FSR, interplaca e intraplaca para PoE 2\% y 10\% en 50 años; los porcentajes se indican sobre cada barra.}
+\label{fig:psha_disagg_pga_bpt}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/disagg_sa10_poisson_barras_1_5.pdf}
+\caption{Desagregación de SA(1.0) por fuente en cinco sitios de referencia (modelo Poisson). Las barras muestran el aporte relativo (\%) de FSR, interplaca e intraplaca para PoE 2\% y 10\% en 50 años; los porcentajes se indican sobre cada barra.}
+\label{fig:psha_disagg_sa10_poisson}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_amenaza/Curvas de Amenaza/disagg_sa10_bpt_barras_1_5.pdf}
+\caption{Desagregación de SA(1.0) por fuente en cinco sitios de referencia (modelo BPT). Las barras muestran el aporte relativo (\%) de FSR, interplaca e intraplaca para PoE 2\% y 10\% en 50 años; los porcentajes se indican sobre cada barra.}
+\label{fig:psha_disagg_sa10_bpt}
+\end{figure}
+
+% ==============================================================
+% 1.2.3 Mapas
+% ==============================================================
+\subsubsection{Mapas de amenaza PSHA}
+\label{subsubsec:psha_mapas}
+
+Las Figuras~\ref{fig:psha_map_pga_poe02} y \ref{fig:psha_map_pga_poe10} presentan mapas de PGA para PoE 2\% y 10\% en 50 años, respectivamente, reportando el percentil 50. En ambos niveles de PoE se observa una estructura espacial consistente entre los tres casos comparados: Poisson completo (interplaca + intraplaca + FSR), Poisson sin FSR (interplaca + intraplaca) y BPT completo (interplaca + intraplaca + FSR). La comparación visual entre Poisson completo y Poisson sin FSR muestra diferencias espaciales acotadas, concentradas principalmente en el margen oriental del dominio, mientras que el patrón general se mantiene.
+
+Las Figuras~\ref{fig:psha_map_pga_diff_fsr_poe02} y \ref{fig:psha_map_pga_diff_fsr_poe10} cuantifican la diferencia espacial de PGA asociada a la inclusión de la FSR, tomando como referencia el caso Poisson sin FSR y reportando p50. Para PoE 2\% en 50 años, la diferencia máxima alcanza $2.31\times10^{-2}$ g (según la escala de color), con incrementos concentrados en una franja estrecha próxima al borde oriental del dominio; el resto del área presenta valores cercanos a cero. Para PoE 10\% en 50 años, la diferencia máxima alcanza $1.25\times10^{-2}$ g y mantiene la misma localización general. En ambos niveles de PoE, el caso BPT presenta una franja de incremento espacialmente más extensa y con mayores valores máximos respecto del caso Poisson completo.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/PSHA/Poisson_completo_PGA_p50_poe02_50y_sharedPOE_PCTL.pdf}
+    \caption{Poisson completo (interplaca + intraplaca + FSR).}
+    \label{fig:psha_map_pga_poisson_poe02}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/PSHA/Sin_FSR_PGA_p50_poe02_50y_sharedPOE_PCTL.pdf}
+    \caption{Poisson sin FSR (interplaca + intraplaca).}
+    \label{fig:psha_map_pga_poisson_sin_fsr_poe02}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/PSHA/BPT_completo_PGA_p50_poe02_50y_sharedPOE_PCTL.pdf}
+    \caption{BPT completo (interplaca + intraplaca + FSR).}
+    \label{fig:psha_map_pga_bpt_poe02}
+\end{subfigure}
+\caption{Mapas PSHA de PGA para PoE 2\% en 50 años (p50). Se comparan Poisson completo, Poisson sin FSR y BPT completo, con escala de colores consistente entre paneles.}
+\label{fig:psha_map_pga_poe02}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/PSHA/Poisson_completo_PGA_p50_poe10_50y_sharedPOE_PCTL.pdf}
+    \caption{Poisson completo (interplaca + intraplaca + FSR).}
+    \label{fig:psha_map_pga_poisson_poe10}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/PSHA/Sin_FSR_PGA_p50_poe10_50y_sharedPOE_PCTL.pdf}
+    \caption{Poisson sin FSR (interplaca + intraplaca).}
+    \label{fig:psha_map_pga_poisson_sin_fsr_poe10}
+\end{subfigure}
+\\[0.15cm]
+\begin{subfigure}{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/PSHA/BPT_completo_PGA_p50_poe10_50y_sharedPOE_PCTL.pdf}
+    \caption{BPT completo (interplaca + intraplaca + FSR).}
+    \label{fig:psha_map_pga_bpt_poe10}
+\end{subfigure}
+\caption{Mapas PSHA de PGA para PoE 10\% en 50 años (p50). Se comparan Poisson completo, Poisson sin FSR y BPT completo, con escala de colores consistente entre paneles.}
+\label{fig:psha_map_pga_poe10}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DIFF_PSHA/Poisson_completo_minus_Sin_FSR_PGA_p50_poe02_50y_sharedPOE_PCTL.pdf}
+    \caption{Poisson completo $-$ Poisson sin FSR.}
+    \label{fig:psha_map_pga_diff_poisson_poe02}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DIFF_PSHA/BPT_completo_minus_Sin_FSR_PGA_p50_poe02_50y_sharedPOE_PCTL.pdf}
+    \caption{BPT completo $-$ Poisson sin FSR.}
+    \label{fig:psha_map_pga_diff_bpt_poe02}
+\end{subfigure}
+\caption{Diferencia de PGA (p50) por inclusión de la FSR para PoE 2\% en 50 años. La escala de color muestra $\Delta$PGA en g.}
+\label{fig:psha_map_pga_diff_fsr_poe02}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DIFF_PSHA/Poisson_completo_minus_Sin_FSR_PGA_p50_poe10_50y_sharedPOE_PCTL.pdf}
+    \caption{Poisson completo $-$ Poisson sin FSR.}
+    \label{fig:psha_map_pga_diff_poisson_poe10}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, height=6cm, keepaspectratio]{figuras_tesis/resultados_amenaza/DIFF_PSHA/BPT_completo_minus_Sin_FSR_PGA_p50_poe10_50y_sharedPOE_PCTL.pdf}
+    \caption{BPT completo $-$ Poisson sin FSR.}
+    \label{fig:psha_map_pga_diff_bpt_poe10}
+\end{subfigure}
+\caption{Diferencia de PGA (p50) por inclusión de la FSR para PoE 10\% en 50 años. La escala de color muestra $\Delta$PGA en g.}
+\label{fig:psha_map_pga_diff_fsr_poe10}
+\end{figure}
+
+% ----------------------------------------------------------------------
+% SECCIÓN 2 — RIESGO
+% ----------------------------------------------------------------------
+\section{Riesgo sísmico}
+\label{sec:Riesgo_sismico}
+
+% ==============================================================
+% 2.1 Riesgo determinista (escenarios)
+% ==============================================================
+\subsection{Riesgo determinista}
+\label{subsec:riesgo_determinista}
+
+\subsubsection{Pérdidas por escenario sísmico}
+\label{subsubsec:riesgo_det_escenarios_mapas}
+
+La Figura~\ref{fig:exposicion_perdida_materialidad_comunas} resume, la exposición total, la composición por materialidad, la pérdida estructural absoluta y la pérdida relativa, separadas por escenario sísmico (FSR, Interplaca e Intraplaca). En la columna de exposición  se observa una jerarquía estable entre escenarios, con \textit{Las Condes} como la comuna de mayor exposición, seguida por \textit{Vitacura} y \textit{La Reina}; \textit{Pirque} y \textit{La Florida} se ubican en el extremo inferior del conjunto analizado. La columna de materialidad muestra, para todas las comunas, predominio de las categorías asociadas a hormigón y albañilería, mientras que la fracción atribuida a madera es reducida y se concentra principalmente en comunas específicas del conjunto.
+
+En las columnas de pérdida estructural (CLP, eje logarítmico) y pérdida relativa (\% de la exposición), la separación entre modelos de vulnerabilidad es consistente a lo largo de comunas y escenarios: los valores centrales del modelo HAZUS se ubican sistemáticamente por encima de los del modelo Nacional. La incertidumbre representada mediante el rango p16--p84 varía entre comunas y escenarios; en particular, en el escenario Intraplaca se aprecian rangos p16--p84 más extensos en varias comunas, tanto en pérdida absoluta como en pérdida relativa, en comparación con los escenarios FSR e Interplaca.
+
+\begin{landscape}
+\pagestyle{plain}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_perdida_dsha/Comparison_Final_4Cols_Mat_FIXED_COMUNA__MAT-NAC_noAdobe.pdf}
+\caption{Resultados por comuna para escenarios deterministas (FSR, Interplaca e Intraplaca). Se reportan: (i) exposición total (CLP, escala logarítmica), (ii) distribución porcentual por materialidad, (iii) pérdida estructural absoluta (CLP) y (iv) pérdida relativa (\% de la exposición). Los marcadores representan el valor central y las barras horizontales corresponden al rango p16--p84; se comparan los modelos de vulnerabilidad Nacional y HAZUS.}
+\label{fig:exposicion_perdida_materialidad_comunas}
+\end{figure}
+\end{landscape}
+
+% --------------------------------------------------------------
+\subsubsection{Pérdida estructural por materialidad}
+\label{subsubsec:riesgo_det_materialidad}
+
+La Figura~\ref{fig:perdida_por_materialidad} presenta la pérdida agregada relativa por materialidad (hormigón, albañilería y madera) para los escenarios FSR, Interplaca e Intraplaca, comparando los modelos Nacional y HAZUS e incorporando el rango p16--p84. En los tres escenarios, las pérdidas relativas por materialidad del modelo HAZUS son mayores que las del modelo Nacional para cada una de las categorías. Entre escenarios, Interplaca muestra los niveles más bajos de pérdida agregada relativa por materialidad para ambos modelos, mientras que Intraplaca y FSR se ubican en los niveles superiores, con diferencias visibles en la posición de la mediana y en la extensión del rango p16--p84 según el material.
+
+En la parte inferior de la Figura~\ref{fig:perdida_por_materialidad}, la contribución de cada material a la pérdida total evidencia que hormigón y albañilería concentran prácticamente la totalidad de la pérdida agregada en los tres escenarios, mientras que madera aporta una fracción marginal. La partición entre hormigón y albañilería difiere entre modelos: en el modelo Nacional, hormigón constituye la fracción mayoritaria (del orden de $\sim$50--60\% según escenario), mientras que en HAZUS se observa un aumento relativo de la contribución de albañilería y una disminución correspondiente de la contribución de hormigón, manteniéndose la contribución de madera cercana a cero en todos los casos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_perdida_dsha/Perdida_por_materialidad.pdf}
+\caption{Pérdida estructural por materialidad para escenarios FSR, Interplaca e Intraplaca. Panel superior: pérdida agregada relativa (\%) por material (marcador: mediana; barras: p16--p84) para los modelos Nacional (NAC) y HAZUS (HAZ). Panel inferior: contribución porcentual de cada material a la pérdida total, separada por modelo (sólido: NAC; rayado: HAZ).}
+\label{fig:perdida_por_materialidad}
+\end{figure}
+
+La Tabla~\ref{tab:perdida_total_escenarios} sintetiza las pérdidas totales a nivel de portafolio para cada escenario, reportando pérdida absoluta (CLP) y pérdida relativa (\%). Para el modelo Nacional, el escenario FSR presenta la mayor pérdida total ($8.29\times10^{10}$~CLP; 7.98\%), seguido por Intraplaca ($7.02\times10^{10}$~CLP; 6.77\%) e Interplaca ($3.84\times10^{10}$~CLP; 3.70\%). En el modelo HAZUS, FSR e Intraplaca presentan pérdidas totales de magnitud similar ($4.57\times10^{11}$~CLP; 44.03\% y $4.54\times10^{11}$~CLP; 43.78\%, respectivamente), mientras que Interplaca muestra valores menores ($2.98\times10^{11}$~CLP; 28.67\%). Comparando modelos, las pérdidas HAZUS exceden a las del modelo Nacional por factores entre $\sim$5.5 y $\sim$7.8 según escenario (tanto en pérdida absoluta como relativa), coherente con la separación observada en las figuras anteriores.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Escenario} & \textbf{Pérdida (CLP)} & \textbf{Pérdida (CLP)} & \textbf{Pérdida relativa} & \textbf{Pérdida relativa} \\
+& \textbf{NAC} & \textbf{HAZ} & \textbf{NAC (\%)} & \textbf{HAZ (\%)} \\
+\hline
+Intraplaca        & $7.02 \times 10^{10}$ & $4.54 \times 10^{11}$ & 6.77 & 43.78 \\
+\hline
+Interplaca & $3.84 \times 10^{10}$ & $2.98 \times 10^{11}$ & 3.70 & 28.67 \\
+\hline
+FSR & $8.29 \times 10^{10}$ & $4.57 \times 10^{11}$ & 7.98 & 44.03 \\
+\hline
+\end{tabular}
+\caption{Pérdida total (CLP) y pérdida relativa (\%) a nivel de portafolio para los escenarios FSR, Interplaca e Intraplaca, utilizando los modelos de vulnerabilidad Nacional (NAC) y HAZUS (HAZ).}
+\label{tab:perdida_total_escenarios}
+\end{table}
+
+% (Nota editorial: la tabla \texttt{tab:perdida_total_escenarios_b} es duplicada; se recomienda eliminarla.)
+
+% --------------------------------------------------------------
+\subsubsection{Mapas de pérdida relativa}
+\label{subsubsec:riesgo_det_mapas_rel}
+
+Las Figuras~\ref{fig:riesgo_det_mapas_perdida_nac} y \ref{fig:riesgo_det_mapas_perdida_haz} muestran la distribución espacial de la pérdida relativa para los escenarios FSR, Interplaca e Intraplaca, diferenciando los modelos Nacional y HAZUS. En el modelo Nacional (Figura~\ref{fig:riesgo_det_mapas_perdida_nac}), la mayor parte de las unidades espaciales se ubica en rangos bajos a intermedios de pérdida relativa, con focos localizados de valores más altos; el escenario Intraplaca exhibe, en general, una mayor presencia de valores intermedios-altos en comparación con Interplaca, mientras que FSR muestra patrones comparables con concentraciones puntuales.
+
+En el modelo HAZUS (Figura~\ref{fig:riesgo_det_mapas_perdida_haz}), los valores de pérdida relativa se desplazan hacia rangos altos en los tres escenarios, con múltiples unidades en categorías superiores de la escala (tonos anaranjados a rojos) a lo largo del corredor espacial representado. El escenario Interplaca mantiene sectores con valores relativamente menores dentro del conjunto HAZUS, mientras que FSR e Intraplaca muestran extensiones más amplias de pérdidas relativas elevadas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{G:/Mi unidad/Tesis/Tesis Rodrigo Rojas/Modelos_v2025/resultados_finales/risk_scenario/maps_paper_style_trace/Map_RefStyle_Trace_NAC.pdf}
+\caption{Mapas de pérdida relativa (p50, \%) para escenarios FSR, Interplaca e Intraplaca, utilizando el modelo de vulnerabilidad Nacional. La escala de color es común dentro de la figura, permitiendo la comparación directa entre escenarios.}
+\label{fig:riesgo_det_mapas_perdida_nac}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{G:/Mi unidad/Tesis/Tesis Rodrigo Rojas/Modelos_v2025/resultados_finales/risk_scenario/maps_paper_style_trace/Map_RefStyle_Trace_HAZ.pdf}
+\caption{Mapas de pérdida relativa (p50, \%) para escenarios FSR, Interplaca e Intraplaca, utilizando el modelo de vulnerabilidad HAZUS. La escala de color es común dentro de la figura, permitiendo la comparación directa entre escenarios.}
+\label{fig:riesgo_det_mapas_perdida_haz}
+\end{figure}
+
+% --------------------------------------------------------------
+\subsubsection{Mapas de pérdida absoluta}
+\label{subsubsec:riesgo_det_mapas_abs}
+
+Las Figuras~\ref{fig:riesgo_det_mapas_perdida_abs_nac} y \ref{fig:riesgo_det_mapas_perdida_abs_haz} presentan mapas de pérdida absoluta (CLP) en escala logarítmica para los tres escenarios. En el modelo Nacional (Figura~\ref{fig:riesgo_det_mapas_perdida_abs_nac}), las mayores pérdidas absolutas se concentran en un subconjunto acotado de unidades espaciales, con patrones que se mantienen entre escenarios y variaciones en la intensidad (color) entre FSR, Interplaca e Intraplaca. En el modelo HAZUS (Figura~\ref{fig:riesgo_det_mapas_perdida_abs_haz}), se observa una distribución espacial similar de las unidades de mayor pérdida absoluta, con un desplazamiento general hacia valores más altos y con mayor presencia de unidades en categorías intermedias-altas de la escala logarítmica, en concordancia con los totales reportados en la Tabla~\ref{tab:perdida_total_escenarios}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{G:/Mi unidad/Tesis/Tesis Rodrigo Rojas/Modelos_v2025/resultados_finales/risk_scenario/maps_paper_style_trace_ABS/Map_RefStyle_Trace_ABS_LOG_NAC.pdf}
+\caption{Mapas de pérdida absoluta (p50, CLP; escala logarítmica) para escenarios FSR, Interplaca e Intraplaca, utilizando el modelo de vulnerabilidad Nacional. La escala logarítmica permite visualizar simultáneamente unidades con pérdidas de distinto orden de magnitud.}
+\label{fig:riesgo_det_mapas_perdida_abs_nac}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{G:/Mi unidad/Tesis/Tesis Rodrigo Rojas/Modelos_v2025/resultados_finales/risk_scenario/maps_paper_style_trace_ABS/Map_RefStyle_Trace_ABS_LOG_HAZ.pdf}
+\caption{Mapas de pérdida absoluta (p50, CLP; escala logarítmica) para escenarios FSR, Interplaca e Intraplaca, utilizando el modelo de vulnerabilidad HAZUS. La escala logarítmica permite visualizar simultáneamente unidades con pérdidas de distinto orden de magnitud.}
+\label{fig:riesgo_det_mapas_perdida_abs_haz}
+\end{figure}
+
+
+% ==============================================================
+% 2.2 Riesgo probabilístico (catálogo)
+% ==============================================================
+% ==============================================================
+% 5.2.2  Riesgo probabilístico basado en catálogo estocástico
+% ==============================================================
+\subsection{Riesgo probabilístico basado en catálogo estocástico}
+\label{subsec:riesgo_catalogo}
+
+Esta sección presenta resultados anualizados y de excedencia de pérdida obtenidos a partir del catálogo estocástico. Se reportan mapas de AAL y AALR por manzana, resúmenes a nivel de portafolio (p16, p50 y p84), curvas OEP y tasas de excedencia $\lambda(L)$, además de una desagregación de AAL/AALR por materialidad y tipología estructural.
+
+% ==============================================================
+% 5.2.2.1  Métricas: AAL y AALR
+% ==============================================================
+\subsubsection{Métricas: AAL y AALR}
+\label{subsubsec:aal_aalr_def}
+
+Las Figuras~\ref{fig:aal_mapas_sin_fsr} y \ref{fig:aalr_mapas_sin_fsr} muestran resultados anualizados sin inclusión de la FSR. En AAL (Figura~\ref{fig:aal_mapas_sin_fsr}), el modelo HAZUS presenta valores más altos y una mayor extensión de manzanas en categorías intermedias y altas de la escala, en comparación con el modelo Nacional, que concentra la mayor parte de las manzanas en rangos bajos. La Figura~\ref{fig:aalr_mapas_sin_fsr} exhibe el patrón equivalente para AALR, donde la separación entre modelos es más evidente al normalizar por exposición: el modelo Nacional se concentra mayoritariamente en los rangos inferiores de la escala, mientras que HAZUS presenta un número mayor de manzanas en rangos altos.
+
+Las Figuras~\ref{fig:aalr_mapas_con_fsr} y \ref{fig:aal_mapas_con_fsr} presentan los resultados con inclusión de la FSR. En ambos indicadores (AAL y AALR) se mantiene la distribución espacial general observada en el caso sin FSR, con variaciones localizadas que se analizan explícitamente en la Figura~\ref{fig:aalr_efecto_fsr_pct}. En particular, el cambio introducido por la inclusión de la FSR es visualmente acotado respecto del rango total de las escalas de AAL y AALR, coherente con las diferencias a nivel de portafolio reportadas en las Tablas~\ref{tab:resumen_portafolio_aal_aalr} y \ref{tab:diferencia_portafolio_fsr}.
+
+La Figura~\ref{fig:aalr_efecto_fsr_pct} muestra el incremento relativo porcentual de AALR por inclusión de la FSR, con valores positivos en la totalidad del dominio. Los incrementos se concentran espacialmente en el corredor representado, con máximos locales del orden de la cota superior de la barra de colores (2.1\%). En términos comparativos, el patrón espacial de incremento se observa más marcado en el modelo Nacional (mayor presencia de categorías altas en el mapa) que en HAZUS.
+
+La Figura~\ref{fig:aalr_cambio_rel_pct_sin_fsr} presenta mapas de cambio relativo porcentual en AALR asociados a variaciones entre escenarios considerados en la modelación (sin y con FSR, según se indica en los paneles). La escala alcanza valores elevados (hasta 95.2\%), evidenciando que, para un subconjunto de manzanas, el AALR es altamente sensible al escenario comparado; el patrón espacial de dichas variaciones se mantiene similar entre los casos sin y con inclusión de FSR.
+
+A nivel agregado, la Tabla~\ref{tab:resumen_portafolio_aal_aalr} resume AAL y AALR del portafolio mediante p16, p50 y p84. Para el modelo Nacional, el AAL p50 es $9.31\times10^{8}$ CLP/año con FSR y $9.14\times10^{8}$ CLP/año sin FSR, mientras que el AALR p50 es 0.90\textperthousand\ con FSR y 0.88\textperthousand\ sin FSR. Para HAZUS, el AAL p50 es $7.76\times10^{9}$ CLP/año con FSR y $7.70\times10^{9}$ CLP/año sin FSR, con AALR p50 de 7.47\textperthousand\ y 7.42\textperthousand, respectivamente. En ambos modelos, el rango p16--p84 es amplio y aproximadamente proporcional al nivel de la métrica, reflejando incertidumbre significativa en el resultado anualizado.
+
+La Tabla~\ref{tab:diferencia_portafolio_fsr} reporta el cambio total (Con FSR $-$ Sin FSR) usando p50. En el modelo Nacional, $\Delta$AAL es $1.70\times10^{7}$ CLP/año (1.86\%) y $\Delta$AALR es $2.0\times10^{-2}$\textperthousand\ (2.27\%). En HAZUS, $\Delta$AAL es $6.00\times10^{7}$ CLP/año (0.78\%) y $\Delta$AALR es $5.0\times10^{-2}$\textperthousand\ (0.67\%). En ambos casos, el efecto a nivel de portafolio se ubica por debajo de unos pocos puntos porcentuales, en contraste con variaciones locales mayores observadas en las métricas normalizadas a escala de manzana.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.67\textheight, keepaspectratio]{figuras_tesis/resultados_perdida/MAP_AAL__sin_fsr.pdf}
+\caption{Mapas de AAL por manzana (CLP/año) para el caso sin FSR. Se comparan los modelos de vulnerabilidad Nacional y HAZUS usando una escala de color común (0 a $1.2\times10^{8}$ CLP/año).}
+\label{fig:aal_mapas_sin_fsr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.67\textheight, keepaspectratio]{figuras_tesis/resultados_perdida/MAP_AALR_pm__sin_fsr.pdf}
+\caption{Mapas de AALR por manzana (\textperthousand) para el caso sin FSR. Se comparan los modelos Nacional y HAZUS con escala común (0 a 7.90\textperthousand), reportando el percentil medio del conjunto de GMF.}
+\label{fig:aalr_mapas_sin_fsr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.67\textheight, keepaspectratio]{figuras_tesis/resultados_perdida/MAP_AALR_pm__con_fsr.pdf}
+\caption{Mapas de AALR por manzana (\textperthousand) con inclusión de la FSR. Se comparan los modelos Nacional y HAZUS con la misma escala de la Figura~\ref{fig:aalr_mapas_sin_fsr}, reportando el percentil medio del conjunto de GMF.}
+\label{fig:aalr_mapas_con_fsr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.67\textheight, keepaspectratio]{figuras_tesis/resultados_perdida/MAP_AAL__con_fsr.pdf}
+\caption{Mapas de AAL por manzana (CLP/año) con inclusión de la FSR. Se comparan los modelos Nacional y HAZUS con la misma escala de la Figura~\ref{fig:aal_mapas_sin_fsr}.}
+\label{fig:aal_mapas_con_fsr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.67\textheight, keepaspectratio]{figuras_tesis/resultados_perdida/MAP_efecto_FSR_en_AALR_pct.pdf}
+\caption{Incremento relativo porcentual de AALR por inclusión de la FSR, por manzana y por modelo de vulnerabilidad. La escala de color (0 a 2.1\%) muestra aumentos locales en AALR al incorporar la fuente cortical.}
+\label{fig:aalr_efecto_fsr_pct}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.67\textheight, keepaspectratio]{figuras_tesis/resultados_perdida/MAP_dAALR_rel_pct__sin_fsr.pdf}
+\caption{Mapas de cambio relativo porcentual en AALR asociados a variaciones entre escenarios considerados, mostrado para los casos sin y con inclusión de la FSR. La escala alcanza 95.2\%, destacando manzanas con alta sensibilidad del AALR al escenario comparado.}
+\label{fig:aalr_cambio_rel_pct_sin_fsr}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Resumen a nivel de portafolio (p16, p50 y p84) para AAL total (CLP/año) y AALR total (\textperthousand), comparando los casos con y sin FSR para los modelos Nacional y HAZUS.}
+\label{tab:resumen_portafolio_aal_aalr}
+\begin{tabular}{llcccccc}
+\hline
+\textbf{Modelo} & \textbf{Caso} &
+\multicolumn{3}{c}{\textbf{AAL total [CLP/año]}} &
+\multicolumn{3}{c}{\textbf{AALR total [\textperthousand]}} \\
+\cline{3-5}\cline{6-8}
+& & \textbf{p16} & \textbf{p50} & \textbf{p84} & \textbf{p16} & \textbf{p50} & \textbf{p84} \\
+\hline
+Nacional & Con FSR & $6.60\times10^{8}$ & $9.31\times10^{8}$ & $1.31\times10^{9}$ & $0.64$ & $0.90$ & $1.26$ \\
+HAZUS    & Con FSR & $6.16\times10^{9}$ & $7.76\times10^{9}$ & $9.66\times10^{9}$ & $5.94$ & $7.47$ & $9.30$ \\
+Nacional & Sin FSR & $6.46\times10^{8}$ & $9.14\times10^{8}$ & $1.29\times10^{9}$ & $0.62$ & $0.88$ & $1.24$ \\
+HAZUS    & Sin FSR & $6.10\times10^{9}$ & $7.70\times10^{9}$ & $9.59\times10^{9}$ & $5.88$ & $7.42$ & $9.24$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Diferencia total a nivel de portafolio (Con FSR $-$ Sin FSR), usando p50. La diferencia absoluta corresponde a $(\text{Con FSR} - \text{Sin FSR})$; la diferencia normalizada se calcula como $\Delta X/X_{\mathrm{sin}}$ (en \%) con $X\in\{\mathrm{AAL},\mathrm{AALR}\}$.}
+\label{tab:diferencia_portafolio_fsr}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Modelo} &
+\textbf{$\Delta$AAL [CLP/año]} &
+\textbf{$\Delta$AAL/$\mathrm{AAL}_{\mathrm{sin}}$ [\%]} &
+\textbf{$\Delta$AALR [\textperthousand]} &
+\textbf{$\Delta$AALR/$\mathrm{AALR}_{\mathrm{sin}}$ [\%]} \\
+\hline
+Nacional & $1.70\times10^{7}$ & $1.86$ & $2.0\times10^{-2}$ & $2.27$ \\
+HAZUS    & $6.00\times10^{7}$ & $0.78$ & $5.0\times10^{-2}$ & $0.67$ \\
+\hline
+\end{tabular}
+\end{table}
+
+% ==============================================================
+% 5.2.2.2  OEP y lambda
+% ==============================================================
+\subsubsection{Curvas de excedencia de pérdida (OEP) y tasas de excedencia}
+\label{subsubsec:oep_lambda}
+
+La Figura~\ref{fig:oep_relativo_con_sin_fsr} presenta curvas OEP relativas (pérdida normalizada por exposición) en función del periodo de retorno. Para todo el rango de periodos de retorno mostrado, las curvas del modelo HAZUS se ubican por encima de las del modelo Nacional, con bandas p16--p84 que conservan la separación entre modelos. Adicionalmente, se incluyen resultados para el portafolio completo (ALL) y para el subconjunto sin FSR (No-ASC), observándose diferencias sistemáticas entre ambos subconjuntos a lo largo del dominio de periodos de retorno.
+
+La Figura~\ref{fig:lambda_comparison_con_sin_fsr} muestra las tasas de excedencia $\lambda(L)$ en función del umbral relativo de pérdida $L/\mathrm{Exposición}$ para los casos con y sin FSR, incorporando bandas p16--p84. Para un mismo umbral, las curvas del modelo HAZUS se ubican sobre las del modelo Nacional, y las curvas con FSR (línea continua) se sitúan por encima de las curvas sin FSR (línea discontinua). El panel de efecto marginal $\Delta\lambda(L)$ muestra diferencias positivas en todo el rango de umbrales, con valores aproximadamente constantes para umbrales bajos y una disminución abrupta al aumentar el umbral, hasta aproximarse a cero para umbrales altos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.49\linewidth]{figuras_tesis/resultados_perdida/figA_oep_relativo_clean_square.pdf}
+\caption{Curvas OEP relativas (pérdida normalizada por exposición) para los modelos Nacional y HAZUS, mostrando medianas (p50) y bandas p16--p84. Se comparan el portafolio completo (ALL) y el subconjunto sin FSR (No-ASC) en función del periodo de retorno.}
+\label{fig:oep_relativo_con_sin_fsr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figuras_tesis/resultados_perdida/LAMBDA_threshold__ConFSR_vs_SinFSR__Nacional_vs_HAZUS__xmin1e-5__p16p84.pdf}
+    \caption{Tasa de excedencia $\lambda(L)$ para escenarios con FSR (línea continua) y sin FSR (línea discontinua), con bandas p16--p84.}
+    \label{fig:lambda_threshold_con_sin_fsr}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figuras_tesis/resultados_perdida/DELTA_LAMBDA_threshold__ConMinusSin__Nacional_vs_HAZUS__xmin1e-5__meanDiff.pdf}
+    \caption{Efecto marginal de la FSR en la tasa de excedencia, $\Delta\lambda(L)$, para los modelos Nacional y HAZUS.}
+    \label{fig:delta_lambda_con_menos_sin_fsr}
+\end{subfigure}
+\caption{Tasas de excedencia de pérdida en función del umbral relativo $L/\mathrm{Exposición}$: (a) $\lambda(L)$ para escenarios con y sin FSR, con bandas p16--p84; (b) efecto marginal $\Delta\lambda(L)=\lambda_{\mathrm{con}}(L)-\lambda_{\mathrm{sin}}(L)$, con escala de periodo de retorno equivalente en el eje secundario.}
+\label{fig:lambda_comparison_con_sin_fsr}
+\end{figure}
+
+% ==============================================================
+% 5.2.2.3  AAL/AALR por materialidad y tipología
+% ==============================================================
+\subsubsection{AAL y AALR por materialidad y tipología estructural}
+\label{subsubsec:riesgo_catalogo_materialidad}
+
+La Figura~\ref{fig:aal_aalr_material_exacto_hazus} desagrega la exposición y las métricas anualizadas por comuna, incorporando la distribución de materialidad y dos subconjuntos del inventario (ALL y No-ASC). En los paneles de AAL y AALR, el modelo HAZUS se ubica sistemáticamente por encima del modelo Nacional, con rangos p16--p84 que reflejan variabilidad entre comunas y entre subconjuntos.
+
+La Figura~\ref{fig:material_piso_expo_aal_aalr} presenta la misma lógica de desagregación, ahora por materialidad y clases de altura, reportando exposición, contribución al valor expuesto, AAL y AALR para ALL y No-ASC. La exposición se concentra en albañilería y hormigón en sus distintas clases, mientras que madera representa una fracción menor del valor expuesto. En AAL y AALR por materialidad, se observa una separación consistente entre modelos (HAZUS por encima de Nacional) y una reducción general de niveles al pasar de ALL a No-ASC, manteniéndose la jerarquía relativa entre categorías dominantes.
+
+\begin{landscape}
+\pagestyle{plain}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_perdida/FIG_4cols_AAL_fromDuckDB__ALL_vs_NONASC__MAT-EXACT_PISO-HAZUS__AALRlog.pdf}
+\caption{Exposición y métricas anualizadas por comuna para el portafolio completo (ALL) y el subconjunto sin FSR (No-ASC). Se reportan: exposición (CLP), distribución por materialidad, AAL (CLP/año; escala logarítmica) y AALR (\% del valor expuesto por año; escala logarítmica), mostrando p50 y rangos p16--p84.}
+\label{fig:aal_aalr_material_exacto_hazus}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\pagestyle{plain}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras_tesis/resultados_perdida/FIG_MATERIAL__PISOBIN_RC__SHARES__EXPO_SHARE_AAL_AALR__ALL_vs_NONASC__NOEMPTY.pdf}
+\caption{Distribución de exposición (CLP), contribución al valor expuesto, AAL (CLP/año) y AALR (1/año) por materialidad y clase de altura, comparando ALL y No-ASC. Se muestran resultados para los modelos Nacional y HAZUS, con rangos p16--p84 en las métricas anualizadas.}
+\label{fig:material_piso_expo_aal_aalr}
+\end{figure}
+\end{landscape}
