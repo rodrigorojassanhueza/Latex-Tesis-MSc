@@ -322,7 +322,7 @@ El inventario de exposición se construyó a partir de registros del Servicio de
 
 La Falla San Ramón (FSR) se incorporó al modelo integrado mediante un conjunto de alternativas geométricas y de recurrencia coherentes con la evidencia sismotectónica disponible. Se consideraron tres configuraciones de traza (PO, PP y PP+RO; Figura~\ref{fig:Traza FSR}), que difieren en la representación de ramales y en la extensión de la traza incluida en la fuente. La magnitud máxima se exploró en el rango $M_w \in [6.8,\,7.5]$.
 
-La recurrencia se parametrizó mediante periodos de retorno entre 6\,500 y 8\,000 años, con incrementos de 500 años. La implementación final adoptó una distribución discreta de magnitud (MFD discreta), asignando a cada magnitud una tasa de ocurrencia consistente con los valores explorados.
+La recurrencia se parametrizó mediante periodos de retorno entre 6\,500 y 8\,000 años, con incrementos de 500 años. Estos valores se consideraron dada la evidencia geológica existente \cite{Campillay2025san}. Para el tiempo desde el último evento utilizado en el modelo BPT, también se utilizaron estos mismos valores como posibles valores de tiempo de último evento. La implementación final adoptó una distribución discreta de magnitud (evento característico), asignando a cada magnitud una tasa de ocurrencia consistente con los valores explorados. Además, para el modelo BPT se consideró un $\alpha$ de 0.38, valor que se justifica como representativo para fallas corticales inversas \cite{Matthews2002}.
 
 \subsubsection{Fuentes de subducción: contribuciones interplaca e intraplaca}
 \label{sec:meto_subduccion}
@@ -743,9 +743,9 @@ El riesgo por escenarios se estimó a partir de los escenarios definidos en el a
 \subsection{Configuración general y corridas}
 \label{sec:meto_event_config}
 
-El cálculo basado en eventos se ejecutó con $T=10\,000$ años, $N_{\text{LT}}=310$ y $N_{\text{SES}}=20$, manteniendo truncamiento de $3\sigma$ y las medidas de intensidad PGA y $SA(1.0)$. Se realizaron dos corridas: (i) una corrida integrada (FSR + interplaca + intraplaca) y (ii) una corrida sin FSR, equivalente a la anterior y excluyendo únicamente la contribución cortical.
+El cálculo basado en eventos se ejecutó con $T=10\,000$ años, $N_{\text{LT}}=310$ (número de ramas de árbol lógico) y $N_{\text{SES}}=20$ (número de simulaciones por cada rama de árbol lógico), manteniendo truncamiento de $3\sigma$ y las medidas de intensidad PGA y $SA(1.0)$. Se realizaron dos corridas: (i) una corrida integrada (FSR + interplaca + intraplaca) y (ii) una corrida sin FSR, equivalente a la anterior y excluyendo únicamente la contribución cortical.
 
-Bajo la hipótesis sin memoria, la ocurrencia se interpreta como Poisson (Ecuación~\ref{eq:poisson_prob_k_occurrences_v2}). Las salidas de riesgo se reportan en términos de tasa de excedencia de pérdidas $\lambda(C>c)$, estimada desde pérdidas por evento mediante un estimador tipo Monte Carlo (Ecuación~\ref{eq:monte_carlo_risk_v2}). A partir de $\lambda(C>c)$ se obtuvieron métricas agregadas: AAL (Ecuación~\ref{eq:average_annual_loss_v2}) y AALR (Ecuación~\ref{eq:aalr_def}). Asimismo, se reportaron curvas OEP en términos de tasa equivalente (Ecuación~\ref{eq:oep_rate}) y, cuando se expresó excedencia en horizontes finitos, se utilizó la relación $P(L>\ell\mid T)$ (Ecuación~\ref{eq:pml_poe}).
+Bajo la hipótesis sin memoria, la ocurrencia se interpreta como Poisson (Ecuación~\ref{eq:poisson_prob_k_occurrences_v2}). Las salidas de riesgo se reportan en términos de tasa de excedencia de pérdidas $\lambda(C>c)$, estimada desde pérdidas por evento mediante un estimador tipo Monte Carlo (Ecuación~\ref{eq:monte_carlo_risk_v2}). A partir de $\lambda(C>c)$ se obtuvieron métricas agregadas: AAL (Ecuación~\ref{eq:average_annual_loss_v2}) y AALR (Ecuación~\ref{eq:aalr_def}). Asimismo, se reportaron curvas OEP en términos de tasa equivalente (Ecuación~\ref{eq:oep_rate}).
 
 \subsection{Filtros de contribución: distancia máxima y umbral mínimo de intensidad}
 \label{sec:meto_event_filtros}
@@ -755,9 +755,9 @@ En los cálculos se aplicaron filtros de contribución para acotar el número de
 La distancia máxima de contribución se definió por tipo de fuente. Para la contribución cortical asociada a la Falla San Ramón (FSR) se utilizó una distancia constante de 300~km. Para subducción, la distancia máxima se especificó como una función escalonada de $M_w$, diferenciando entre sismicidad interplaca e intraplaca/intraslab.
 
 \paragraph{Determinación de la distancia de corte $R_{\mathrm{cut}}$.}
-Para justificar y contrastar las distancias máximas adoptadas en subducción, se estimó una \emph{distancia de corte} $R_{\mathrm{cut}}$ para cada magnitud $M_w$ a partir de modelos de predicción del movimiento del suelo. El criterio es simple: para una magnitud dada, $R_{\mathrm{cut}}$ corresponde a la distancia a la ruptura a partir de la cual el nivel de intensidad esperado resulta menor que el umbral mínimo de interés ($0.05\,g$).
+Para justificar y contrastar las distancias máximas adoptadas en subducción, se estimó una \emph{distancia de corte} $R_{\mathrm{cut}}$ para cada magnitud $M_w$ a partir de modelos de predicción del movimiento del suelo. Para una magnitud dada, $R_{\mathrm{cut}}$ corresponde a la distancia a la ruptura a partir de la cual el nivel de intensidad esperado resulta menor que el umbral mínimo de interés ($0.05\,g$).
 
-En la práctica, para cada $M_w$ y una malla de distancias a la ruptura $R_{rup}$, se evaluaron cinco modelos (MBR17, PSHAB2020, KBCG2020, BCHU18 y AG2020). Con estas predicciones se construyó una envolvente superior incorporando la dispersión aleatoria mediante niveles $k\,\sigma$. Luego, $R_{\mathrm{cut}}$ se tomó como la menor distancia $R_{rup}$ para la cual dicha envolvente cae por debajo de $0.05\,g$ (en esta sección se ilustra el procedimiento con $\mathrm{PGA}$). Para evitar oscilaciones asociadas a discretización y a cambios del modelo dominante, la relación $R_{\mathrm{cut}}(M_w)$ se forzó a ser no decreciente con $M_w$.
+En la práctica, para cada $M_w$ y una malla de distancias a la ruptura $R_{rup}$, se evaluaron cinco modelos (MBR17, PSHAB2020, KBCG2020, BCHU18 y AG2020). Con estas predicciones se construyó una envolvente superior incorporando la dispersión aleatoria mediante niveles $k\,\sigma$ (0.5$\sigma$, 1$\sigma$, etc.). Luego, $R_{\mathrm{cut}}$ se tomó como la menor distancia $R_{rup}$ para la cual dicha envolvente cae por debajo de $0.05\,g$. Se ilustran los procedimientos con $\mathrm{PGA}$ y $SA(1.0)$ Para evitar oscilaciones asociadas a discretización y a cambios del modelo dominante, la relación $R_{\mathrm{cut}}(M_w)$ se forzó a ser no decreciente con $M_w$.
 
 Las Figuras~\ref{fig:meto_event_dist_mw_plot_pga} y~\ref{fig:meto_event_dist_mw_plot_sa} muestran $R_{\mathrm{cut}}(M_w)$ para interplaca e intraplaca/intraslab y distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las distancias máximas por tramos que se adoptaron en los cálculos, incluidas para comparar visualmente el grado de conservadurismo o cercanía de la parametrización final respecto de las estimaciones derivadas de los modelos.
 
@@ -813,6 +813,7 @@ m=\frac{\dfrac{z^2\,p(1-p)}{e^2}}{1+\dfrac{z^2\,p(1-p)}{e^2\,N}}.
 \label{eq:ns_fpc_m}
 \end{equation}
 \begin{itemize}
+  \item $p$: proporción esperada de sitios con excedencia (se asumió $p=0.5$ para maximizar la varianza).	
   \item $m$: tamaño de la submuestra de sitios.
   \item $N$: número total de sitios del \textit{site model}.
   \item $z$: cuantil Normal estándar adoptado.
@@ -828,7 +829,7 @@ e=z\sqrt{\frac{p(1-p)}{n_0}},\qquad n_0=\frac{m}{1-m/N}.
   \item $n_0$: tamaño equivalente sin FPC.
 \end{itemize}
 
-La submuestra se generó con semilla fija y se guardó junto con metadatos (parámetros y semilla) para asegurar trazabilidad. Su representatividad se verificó comparando (i) cobertura espacial (mapas y distancia a vecino más cercano) y (ii) distribuciones de $V_{S30}$ y $Z_{1.0}$ (histogramas), además de diagnósticos por grilla con residuales de Pearson y contribuciones a $\chi^2$:
+La submuestra se generó con semilla fija y se guardó junto con metadatos (parámetros y semilla) para asegurar trazabilidad. Su representatividad se verificó comparando (i) cobertura espacial con mapas y distancia a vecino más cercano \ref{fig:meto_mapa_sitios_pearson} y (ii) distribuciones de $V_{S30}$ y $Z_{1.0}$ con histogramas, además de diagnósticos por grilla con residuales de Pearson y contribuciones a $\chi^2$ en \ref{fig:meto_qa_sitios_completo}:
 \begin{equation}
 r=\frac{O-E}{\sqrt{E}}, \qquad c=\frac{(O-E)^2}{E}.
 \label{eq:qa_residuales}
@@ -931,11 +932,8 @@ $KS(p)$ & 0.027\,(0.82) & 0.025\,(0.87) \\
 \end{tabular}
 \end{table}
 
-\paragraph{Umbrales de excedencia.}
-Se consideraron $\mathrm{PGA}=0.2\,g$ y $\mathrm{PGA}=0.4\,g$.
-
 \paragraph{Estadístico espacial y curva $T(u)$.}
-Para cada evento $e$ y umbral $y^\ast$, se definió el conteo de excedencias espaciales:
+Para cada evento $e$ y umbral $y^\ast$ (se consideraron $\mathrm{PGA}=0.2\,g$ y $\mathrm{PGA}=0.4\,g$), se definió el conteo de excedencias espaciales:
 \begin{equation}
 C_e(y^\ast)=\#\left\{\,s:\ \mathrm{PGA}_{e,s}>y^\ast\,\right\}.
 \label{eq:Ce_def}
@@ -957,7 +955,7 @@ y se trabajó en el eje normalizado $u=k/N_s\in[0,1]$ para comparar mallas con d
 \end{equation}
 
 \paragraph{Bootstrap por eventos y criterio de convergencia.}
-Para cuantificar la incertidumbre asociada al uso de un número finito de GMFs, se aplicó bootstrap por eventos: para cada $n$ candidato se generaron $B$ réplicas remuestreando $n$ eventos con reemplazo y obteniendo $\widehat{T}^{(b)}_{y^\ast}(k)$. La convergencia se evaluó con el máximo error vertical respecto de $\widehat{T}^{\,\mathrm{ref}}_{y^\ast}(k)$, restringiendo la comparación a $[0.025,\,0.975]$:
+Para cuantificar la incertidumbre asociada al uso de un número finito de GMFs (\textit{ground motion fields}, campos de movimiento de suelo), se aplicó bootstrap por eventos: para cada $n$ candidato se generaron $B$ réplicas remuestreando $n$ eventos con reemplazo y obteniendo $\widehat{T}^{(b)}_{y^\ast}(k)$. La convergencia se evaluó con el máximo error vertical respecto de $\widehat{T}^{\,\mathrm{ref}}_{y^\ast}(k)$, restringiendo la comparación a $[0.025,\,0.975]$:
 \begin{equation}
 \Delta^{(b)}_{y^\ast}(n)=
 \max_{k\,:\,\widehat{T}^{\,\mathrm{ref}}_{y^\ast}(k)\in[0.025,\,0.975]}
@@ -979,10 +977,10 @@ Luego se exigió, para ambos umbrales, que el percentil 97.5\% de $\Delta$ fuese
   \item $\varepsilon$: tolerancia adoptada para la selección de $n$ (aquí, $\varepsilon=0.05$).
 \end{itemize}
 
-Con este criterio se adoptó $n=860$ GMFs, por ser el menor valor que cumple simultáneamente la tolerancia en ambos umbrales.
+Con este criterio se adoptó $n=860$ GMFs, por ser el menor valor que cumple simultáneamente la tolerancia en ambos umbrales. En la figura \ref{fig:meto_convergencia} se muestra el esquema de control de convergencia, con las curvas de referencia y ejemplos de réplicas para cada umbral, junto con la evolución del percentil 97.5\% de $\Delta$ en función de $n$.
 
 \paragraph{Análisis de sensibilidad: completo vs.\ reducido y banda por $N_G=860$.}
-Además del control de convergencia, se evaluó la consistencia entre un modelo \textbf{completo} (todos los sitios, $N_G=860$) y un modelo \textbf{reducido} (submuestra de sitios) calculado con un número grande de GMFs $N_G^{\mathrm{ref}}$ (p.\ ej., $40{,}000$). Para aislar el efecto de usar $N_G=860$ sobre el reducido, se construyó una banda de error centrada en cero:
+Además del control de convergencia, se evaluó la consistencia entre un modelo \textbf{completo} (todos los sitios, $N_G=860$) y un modelo reducido (submuestra de sitios) calculado con un número grande de GMFs $N_G^{\mathrm{ref}}$ (p.\ ej., $40{,}000$). Para aislar el efecto de usar $N_G=860$ sobre el reducido, se construyó una banda de error centrada en cero:
 \begin{equation}
 \delta^{(b)}(u)=T^{(b)}_{\mathrm{red},\,860}(u)-T_{\mathrm{red},\,\mathrm{ref}}(u).
 \label{eq:delta_boot_u}
@@ -1000,7 +998,7 @@ La diferencia observada entre completo y reducido se definió como:
   \item $\Delta_{\mathrm{obs}}(u)$: diferencia observado completo--reducido en términos de $T(u)$.
 \end{itemize}
 
-La comparación se interpretó verificando si $\Delta_{\mathrm{obs}}(u)$ queda mayoritariamente dentro del intervalo percentil 2.5--97.5 de $\delta(u)$, lo que indica que las discrepancias completo--reducido son del orden de la variabilidad esperable por usar un número finito de GMFs.
+La comparación se interpretó verificando si $\Delta_{\mathrm{obs}}(u)$ queda mayoritariamente dentro del intervalo percentil 2.5--97.5 de $\delta(u)$, lo que indica que las discrepancias completo--reducido son del orden de la variabilidad esperable por usar un número finito de GMFs. En la figura \ref{fig:meto_comparacion_excedencias} se muestra esta comparación para ambos umbrales, con las curvas $T(u)$ del completo y el reducido, la diferencia observada entre el caso completo y reducido, además de la banda de error por número finito de GMFs del reducido.
 
 \begin{figure}[H]
 	\centering
@@ -1039,15 +1037,15 @@ La comparación se interpretó verificando si $\Delta_{\mathrm{obs}}(u)$ queda m
 \subsection{Selección de número de ramas de árbol lógico}
 \label{sec:meto_nlt}
 
-El número de ramas del árbol lógico controla el costo computacional y, al mismo tiempo, la estabilidad de los resultados. Para fijar un número mínimo de ramas $N$ que mantenga resultados estables, se evaluó la convergencia de una intensidad equivalente $IM^\ast$ asociada a un período de retorno alto ($T_R=10{,}000$ años), usando remuestreo \textit{bootstrap} sobre las realizaciones del árbol lógico.
+El número de ramas del árbol lógico controla el costo computacional y, al mismo tiempo, la estabilidad de los resultados. Para fijar un número mínimo de ramas $N$ que mantenga resultados estables, se evaluó la convergencia de una intensidad equivalente $IM^\ast$ asociada a un período de retorno alto ($RP=10{,}000$ años), usando remuestreo \textit{bootstrap} sobre las realizaciones del árbol lógico.
 
 \paragraph{Probabilidad objetivo.}
-Bajo ocurrencia Poisson, la probabilidad de excedencia en el horizonte $T_{\mathrm{inv}}$ asociada al período de retorno objetivo $T_R^\ast$ se calculó como:
+Bajo ocurrencia Poisson, la probabilidad de excedencia en el horizonte $T$ asociada al período de retorno objetivo $T_R^\ast$ se calculó como:
 \begin{equation}
-\mathrm{PoE}_{\mathrm{target}}=1-\exp\!\left(-\frac{T_{\mathrm{inv}}}{T_R^\ast}\right).
+\mathrm{PoE}_{\mathrm{target}}=1-\exp\!\left(-\frac{T}{T_R^\ast}\right).
 \end{equation}
 \begin{itemize}
-  \item $T_{\mathrm{inv}}$: horizonte temporal usado en la comparación (en este trabajo, $50$ años).
+  \item $T$: horizonte temporal usado en la comparación (en este trabajo, $50$ años).
   \item $T_R^\ast$: período de retorno objetivo (en este análisis, $10{,}000$ años).
 \end{itemize}
 
@@ -1068,7 +1066,7 @@ Sea $N_{\mathrm{tot}}$ el número total de realizaciones disponibles. Para cada 
 q^{\mathrm{ref}}_{p,s}=\operatorname{perc}_{p}\!\left(\left\{IM^\ast_{r,s}\right\}_{r=1}^{N_{\mathrm{tot}}}\right).
 \end{equation}
 \begin{itemize}
-  \item $N_{\mathrm{tot}}$: número total de realizaciones del árbol lógico presentes en el ZIP.
+  \item $N_{\mathrm{tot}}$: número total de realizaciones disponibles.
   \item $p$: percentil analizado (se trabajó con tres percentiles: $p16$, $p50$, $p84$).
 \end{itemize}
 
@@ -1100,7 +1098,7 @@ y se resumió mediante media y desviación estándar bootstrap:
   \item $\mathcal{S}^{(b)}(N)$: conjunto de índices (con reemplazo) de tamaño $N$ para la remuestra $b$.
 \end{itemize}
 
-En esta etapa se aplicó muestreo uniforme sobre realizaciones (consistente con lo implementado en el código).
+En esta etapa se aplicó muestreo uniforme sobre realizaciones.
 
 \paragraph{Criterio de convergencia y selección de $N$.}
 La convergencia se evaluó mediante el error relativo respecto del valor de referencia:
@@ -1141,7 +1139,7 @@ N^{(\tau)}_{\mathrm{global}}=\max_{\mathrm{IM}} N^{(\tau)}_{\mathrm{IM}}.
 \end{itemize}
 
 \paragraph{Implementación práctica.}
-Para reducir costo, $N$ se exploró primero en una malla gruesa (incrementos de 100 ramas) y, al detectar convergencia al $2\%$, se refinó localmente con paso 1 para obtener el $N$ mínimo consistente con el criterio de estabilidad.
+Para reducir costo, $N$ se exploró primero en una malla gruesa (incrementos de 100 ramas) y, al detectar convergencia al $2\%$, se refinó localmente con paso 1 para obtener el $N$ mínimo consistente con el criterio de estabilidad. Este análisis se muestra en la figura \ref{fig:meto_convergencia_nlt}, con la evolución del error relativo $\varepsilon$ para los percentiles $p16$, $p50$ y $p84$ en un sitio representativo, junto con el criterio de convergencia aplicado.
 
 \begin{figure}[H]
 	\centering
