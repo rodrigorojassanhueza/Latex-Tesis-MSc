@@ -58,8 +58,9 @@ El análisis probabilista de amenaza sísmica (PSHA) estima la tasa o probabilid
 
 El PSHA combina \cite{Cornell1968}:
 \begin{enumerate}
+    \item \textbf{Modelo de sitio}: describe las caracterísitcas del suelo en el sitio de interés, que afectan la respuesta sísmica.
     \item \textbf{Modelos de fuente}: describen recurrencia (tasa de actividad) y caracterización de rupturas (distribuciones de magnitud, geometría y localización).
-    \item \textbf{GMM}: entregan la distribución de \(IM\) condicionada a parámetros de fuente, trayectoria y sitio.
+    \item \textbf{GMM (\textit{Ground Motion Model})}: entregan la distribución de \(IM\) condicionada a parámetros de fuente, trayectoria y sitio.
 \end{enumerate}
 
 \subsubsection{Formulación discreta por fuentes y rupturas}
@@ -81,14 +82,14 @@ P_{\text{rup},ij}(k \mid T) = \exp(-\lambda_{ij}T)\,\frac{(\lambda_{ij}T)^k}{k!}
 
 \subsubsection{Modelo de recurrencia dependiente del tiempo: Brownian Passage Time (BPT)}
 
-Para incorporar dependencia del tiempo transcurrido desde el último evento, se utiliza un modelo de renovación como el \textit{Brownian Passage Time} (BPT). La PDF del tiempo entre eventos se expresa como \cite{MatthewsEllsworthReasenberg2002}:
+Para incorporar dependencia del tiempo transcurrido desde el último evento, se utiliza un modelo de renovación como el \textit{Brownian Passage Time} (BPT). La PDF (\textit{Probability Density Function}) del tiempo entre eventos se expresa como \cite{MatthewsEllsworthReasenberg2002}:
 \begin{equation}
 f_{\text{BPT}}(t) = \sqrt{\frac{\mu}{2\pi\alpha^2 t^3}} \exp \left[-\frac{(t-\mu)^2}{2\mu\alpha^2 t}\right],
 \label{eq:bpt_pdf_v2}
 \end{equation}
 donde \(t\) es el tiempo desde el último evento, \(\mu\) el periodo medio de recurrencia y \(\alpha\) la aperiodicidad.
 
-La CDF del modelo BPT está dada por \cite{MatthewsEllsworthReasenberg2002}:
+La CDF (\textit{Cumulative Distribution Function}) del modelo BPT está dada por \cite{MatthewsEllsworthReasenberg2002}:
 \begin{equation}
 F_{\text{BPT}}(t) = \Phi\left(\frac{t - \mu}{\alpha\sqrt{\mu t}}\right) + \exp \left(\frac{2}{\alpha^2}\right)\Phi\left(-\frac{t + \mu}{\alpha\sqrt{\mu t}}\right).
 \label{eq:bpt_cdf_v2}

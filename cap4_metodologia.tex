@@ -5,7 +5,7 @@
 \section{Visión general del flujo de trabajo}
 \label{sec:meto_vision_general}
 
-La metodología cuantifica la amenaza sísmica y el riesgo asociado a un modelo multifuente que integra (i) una fuente cortical cercana, representada por la Falla San Ramón (FSR), y (ii) fuentes de subducción, diferenciadas en contribuciones interplaca e intraplaca. Los cálculos se ejecutaron en OpenQuake Engine v3.23.2.
+La metodología cuantifica la amenaza sísmica y el riesgo asociado a un modelo multifuente que integra (i) una fuente cortical cercana, representada por la Falla San Ramón (FSR), y (ii) fuentes de subducción, diferenciadas en contribuciones interplaca e intraplaca. Los cálculos se ejecutaron en OpenQuake Engine v3.23.2. En la figura \ref{fig:meto_flujo_general} se presenta un diagrama del flujo de trabajo, que integra los modelos de entrada, la configuración de corridas para DSHA, PSHA y riesgo (por escenarios y event-based con/sin FSR) y el postproceso para obtener curvas, desagregaciones, mapas y métricas agregadas (AAL, AALR y curvas OEP).
 
 Para los cálculos se consideraron dos escalas espaciales:
 \begin{itemize}
@@ -16,7 +16,7 @@ Para los cálculos se consideraron dos escalas espaciales:
 El flujo de trabajo se organiza en tres etapas:
 \begin{enumerate}
     \item \textbf{Construcción de modelos de entrada:} modelos de fuente, modelos de movimiento del suelo (GMPEs) y su lógica de combinación, parámetros de sitio, exposición y vulnerabilidad.
-    \item \textbf{Ejecución de corridas en OpenQuake:} amenaza determinista (DSHA), amenaza probabilista (PSHA) y riesgo (por escenarios y event-based).
+    \item \textbf{Ejecución de corridas en OpenQuake:} amenaza determinista (DSHA), amenaza probabilista (PSHA) y riesgo (por escenarios y basado en eventos).
     \item \textbf{Postproceso reproducible:} extracción de salidas, verificaciones de consistencia, agregación espacial y generación de productos finales.
 \end{enumerate}
 
@@ -257,7 +257,7 @@ El flujo de trabajo se organiza en tres etapas:
 
 Se ejecutaron cuatro familias de análisis:
 \begin{itemize}
-    \item \textbf{Amenaza determinista (DSHA):} escenarios representativos de FSR, interplaca e intraplaca, con mapas de intensidades para PGA y $SA(1.0)$ en la cuenca.
+    \item \textbf{Amenaza determinista (DSHA):} escenarios representativos de FSR, interplaca e intraplaca, analizados por separado, con mapas de intensidades para PGA y $SA(1.0)$ en la cuenca.
 
     \item \textbf{Amenaza probabilista (PSHA) multifuente:} un modelo conjunto (FSR + subducción interplaca + subducción intraplaca) bajo dos hipótesis temporales: (a) sin memoria (Poisson) y (b) con memoria (BPT). Para cada corrida se obtuvieron curvas $\lambda(IM>im)$ (Ecuación~\ref{eq:hazard_curve_def}) y mapas de probabilidad de excedencia a partir de la relación tasa--probabilidad (Ecuación~\ref{eq:poe_from_lambda}). La probabilidad condicional de excedencia asociada a GMPEs se interpreta bajo la formulación lognormal (Ecuación~\ref{eq:gmpe_exceedance_probability}). Para el caso BPT, la ocurrencia se incorporó mediante $P(\Delta t\mid t_p)$ (Ecuación~\ref{eq:bpt_conditional_probability_v2}). Adicionalmente, se reportó desagregación en sitios (Ecuación~\ref{eq:hazard_deaggregation_weight}).
 
@@ -342,6 +342,8 @@ El modelo se implementó como un sistema multifuente compuesto por (i) una fuent
 
 Para la contribución cortical asociada a la FSR se emplearon cuatro GMPEs del conjunto NGA-West2: ASK14 \shortcite{Abrahamson2014}, BSSA14 \shortcite{Boore2014}, CB14 \shortcite{Campbell2014} y CY14 \shortcite{Chiou2014}. Para la subducción (interplaca e intraplaca) se utilizaron cinco GMPEs basadas en NGA-Subduction: AG \shortcite{Abrahamson2020}, KBCG \shortcite{Kuehn2020}, PSBAH \shortcite{Parker2020}, además de MBR \shortcite{Montalva2017} y BCHU \shortcite{Abrahamson2018}.
 
+En ambos casos, las GMPEs fueron incorporadas con pesos uniformes dentro de cada tipo de fuente. Así, para la fuente cortical FSR se asignó un peso de (0.25) a cada una de las cuatro GMPEs NGA-West2, mientras que para las fuentes de subducción se asignó un peso de (0.20) a cada una de las cinco GMPEs consideradas. Esta ponderación se adoptó debido a que en este trabajo no se realizó una evaluación regional específica del desempeño relativo de cada GMPE que permitiera asignar pesos diferenciados.
+
 \subsubsection{Correlación espacial del movimiento del suelo}
 \label{sec:meto_correlacion}
 
@@ -367,7 +369,7 @@ Para la fuente cortical asociada a la FSR se adoptó una magnitud fija $M_w=7.5$
     \item dip $60^\circ$, profundidad mínima 5~km.
 \end{itemize}
 
-Para la subducción se definieron dos escenarios representativos, uno interplaca ($M_w=9.3$) y otro intraplaca ($M_w=8.0$). En el caso intraplaca se consideraron tres orientaciones en planta para capturar la sensibilidad geométrica asociada a la dirección del plano de ruptura: caso base (0°) y rotaciones de 20° y 40° en sentido horario respecto al norte, rotando el plano de ruptura a partir de la superficie propuesta por Hayes (2018).
+Para la subducción se definieron dos escenarios representativos, los que se analizaron por separado, uno interplaca ($M_w=9.3$) y otro intraplaca ($M_w=8.0$). En el caso intraplaca se consideraron tres orientaciones en planta para capturar la sensibilidad geométrica asociada a la dirección del plano de ruptura: caso base (0°) y rotaciones de 20° y 40° en sentido horario respecto al norte, rotando el plano de ruptura a partir de la superficie propuesta por Hayes (2018). En la Figura~\ref{fig:meto_dsha_geometrias} se ilustran las geometrías en planta de los escenarios deterministas considerados para la FSR y para la subducción (interplaca e intraplaca).
 
 \begin{figure}[H]
     \centering
@@ -548,7 +550,7 @@ La incertidumbre epistémica se representó mediante un árbol lógico con $N_{\
 \subsubsection{Salidas del PSHA y sitios de reporte}
 \label{sec:meto_psha_out}
 
-De cada corrida PSHA se obtuvieron: (i) curvas de amenaza en sitios en términos de $\lambda(IM>im)$ (Ecuación~\ref{eq:hazard_curve_def}), (ii) desagregación de amenaza en sitios mediante contribuciones normalizadas $w(m,r,\varepsilon\mid im)$ (Ecuación~\ref{eq:hazard_deaggregation_weight}) y (iii) mapas de amenaza asociados a probabilidades de excedencia del 10\% y 2\% en 50 años, calculadas a partir de $\lambda(IM>im)$ usando la relación poissoniana (Ecuación~\ref{eq:poe_from_lambda}). Los sitios seleccionados para curvas y desagregación se documentan mediante un mapa de localización y una lista de identificadores.
+De cada corrida PSHA se obtuvieron: (i) curvas de amenaza en sitios en términos de $\lambda(IM>im)$ (Ecuación~\ref{eq:hazard_curve_def}), (ii) desagregación de amenaza en sitios mediante contribuciones normalizadas $w(m,r,\varepsilon\mid im)$ (Ecuación~\ref{eq:hazard_deaggregation_weight}) y (iii) mapas de amenaza asociados a probabilidades de excedencia del 10\% y 2\% en 50 años, calculadas a partir de $\lambda(IM>im)$ usando la relación poissoniana (Ecuación~\ref{eq:poe_from_lambda}). Los sitios seleccionados para curvas y desagregación se documentan mediante un mapa de localización y una lista de identificadores. En la figura \ref{fig:meto_sitios_curvas} se muestra la localización de los sitios seleccionados para análisis detallado, mientras que en la Tabla~\ref{tab:meto_sitios_reporte} se resumen sus coordennadas, condiciones de sitio ($V_{S30}$, $Z_{1.0}$ y $Z_{2.5}$) y se asigna un identificador numérico para su referencia en el reporte de resultados (Capítulo~\ref{cap:resultados}).
 
 \begin{figure}[H]
     \centering
@@ -585,7 +587,7 @@ De cada corrida PSHA se obtuvieron: (i) curvas de amenaza en sitios en términos
 \subsection{Exposición y alcance espacial del cálculo de pérdidas}
 \label{sec:meto_expo}
 
-La estimación de pérdidas se realizó sobre el inventario habitacional contenido en la franja de análisis definida en torno a la Falla San Ramón (FSR). El inventario final considera 3\,320 roles (identificadores prediales únicos del Servicio de Impuestos Internos, asociados a una propiedad y usados para fines de catastro y tributación) con clasificación de materialidad. El valor económico de cada elemento se representó mediante el avalúo fiscal (CLP), utilizado como proxy del valor expuesto.
+La estimación de pérdidas se realizó sobre el inventario habitacional contenido en la franja de análisis definida en torno a la Falla San Ramón (FSR). El inventario final considera 3\,320 roles (identificadores prediales únicos del Servicio de Impuestos Internos, asociados a una propiedad y usados para fines de catastro y tributación) con clasificación de materialidad. El valor económico de cada elemento se representó mediante el avalúo fiscal (CLP), que corresponde al valor catastral de la propiedad, utilizado como proxy del valor expuesto.
 
 \begin{table}[H]
 \centering
@@ -601,13 +603,13 @@ La estimación de pérdidas se realizó sobre el inventario habitacional conteni
 \textbf{Avalúo fiscal} \textbf{(\(\times 10^{9}\) CLP)} &
 \textbf{\% valor expuesto} \\
 \midrule
-Albañilería & 2\,666 & 533.7 & 52.52 \\
+Albañilería (1--3 pisos) & 2\,666 & 533.7 & 52.52 \\
 Hormigón armado (1--3 pisos) & 353 & 291.0 & 28.63 \\
 Hormigón armado (4--7 pisos) & 19 & 88.1 & 8.68 \\
 Hormigón armado (8--9 pisos) & 4 & 1.5 & 0.15 \\
 Hormigón armado (10--24 pisos) & 7 & 73.3 & 7.21 \\
-Madera & 250 & 26.7 & 2.62 \\
-Adobe & 21 & 1.9 & 0.18 \\
+Madera (1--3 pisos) & 250 & 26.7 & 2.62 \\
+Adobe (1--3 pisos) A& 21 & 1.9 & 0.18 \\
 \midrule
 \textbf{Total} & \textbf{3\,320} & \textbf{1\,016.2} & \textbf{100.00} \\
 \bottomrule
@@ -627,6 +629,14 @@ Adobe & 21 & 1.9 & 0.18 \\
 La modelación de pérdidas se implementó con tres configuraciones de funciones de fragilidad: Jünemann et al.\ (2024), Cabrera et al.\ (2024) y HAZUS (FEMA, 2020). Los dos modelos nacionales se reportaron tanto de manera individual como de forma conjunta bajo la denominación \textit{modelo nacional} (Jünemann + Cabrera), dado que fueron desarrollados sobre inventarios no superpuestos y, en conjunto, cubren las tipologías presentes en la franja de análisis.
 
 La comparación con HAZUS se efectuó sobre el subconjunto \textit{no-adobe}, debido a que la parametrización utilizada para HAZUS no contempla dicha tipología. Por consistencia, los resultados asociados a adobe se reportaron por separado, tanto en el análisis por escenarios como en el riesgo basado en eventos.
+
+Previo a la asignación de funciones de fragilidad, las tipologías del modelo de exposición fueron interpretadas según el material predominante, el rango de altura y el sistema estructural que controla la respuesta frente a cargas laterales. Esta interpretación permite distinguir entre viviendas de baja altura, edificios de hormigón armado de mediana y gran altura, y sistemas de muros de distinta materialidad. Sin embargo, la ductilidad no fue introducida como una variable adicional independiente del análisis, sino que quedó incorporada en la formulación de las funciones de fragilidad adoptadas para cada tipología.
+
+Para las viviendas de baja altura se utilizaron las curvas empíricas propuestas por \shortcite{Cabrera2024}, desarrolladas para casas chilenas de hormigón armado, albañilería reforzada, madera y adobe a partir de daño observado en los terremotos de Iquique 2014 e Illapel 2015. Estas tipologías corresponden principalmente a estructuras de uno a dos pisos, en las cuales la resistencia lateral está gobernada por muros. En este grupo, la clase (RC13) representa viviendas de hormigón armado de baja altura; (RM), viviendas de albañilería reforzada con muros portantes; (Timber), viviendas livianas de madera; y (Adobe), viviendas con muros de adobe. Desde el punto de vista cualitativo, las viviendas de madera y de hormigón armado presentan una mayor capacidad relativa de deformación lateral que los sistemas masivos de albañilería y adobe. La albañilería reforzada se asocia a una ductilidad limitada a moderada, controlada por el agrietamiento y la capacidad de los muros portantes, mientras que el adobe presenta un comportamiento predominantemente frágil y baja capacidad de disipación estable de energía. En este último caso, el sistema no corresponde a una tipología sismorresistente moderna, por lo que su vulnerabilidad queda representada directamente por las curvas empíricas de daño.
+
+Para los edificios de hormigón armado de cuatro o más pisos se utilizaron las tipologías propuestas por \shortcite{Junemann2024}, representativas de edificios residenciales chilenos estructurados principalmente mediante muros de hormigón armado. En estos sistemas, los muros constituyen el principal sistema resistente frente a cargas laterales y gravitacionales, mientras que las losas actúan como diafragmas que distribuyen la demanda sísmica hacia los elementos verticales. Las clases (RCBL), (RCBM) y (RCBH) corresponden, respectivamente, a edificios de baja altura entre 4 y 9 pisos, mediana altura entre 10 y 24 pisos, y gran altura sobre 24 pisos. En consecuencia, las letras (L), (M) y (H) indican el rango de altura de la tipología, y no un nivel de ductilidad.
+
+Las curvas de \shortcite{Junemann2024} fueron obtenidas mediante modelos equivalentes de un grado de libertad con comportamiento elastoplástico, considerando curvas de capacidad definidas por puntos de fluencia y desplazamiento último. Dicho modelo distingue niveles de ductilidad media y alta mediante los umbrales de deformación utilizados en la curva de capacidad. Por lo tanto, para estas tipologías la ductilidad se encuentra incorporada en los parámetros de la función de fragilidad seleccionada. En particular, el efecto de la ductilidad es más relevante en edificios bajos de hormigón armado y disminuye en las tipologías de mayor altura, donde la respuesta queda más controlada por la flexibilidad global y la demanda espectral asociada al período fundamental.
 
 \begin{table}[H]
 \centering
