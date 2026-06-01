@@ -22,6 +22,7 @@ El flujo de trabajo se organiza en tres etapas:
 
 \begin{figure}[H]
     \centering
+	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		font=\footnotesize,
 		node distance=5mm and 8mm,
@@ -42,7 +43,7 @@ El flujo de trabajo se organiza en tres etapas:
 			base,
 			fill=black!8,
 			align=center,
-			font=\bfseries\footnotesize,
+			font=\footnotesize,
 			text width=4.45cm,
 			inner sep=3pt
 		},
@@ -53,7 +54,7 @@ El flujo de trabajo se organiza en tres etapas:
 			rounded corners=3pt,
 			inner sep=6pt,
 			align=center,
-			font=\bfseries,
+			font=\normalsize,
 			text width=4.3cm,
 			drop shadow={opacity=0.3, shadow xshift=1pt, shadow yshift=-1pt}
 		},
@@ -112,8 +113,8 @@ El flujo de trabajo se organiza en tres etapas:
 
 	\node[box, below=of Input4] (Input5) {
 		\textbf{Vulnerabilidad}\\[2pt]
-		\bitem Jünemann et al. (2024)\\
-		\bitem Cabrera et al. (2024)\\
+		\bitem \citeA{Junemann2024}\\
+		\bitem \citeA{Cabrera2024}\\
 		\bitem HAZUS
 	};
 
@@ -135,9 +136,9 @@ El flujo de trabajo se organiza en tres etapas:
 
 	\node[box, below=0mm of HeadAmenaza, sharp corners=north, yshift=1.5pt] (Calc1) {
 		\textbf{DSHA (escenarios)}\\[2pt]
-		\bitem FSR: $M_w=7.5$; dip 34/60; $z_{\min}$ 0/5 km\\
-		\bitem Interplaca: $M_w=9.3$\\
-		\bitem Intraplaca: $M_w=8.0$; rotación 0/20/40
+		\bitem FSR: $\Mw{}=7.5$; dip 34/60; $z_{\min}$ 0/5 km\\
+		\bitem Interplaca: $\Mw{}=9.3$\\
+		\bitem Intraplaca: $\Mw{}=8.0$; rotación 0/20/40
 	};
 
 	\node[box, below=of Calc1] (Calc2) {
@@ -247,7 +248,8 @@ El flujo de trabajo se organiza en tres etapas:
 	\draw[conn] (Post1.south) -- (Post2.north);
 	\draw[conn] (Post2.south) -- (Post3.north);
 
-	\end{tikzpicture}
+	\end{tikzpicture}%
+	}
     \caption{Diagrama del flujo de trabajo para la evaluación de amenaza y riesgo sísmico. Se integran los modelos de entrada y la configuración de corridas en OpenQuake para DSHA, PSHA (Poisson y BPT) y riesgo (por escenarios y event-based con/sin FSR), junto con el postproceso para obtener curvas, desagregaciones, mapas y métricas agregadas (AAL, AALR y curvas OEP).}
     \label{fig:meto_flujo_general}
 \end{figure}
@@ -271,21 +273,19 @@ Se ejecutaron cuatro familias de análisis:
 \caption{Inventario de análisis ejecutados, entradas principales y productos reportados.}
 \label{tab:meto_inventario_analisis}
 \small
-\begin{tabular}{p{3.2cm} p{4.6cm} p{4.2cm} p{3.2cm}}
-\hline
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.7cm}@{}}
+\toprule
 \textbf{Análisis} & \textbf{Entradas principales} & \textbf{Productos reportados} & \textbf{Dominio} \\
-\hline
+\midrule
 DSHA & Escenarios (FSR, interplaca, intraplaca), GMPEs, modelo de sitio & Mapas de PGA y $SA(1.0)$ por escenario & Cuenca \\
 PSHA Poisson & Modelo conjunto multifuente, GMPEs, árbol lógico, modelo de sitio & Curvas y desagregación en sitios; mapas PoE 10\%/2\% en 50 años & Cuenca \\
 PSHA BPT & Igual a Poisson + parámetros BPT & Curvas y desagregación en sitios; mapas PoE 10\%/2\% en 50 años & Cuenca \\
 Riesgo por escenarios & DSHA + exposición + vulnerabilidad & Pérdidas por escenario (portafolio y por manzana) & Buffer FSR \\
 Riesgo event-based (con FSR) & Catálogos, correlación espacial, exposición, vulnerabilidad & AAL, AALR, AEP/OEP (portafolio y por manzana) & Buffer FSR \\
 Riesgo event-based (sin FSR) & Igual al anterior, excluyendo FSR & AAL, AALR, AEP/OEP (portafolio y por manzana) & Buffer FSR \\
-\hline
-\end{tabular}
+\bottomrule
+\end{tabularx}
 \end{table}
-
-\newpage
 
 % =============================================================================
 \section{Área de estudio, discretización espacial y datos base}
@@ -304,9 +304,13 @@ El análisis de pérdidas se restringió a una franja en torno a la traza comple
 \subsection{Preprocesamiento geoespacial y datos utilizados}
 \label{sec:meto_capas}
 
-La traza completa de la FSR se obtuvo de \shortcite{campillay2025san} y se empleó para construir la franja de análisis descrita en la Sección~\ref{sec:meto_buffer}. Las manzanas censales se obtuvieron de la cartografía oficial asociada al Censo 2018 (INE) y se utilizaron como unidad de agregación espacial del riesgo, asociando el inventario de exposición a cada manzana mediante operaciones de intersección espacial.
+\ifincludeprivatedata
+La traza completa de la FSR se obtuvo de \shortcite{campillay2025san} y se empleó para construir la franja de análisis descrita en la Sección~\ref{sec:meto_buffer}. Las manzanas censales se obtuvieron de la cartografía oficial asociada a los resultados del Censo 2017 publicados por el INE \shortcite{ine_censo2017} y se utilizaron como unidad de agregación espacial del riesgo, asociando el inventario de exposición a cada manzana mediante operaciones de intersección espacial.
+\else
+La traza completa de la FSR se empleó para construir la franja de análisis descrita en la Sección~\ref{sec:meto_buffer}. Las manzanas censales se obtuvieron de la cartografía oficial asociada a los resultados del Censo 2017 publicados por el INE \shortcite{ine_censo2017} y se utilizaron como unidad de agregación espacial del riesgo, asociando el inventario de exposición a cada manzana mediante operaciones de intersección espacial.
+\fi
 
-La caracterización de condiciones de sitio se basó en zonificaciones y modelos de velocidad disponibles para la cuenca de Santiago \shortcite{OrtizWall2022,acevedo2021modelo,Salomon2021,Bustos2023}. En particular, se asignaron a cada sitio de la malla valores de $V_{S30}$ y parámetros vinculados a la profundidad del contraste suelo--roca, específicamente $Z_{1.0}$ y $Z_{2.5}$, manteniendo la consistencia espacial entre capas.
+La caracterización de condiciones de sitio se basó en zonificaciones y modelos de velocidad disponibles para la cuenca de Santiago \shortcite{acevedo2021modelo,Salomon2021,OrtizWall2022,Bustos2023}. En particular, se asignaron a cada sitio de la malla valores de $V_{S30}$ y parámetros vinculados a la profundidad del contraste suelo--roca, específicamente $Z_{1.0}$ y $Z_{2.5}$, manteniendo la consistencia espacial entre capas.
 
 El inventario de exposición se construyó a partir de registros del Servicio de Impuestos Internos (SII), utilizando el rol como identificador y el avalúo fiscal como proxy del valor económico (CLP). El universo analizado se restringió a los elementos ubicados dentro del \textit{buffer} definido para el análisis de pérdidas.
 
@@ -320,14 +324,18 @@ El inventario de exposición se construyó a partir de registros del Servicio de
 \subsubsection{Fuente Falla San Ramón}
 \label{sec:meto_fsr}
 
-La Falla San Ramón (FSR) se incorporó al modelo integrado mediante un conjunto de alternativas geométricas y de recurrencia coherentes con la evidencia sismotectónica disponible. Se consideraron tres configuraciones de traza (PO, PP y PP+RO; Figura~\ref{fig:Traza FSR}), que difieren en la representación de ramales y en la extensión de la traza incluida en la fuente. La magnitud máxima se exploró en el rango $M_w \in [6.8,\,7.5]$.
+La Falla San Ramón (FSR) se incorporó al modelo integrado mediante un conjunto de alternativas geométricas y de recurrencia coherentes con la evidencia sismotectónica disponible. Se consideraron tres configuraciones de traza (PO, PP y PP+RO; Figura~\ref{fig:traza_fsr}), que difieren en la representación de ramales y en la extensión de la traza incluida en la fuente. La magnitud máxima se exploró en el rango $\Mw{} \in [6.8,\,7.5]$.
 
-La recurrencia se parametrizó mediante periodos de retorno entre 6\,500 y 8\,000 años, con incrementos de 500 años. Estos valores se consideraron dada la evidencia geológica existente \cite{campillay2025san}. Para el tiempo desde el último evento utilizado en el modelo BPT, también se utilizaron estos mismos valores como posibles valores de tiempo de último evento. La implementación final adoptó una distribución discreta de magnitud (evento característico), asignando a cada magnitud una tasa de ocurrencia consistente con los valores explorados. Además, para el modelo BPT se consideró un $\alpha$ de 0.38, valor que se justifica como representativo para fallas corticales inversas \cite{Matthews2002}.
+\ifincludeprivatedata
+La recurrencia se parametrizó mediante periodos de retorno entre 6\,500 y 8\,000 años, con incrementos de 500 años. Estos valores se consideraron dada la evidencia geológica existente \cite{campillay2025san}. Para el tiempo desde el último evento utilizado en el modelo BPT, también se utilizaron estos mismos valores como posibles valores de tiempo de último evento. La implementación final adoptó una distribución discreta de magnitud (evento característico), asignando a cada magnitud una tasa de ocurrencia consistente con los valores explorados. Además, para el modelo BPT se consideró un $\alpha$ de 0.38, valor que se justifica como representativo para fallas corticales inversas \cite{MatthewsEllsworthReasenberg2002}.
+\else
+La recurrencia se parametrizó mediante periodos de retorno entre 6\,500 y 8\,000 años, con incrementos de 500 años, como rango de sensibilidad para la fuente cortical. Para el tiempo desde el último evento utilizado en el modelo BPT, también se utilizaron estos mismos valores como posibles valores de tiempo de último evento. La implementación final adoptó una distribución discreta de magnitud (evento característico), asignando a cada magnitud una tasa de ocurrencia consistente con los valores explorados. Además, para el modelo BPT se consideró un $\alpha$ de 0.38, valor que se justifica como representativo para fallas corticales inversas \cite{MatthewsEllsworthReasenberg2002}.
+\fi
 
 \subsubsection{Fuentes de subducción: contribuciones interplaca e intraplaca}
 \label{sec:meto_subduccion}
 
-La contribución de subducción se definió a partir de la zonificación de recurrencia para sismicidad interplaca e intraplaca propuesta por Poulos et al.\ (2019) y de la geometría de la interfaz y del slab provista por Slab2 (Hayes, 2018). En el PSHA se incluyeron simultáneamente las siete zonas de recurrencia de Poulos et al.\ (2019). En el DSHA se definieron escenarios representativos consistentes con dicha zonificación: un escenario interplaca basado en la zona~2 completa y un escenario intraplaca construido sobre una porción representativa de la zona intraplaca correspondiente.
+La contribución de subducción se definió a partir de la zonificación de recurrencia para sismicidad interplaca e intraplaca propuesta por \citeA{Poulos2019} y de la geometría de la interfaz y del slab provista por Slab2 \shortcite{Hayes2018}. En el PSHA se incluyeron simultáneamente las siete zonas de recurrencia de \citeA{Poulos2019}. En el DSHA se definieron escenarios representativos consistentes con dicha zonificación: un escenario interplaca basado en la zona~2 completa y un escenario intraplaca construido sobre una porción representativa de la zona intraplaca correspondiente.
 
 \subsubsection{Ensamblaje del modelo conjunto multifuente}
 \label{sec:meto_ensamble}
@@ -361,7 +369,7 @@ Se definieron escenarios deterministas con el objetivo de representar configurac
 \subsubsection{Escenarios considerados}
 \label{sec:meto_dsha_escenarios}
 
-Para la fuente cortical asociada a la FSR se adoptó una magnitud fija $M_w=7.5$ y se evaluó la sensibilidad a parámetros geométricos mediante la combinación de dos inclinaciones (34° y 60°) y dos profundidades mínimas de ruptura (0 y 5~km), resultando en cuatro configuraciones:
+Para la fuente cortical asociada a la FSR se adoptó una magnitud fija $\Mw{}=7.5$ y se evaluó la sensibilidad a parámetros geométricos mediante la combinación de dos inclinaciones (34° y 60°) y dos profundidades mínimas de ruptura (0 y 5~km), resultando en cuatro configuraciones:
 \begin{itemize}
     \item dip $34^\circ$, profundidad mínima 0~km;
     \item dip $60^\circ$, profundidad mínima 0~km;
@@ -369,7 +377,7 @@ Para la fuente cortical asociada a la FSR se adoptó una magnitud fija $M_w=7.5$
     \item dip $60^\circ$, profundidad mínima 5~km.
 \end{itemize}
 
-Para la subducción se definieron dos escenarios representativos, los que se analizaron por separado, uno interplaca ($M_w=9.3$) y otro intraplaca ($M_w=8.0$). En el caso intraplaca se consideraron tres orientaciones en planta para capturar la sensibilidad geométrica asociada a la dirección del plano de ruptura: caso base (0°) y rotaciones de 20° y 40° en sentido horario respecto al norte, rotando el plano de ruptura a partir de la superficie propuesta por Hayes (2018). En la Figura~\ref{fig:meto_dsha_geometrias} se ilustran las geometrías en planta de los escenarios deterministas considerados para la FSR y para la subducción (interplaca e intraplaca).
+Para la subducción se definieron dos escenarios representativos, los que se analizaron por separado, uno interplaca ($\Mw{}=9.3$) y otro intraplaca ($\Mw{}=8.0$). En el caso intraplaca se consideraron tres orientaciones en planta para capturar la sensibilidad geométrica asociada a la dirección del plano de ruptura: caso base (0°) y rotaciones de 20° y 40° en sentido horario respecto al norte, rotando el plano de ruptura a partir de la superficie propuesta por \citeA{Hayes2018}. En la Figura~\ref{fig:meto_dsha_geometrias} se ilustran las geometrías en planta de los escenarios deterministas considerados para la FSR y para la subducción (interplaca e intraplaca).
 
 \begin{figure}[H]
     \centering
@@ -394,7 +402,7 @@ La incertidumbre epistémica se representó mediante un árbol lógico con $N_{\
     lvlname/.style={
         text width=4.8cm,
         align=right,
-        font=\bfseries\small\color{black!80},
+        font=\small\color{black!80},
         anchor=east
     },
     lvlnote/.style={
@@ -550,7 +558,7 @@ La incertidumbre epistémica se representó mediante un árbol lógico con $N_{\
 \subsubsection{Salidas del PSHA y sitios de reporte}
 \label{sec:meto_psha_out}
 
-De cada corrida PSHA se obtuvieron: (i) curvas de amenaza en sitios en términos de $\lambda(IM>im)$ (Ecuación~\ref{eq:hazard_curve_def}), (ii) desagregación de amenaza en sitios mediante contribuciones normalizadas $w(m,r,\varepsilon\mid im)$ (Ecuación~\ref{eq:hazard_deaggregation_weight}) y (iii) mapas de amenaza asociados a probabilidades de excedencia del 10\% y 2\% en 50 años, calculadas a partir de $\lambda(IM>im)$ usando la relación poissoniana (Ecuación~\ref{eq:poe_from_lambda}). Los sitios seleccionados para curvas y desagregación se documentan mediante un mapa de localización y una lista de identificadores. En la figura \ref{fig:meto_sitios_curvas} se muestra la localización de los sitios seleccionados para análisis detallado, mientras que en la Tabla~\ref{tab:meto_sitios_reporte} se resumen sus coordennadas, condiciones de sitio ($V_{S30}$, $Z_{1.0}$ y $Z_{2.5}$) y se asigna un identificador numérico para su referencia en el reporte de resultados (Capítulo~\ref{cap:resultados}).
+De cada corrida PSHA se obtuvieron: (i) curvas de amenaza en sitios en términos de $\lambda(IM>im)$ (Ecuación~\ref{eq:hazard_curve_def}), (ii) desagregación de amenaza en sitios mediante contribuciones normalizadas $w(m,r,\varepsilon\mid im)$ (Ecuación~\ref{eq:hazard_deaggregation_weight}) y (iii) mapas de amenaza asociados a probabilidades de excedencia del 10\% y 2\% en 50 años, calculadas a partir de $\lambda(IM>im)$ usando la relación poissoniana (Ecuación~\ref{eq:poe_from_lambda}). Los sitios seleccionados para curvas y desagregación se documentan mediante un mapa de localización y una lista de identificadores. En la figura \ref{fig:meto_sitios_curvas} se muestra la localización de los sitios seleccionados para análisis detallado, mientras que en la Tabla~\ref{tab:meto_sitios_reporte} se resumen sus coordennadas, condiciones de sitio ($V_{S30}$, $Z_{1.0}$ y $Z_{2.5}$) y se asigna un identificador numérico para su referencia en el reporte de resultados (Capítulo~\ref{ch:resultados}).
 
 \begin{figure}[H]
     \centering
@@ -564,19 +572,19 @@ De cada corrida PSHA se obtuvieron: (i) curvas de amenaza en sitios en términos
 \caption{Sitios seleccionados para análisis detallado.}
 \label{tab:meto_sitios_reporte}
 \small
-\begin{tabular}{c c c c c c}
-\hline
+\begin{tabular}{@{}cccccc@{}}
+\toprule
 \textbf{Sitio} & \textbf{Longitud} & \textbf{Latitud} &
 \(\mathbf{V_{S30}}\) \textbf{(m/s)} &
 \(\mathbf{Z_{1.0}}\) \textbf{(m)} &
 \(\mathbf{Z_{2.5}}\) \textbf{(km)} \\
-\hline
+\midrule
 1 & -70.5379 & -33.4109 & 415  & 96  & 1 \\
 2 & -70.5306 & -33.6094 & 579  & 50  & 1 \\
 3 & -70.5184 & -33.5284 & 1900 & 1   & 1 \\
 4 & -70.6613 & -33.4003 & 280  & 268 & 1 \\
 5 & -70.6625 & -33.4589 & 579  & 50  & 1 \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -626,7 +634,7 @@ Adobe (1--3 pisos) A& 21 & 1.9 & 0.18 \\
 \subsection{Vulnerabilidad y modelos de pérdida}
 \label{sec:meto_vuln}
 
-La modelación de pérdidas se implementó con tres configuraciones de funciones de fragilidad: Jünemann et al.\ (2024), Cabrera et al.\ (2024) y HAZUS (FEMA, 2020). Los dos modelos nacionales se reportaron tanto de manera individual como de forma conjunta bajo la denominación \textit{modelo nacional} (Jünemann + Cabrera), dado que fueron desarrollados sobre inventarios no superpuestos y, en conjunto, cubren las tipologías presentes en la franja de análisis.
+La modelación de pérdidas se implementó con tres configuraciones de funciones de fragilidad: la propuesta de \citeA{Junemann2024}, la propuesta de \citeA{Cabrera2024} y HAZUS \shortcite{hazusEarthquakeModel61}. Los dos modelos nacionales se reportaron tanto de manera individual como de forma conjunta bajo la denominación \textit{modelo nacional} (Jünemann + Cabrera), dado que fueron desarrollados sobre inventarios no superpuestos y, en conjunto, cubren las tipologías presentes en la franja de análisis.
 
 La comparación con HAZUS se efectuó sobre el subconjunto \textit{no-adobe}, debido a que la parametrización utilizada para HAZUS no contempla dicha tipología. Por consistencia, los resultados asociados a adobe se reportaron por separado, tanto en el análisis por escenarios como en el riesgo basado en eventos.
 
@@ -640,7 +648,7 @@ Las curvas de \shortcite{Junemann2024} fueron obtenidas mediante modelos equival
 
 \begin{table}[H]
 \centering
-\caption{Tipologías consideradas y correspondencia con clases de HAZUS (FEMA, 2020) y del modelo nacional (Jünemann et al., 2024; Cabrera et al., 2024).}
+\caption{Tipologías consideradas y correspondencia con clases de HAZUS y del modelo nacional.}
 \label{tab:meto_tipologias_modelos}
 \small
 \setlength{\tabcolsep}{5pt}
@@ -664,8 +672,8 @@ Adobe       & 1--3 & --     & Adobe\textsuperscript{C} \\
 
 \vspace{2mm}
 \footnotesize
-\emph{Nota:} \textsuperscript{J} tipología provista por Jünemann et al.\ (2024);
-\textsuperscript{C} tipología provista por Cabrera et al.\ (2024).
+\emph{Nota:} \textsuperscript{J} tipología provista por \citeA{Junemann2024};
+\textsuperscript{C} tipología provista por \citeA{Cabrera2024}.
 \end{table}
 
 \subsubsection{Conversión de curvas de fragilidad a curvas de vulnerabilidad}
@@ -686,7 +694,7 @@ y para el último nivel:
 p_n(IM)=P(DS_n\mid IM)=P(LS_n\mid IM).
 \end{equation}
 
-Para vincular daño con pérdida, a cada nivel $DS_i$ se asignó una pérdida relativa media $\mu_i=\mathrm{E}[LR\mid DS_i]$, donde $LR$ corresponde a la pérdida relativa (adimensional). En este trabajo se adoptó el esquema de consecuencias de HAZUS (FEMA, 2020), utilizando cuatro niveles de daño (\textit{leve}, \textit{moderado}, \textit{extensivo} y \textit{colapso}) y las pérdidas relativas medias $\mu_{\text{leve}}=0.10$, $\mu_{\text{moderado}}=0.50$, $\mu_{\text{extensivo}}=0.75$ y $\mu_{\text{colapso}}=1.00$.
+Para vincular daño con pérdida, a cada nivel $DS_i$ se asignó una pérdida relativa media $\mu_i=\mathrm{E}[LR\mid DS_i]$, donde $LR$ corresponde a la pérdida relativa (adimensional). En este trabajo se adoptó el esquema de consecuencias de HAZUS \shortcite{hazusEarthquakeModel61}, utilizando cuatro niveles de daño (\textit{leve}, \textit{moderado}, \textit{extensivo} y \textit{colapso}) y las pérdidas relativas medias $\mu_{\text{leve}}=0.10$, $\mu_{\text{moderado}}=0.50$, $\mu_{\text{extensivo}}=0.75$ y $\mu_{\text{colapso}}=1.00$.
 
 La pérdida relativa media condicionada a $IM$ se calculó como:
 \begin{equation}
@@ -726,15 +734,17 @@ En este trabajo se adoptó un esquema de consecuencias deterministas por nivel d
 \begin{figure}[H]
 \centering
 \includegraphics[height=0.30\textheight]{figuras_tesis/metodologia/vulnerabilidad_hazus_paper.png}
-\caption{Funciones de vulnerabilidad estructural de HAZUS (FEMA, 2020), expresadas como pérdida relativa media en función de $\mathrm{PGA}$.}
+\caption{Funciones de vulnerabilidad estructural de HAZUS, expresadas como pérdida relativa media en función de $\mathrm{PGA}$.}
 \label{fig:meto_vulnerabilidad_hazus}
+{\footnotesize Fuente: \shortcite{hazusEarthquakeModel61}.\par}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[height=0.30\textheight]{figuras_tesis/metodologia/vulnerabilidad_Junemann_paper.png}
-\caption{Funciones de vulnerabilidad estructural de Jünemann et al.\ (2024), expresadas como pérdida relativa media en función de $\mathrm{PGA}$ y $SA(1.0)$, según la tipología reportada.}
+\caption{Funciones de vulnerabilidad estructural, expresadas como pérdida relativa media en función de $\mathrm{PGA}$ y $SA(1.0)$, según la tipología reportada.}
 \label{fig:meto_vulnerabilidad_Jünemann}
+{\footnotesize Fuente: \citeA{Junemann2024}.\par}
 \end{figure}
 
 % =============================================================================
@@ -744,7 +754,7 @@ En este trabajo se adoptó un esquema de consecuencias deterministas por nivel d
 \subsection{Configuración del cálculo determinista de pérdidas}
 \label{sec:meto_riesgo_esc_config}
 
-El riesgo por escenarios se estimó a partir de los escenarios definidos en el análisis determinista de amenaza (Sección~\ref{sec:meto_dsha}). Para cada escenario se calcularon campos de intensidad en la malla regular de sitios y se transfirieron al inventario de exposición contenido en la franja de análisis definida por el \textit{buffer}. La traducción intensidad--pérdida se implementó mediante funciones de vulnerabilidad (valor esperado de pérdida relativa condicionado a $IM$) (Ecuación~\ref{eq:expected_loss_ratio_from_ds}) y la obtención de pérdidas esperadas por activo al multiplicar por el valor expuesto (Ecuación~\ref{eq:expected_loss_asset}). Las pérdidas se evaluaron utilizando, por separado, los modelos de vulnerabilidad de Jünemann et al.\ (2024), Cabrera et al.\ (2024) y HAZUS (FEMA, 2020), incluyendo además el reporte conjunto del \textit{modelo nacional} (Jünemann + Cabrera) cuando correspondió.
+El riesgo por escenarios se estimó a partir de los escenarios definidos en el análisis determinista de amenaza (Sección~\ref{sec:meto_dsha}). Para cada escenario se calcularon campos de intensidad en la malla regular de sitios y se transfirieron al inventario de exposición contenido en la franja de análisis definida por el \textit{buffer}. La traducción intensidad--pérdida se implementó mediante funciones de vulnerabilidad (valor esperado de pérdida relativa condicionado a $IM$) (Ecuación~\ref{eq:expected_loss_ratio_from_ds}) y la obtención de pérdidas esperadas por activo al multiplicar por el valor expuesto (Ecuación~\ref{eq:expected_loss_asset}). Las pérdidas se evaluaron utilizando, por separado, los modelos de vulnerabilidad de \citeA{Junemann2024}, \citeA{Cabrera2024} y HAZUS \shortcite{hazusEarthquakeModel61}, incluyendo además el reporte conjunto del \textit{modelo nacional} (Jünemann + Cabrera) cuando correspondió.
 
 % =============================================================================
 \section{Riesgo basado en eventos (event-based)}
@@ -762,14 +772,14 @@ Bajo la hipótesis sin memoria, la ocurrencia se interpreta como Poisson (Ecuaci
 
 En los cálculos se aplicaron filtros de contribución para acotar el número de pares fuente--sitio evaluados y, con ello, reducir el volumen de campos de movimiento del suelo generados y almacenados. En particular, se fijó un umbral mínimo de intensidad de $0.05\,g$, de modo que los campos de movimiento del suelo se construyen y guardan únicamente cuando la intensidad simulada supera dicho valor. Además, se utilizó un campo de movimiento del suelo por evento simulado, manteniendo truncamiento $3\sigma$.
 
-La distancia máxima de contribución se definió por tipo de fuente. Para la contribución cortical asociada a la Falla San Ramón (FSR) se utilizó una distancia constante de 300~km. Para subducción, la distancia máxima se especificó como una función escalonada de $M_w$, diferenciando entre sismicidad interplaca e intraplaca/intraslab.
+La distancia máxima de contribución se definió por tipo de fuente. Para la contribución cortical asociada a la Falla San Ramón (FSR) se utilizó una distancia constante de 300~km. Para subducción, la distancia máxima se especificó como una función escalonada de $\Mw{}$, diferenciando entre sismicidad interplaca e intraplaca/intraslab.
 
 \paragraph{Determinación de la distancia de corte $R_{\mathrm{cut}}$.}
-Para justificar y contrastar las distancias máximas adoptadas en subducción, se estimó una \emph{distancia de corte} $R_{\mathrm{cut}}$ para cada magnitud $M_w$ a partir de modelos de predicción del movimiento del suelo. Para una magnitud dada, $R_{\mathrm{cut}}$ corresponde a la distancia a la ruptura a partir de la cual el nivel de intensidad esperado resulta menor que el umbral mínimo de interés ($0.05\,g$).
+Para justificar y contrastar las distancias máximas adoptadas en subducción, se estimó una \emph{distancia de corte} $R_{\mathrm{cut}}$ para cada magnitud $\Mw{}$ a partir de modelos de predicción del movimiento del suelo. Para una magnitud dada, $R_{\mathrm{cut}}$ corresponde a la distancia a la ruptura a partir de la cual el nivel de intensidad esperado resulta menor que el umbral mínimo de interés ($0.05\,g$).
 
-En la práctica, para cada $M_w$ y una malla de distancias a la ruptura $R_{rup}$, se evaluaron cinco modelos (MBR17, PSHAB2020, KBCG2020, BCHU18 y AG2020). Con estas predicciones se construyó una envolvente superior incorporando la dispersión aleatoria mediante niveles $k\,\sigma$ (0.5$\sigma$, 1$\sigma$, etc.). Luego, $R_{\mathrm{cut}}$ se tomó como la menor distancia $R_{rup}$ para la cual dicha envolvente cae por debajo de $0.05\,g$. Se ilustran los procedimientos con $\mathrm{PGA}$ y $SA(1.0)$ Para evitar oscilaciones asociadas a discretización y a cambios del modelo dominante, la relación $R_{\mathrm{cut}}(M_w)$ se forzó a ser no decreciente con $M_w$.
+En la práctica, para cada $\Mw{}$ y una malla de distancias a la ruptura $R_{rup}$, se evaluaron cinco modelos (MBR17, PSHAB2020, KBCG2020, BCHU18 y AG2020). Con estas predicciones se construyó una envolvente superior incorporando la dispersión aleatoria mediante niveles $k\,\sigma$ (0.5$\sigma$, 1$\sigma$, etc.). Luego, $R_{\mathrm{cut}}$ se tomó como la menor distancia $R_{rup}$ para la cual dicha envolvente cae por debajo de $0.05\,g$. Se ilustran los procedimientos con $\mathrm{PGA}$ y $SA(1.0)$ Para evitar oscilaciones asociadas a discretización y a cambios del modelo dominante, la relación $R_{\mathrm{cut}}(\Mw{})$ se forzó a ser no decreciente con $\Mw{}$.
 
-Las Figuras~\ref{fig:meto_event_dist_mw_plot_pga} y~\ref{fig:meto_event_dist_mw_plot_sa} muestran $R_{\mathrm{cut}}(M_w)$ para interplaca e intraplaca/intraslab y distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las distancias máximas por tramos que se adoptaron en los cálculos, incluidas para comparar visualmente el grado de conservadurismo o cercanía de la parametrización final respecto de las estimaciones derivadas de los modelos.
+Las Figuras~\ref{fig:meto_event_dist_mw_plot_pga} y~\ref{fig:meto_event_dist_mw_plot_sa} muestran $R_{\mathrm{cut}}(\Mw{})$ para interplaca e intraplaca/intraslab y distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las distancias máximas por tramos que se adoptaron en los cálculos, incluidas para comparar visualmente el grado de conservadurismo o cercanía de la parametrización final respecto de las estimaciones derivadas de los modelos.
 
 \begin{figure}[htbp]
 	\centering
@@ -784,7 +794,7 @@ Las Figuras~\ref{fig:meto_event_dist_mw_plot_pga} y~\ref{fig:meto_event_dist_mw_
 		\includegraphics[width=\textwidth]{figuras_tesis/metodologia/paper_Rcut_vs_Mw_intraplaca_PGA.pdf}
 		\subcaption{Intraplaca}
 	\end{minipage}
-	\caption{Distancia de corte $R_{\mathrm{cut}}$ en función de la magnitud $M_w$ para sismicidad de subducción interplaca (a) e intraplaca/intraslab (b), calculada para $\mathrm{PGA}$ con umbral $IM_{\min}=0.05\,g$. Para cada $M_w$, $R_{\mathrm{cut}}$ representa la distancia máxima de contribución obtenida a partir de una envolvente basada en varios modelos de predicción del movimiento del suelo, considerando distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las restricciones de distancia máxima por magnitud implementadas en OpenQuake (parámetro \texttt{maximum\_distance}), incluidas para comparar los valores adoptados en el cálculo con los estimados mediante los modelos.}
+	\caption{Distancia de corte $R_{\mathrm{cut}}$ en función de la magnitud $\Mw{}$ para sismicidad de subducción interplaca (a) e intraplaca/intraslab (b), calculada para $\mathrm{PGA}$ con umbral $IM_{\min}=0.05\,g$. Para cada $\Mw{}$, $R_{\mathrm{cut}}$ representa la distancia máxima de contribución obtenida a partir de una envolvente basada en varios modelos de predicción del movimiento del suelo, considerando distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las restricciones de distancia máxima por magnitud implementadas en OpenQuake (parámetro \texttt{maximum\_distance}), incluidas para comparar los valores adoptados en el cálculo con los estimados mediante los modelos.}
 	\label{fig:meto_event_dist_mw_plot_pga}
 \end{figure}
 
@@ -801,11 +811,9 @@ Las Figuras~\ref{fig:meto_event_dist_mw_plot_pga} y~\ref{fig:meto_event_dist_mw_
 		\includegraphics[width=\textwidth]{figuras_tesis/metodologia/paper_Rcut_vs_Mw_intraplaca_SA1p0s.pdf}
 		\subcaption{Intraplaca}
 	\end{minipage}
-	\caption{Distancia de corte $R_{\mathrm{cut}}$ en función de la magnitud $M_w$ para sismicidad de subducción interplaca (a) e intraplaca/intraslab (b), calculada para $SA(1.0)$ con umbral $IM_{\min}=0.05\,g$. Para cada $M_w$, $R_{\mathrm{cut}}$ representa la distancia máxima de contribución obtenida a partir de una envolvente basada en varios modelos de predicción del movimiento del suelo, considerando distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las restricciones de distancia máxima por magnitud implementadas en OpenQuake (parámetro \texttt{maximum\_distance}), incluidas para comparar los valores adoptados en el cálculo con los estimados mediante los modelos.}
+	\caption{Distancia de corte $R_{\mathrm{cut}}$ en función de la magnitud $\Mw{}$ para sismicidad de subducción interplaca (a) e intraplaca/intraslab (b), calculada para $SA(1.0)$ con umbral $IM_{\min}=0.05\,g$. Para cada $\Mw{}$, $R_{\mathrm{cut}}$ representa la distancia máxima de contribución obtenida a partir de una envolvente basada en varios modelos de predicción del movimiento del suelo, considerando distintos niveles $k\,\sigma$ (curvas de color). La curva negra corresponde a las restricciones de distancia máxima por magnitud implementadas en OpenQuake (parámetro \texttt{maximum\_distance}), incluidas para comparar los valores adoptados en el cálculo con los estimados mediante los modelos.}
 	\label{fig:meto_event_dist_mw_plot_sa}
 \end{figure}
-
-\newpage
 
 % =============================================================================
 \section{Estrategia computacional y control de convergencia}
@@ -878,7 +886,7 @@ r=\frac{O-E}{\sqrt{E}}, \qquad c=\frac{(O-E)^2}{E}.
 		\includegraphics[width=\textwidth]{figuras_tesis/metodologia/QA_A_r01_m580_map_z1pt0.png}
 		\subcaption{Mapa $Z_{1.0}$}
 	\end{minipage}
-	\\[6pt]
+	\par\smallskip
 	\begin{minipage}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{figuras_tesis/metodologia/QA_A_r01_m580_hist_frac_vs30.png}
@@ -916,11 +924,11 @@ D_{\mathrm{JS}}(p,q)=\frac{1}{2}D_{\mathrm{KL}}(p\|m)+\frac{1}{2}D_{\mathrm{KL}}
 \end{itemize}
 
 \begin{equation}
-D_{\mathrm{KS}}=\sup_x \left|F_{\mathrm{all}}(x)-F_{\mathrm{sub}}(x)\right|,
+D_{\mathrm{KS}}=\sup_x \left|F_{\mathrm{comp}}(x)-F_{\mathrm{sub}}(x)\right|,
 \label{eq:ks}
 \end{equation}
 \begin{itemize}
-  \item $F_{\mathrm{all}}(x)$, $F_{\mathrm{sub}}(x)$: funciones de distribución empíricas del conjunto completo y la submuestra.
+  \item $F_{\mathrm{comp}}(x)$, $F_{\mathrm{sub}}(x)$: funciones de distribución empíricas del conjunto completo y la submuestra.
 \end{itemize}
 
 Valores bajos de $d_{\mathrm{TV}}$ y $D_{\mathrm{JS}}$, junto con un $D_{\mathrm{KS}}$ pequeño (y su $p$-valor asociado), se interpretaron como evidencia de que la submuestra preserva las distribuciones marginales relevantes del modelo completo.
@@ -931,14 +939,15 @@ Los resultados de estas métricas para $V_{S30}$ y $Z_{1.0}$ se resumen en la Ta
 \centering
 \caption{Métricas de comparación entre distribuciones. $TV$: \textit{Total Variation} distance; $JS$: \textit{Jensen--Shannon} divergence; $KS$: estadístico de \textit{Kolmogorov--Smirnov}.}
 \label{tab:dist_metrics_subset}
-\begin{tabular}{lcc}
-\hline
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
 \textbf{Métrica} & \(\mathbf{V_{S30}}\) & \(\mathbf{Z_{1.0}}\) \\
-\hline
+\midrule
 $TV$ & 0.032 & 0.055 \\
 $JS$ & 0.006 & 0.016 \\
 $KS(p)$ & 0.027\,(0.82) & 0.025\,(0.87) \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -1077,10 +1086,10 @@ q^{\mathrm{ref}}_{p,s}=\operatorname{perc}_{p}\!\left(\left\{IM^\ast_{r,s}\right
 \end{equation}
 \begin{itemize}
   \item $N_{\mathrm{tot}}$: número total de realizaciones disponibles.
-  \item $p$: percentil analizado (se trabajó con tres percentiles: $p16$, $p50$, $p84$).
+  \item $p$: percentil analizado (se trabajó con tres percentiles: \pSixteen{}, \pFifty{}, \pEightyFour{}).
 \end{itemize}
 
-Para que $p16$, $p50$ y $p84$ representen $-1\sigma$, mediana y $+1\sigma$ de una normal estándar truncada en $\pm 3\sigma$, se usaron percentiles normalizados:
+Para que \pSixteen{}, \pFifty{} y \pEightyFour{} representen $-1\sigma$, mediana y $+1\sigma$ de una normal estándar truncada en $\pm 3\sigma$, se usaron percentiles normalizados:
 \begin{equation}
 p(z)=\frac{\Phi(z)-\Phi(-\kappa)}{\Phi(\kappa)-\Phi(-\kappa)}\,100,
 \qquad z\in\{-1,0,+1\},\ \kappa=3.
@@ -1128,9 +1137,9 @@ N^{(\tau)}_{p,s}=\min\left\{N:\ \varepsilon_{p,s}(N-j)<\tau\ \ \forall j=0,\dots
   \item $W$: ventana de estabilidad (en este trabajo, $W=3$).
 \end{itemize}
 
-Luego, para que un mismo $N$ garantice convergencia simultánea de $p16$, $p50$ y $p84$ en el sitio $s$, se tomó:
+Luego, para que un mismo $N$ garantice convergencia simultánea de \pSixteen{}, \pFifty{} y \pEightyFour{} en el sitio $s$, se tomó:
 \begin{equation}
-N^{(\tau)}_{s}=\max_{p\in\{p16,p50,p84\}} N^{(\tau)}_{p,s}.
+N^{(\tau)}_{s}=\max_{p\in\{\pSixteen{},\pFifty{},\pEightyFour{}\}} N^{(\tau)}_{p,s}.
 \end{equation}
 \begin{itemize}
   \item $N^{(\tau)}_{s}$: número mínimo de ramas requerido en el sitio $s$ para converger en los tres percentiles.
@@ -1149,7 +1158,7 @@ N^{(\tau)}_{\mathrm{global}}=\max_{\mathrm{IM}} N^{(\tau)}_{\mathrm{IM}}.
 \end{itemize}
 
 \paragraph{Implementación práctica.}
-Para reducir costo, $N$ se exploró primero en una malla gruesa (incrementos de 100 ramas) y, al detectar convergencia al $2\%$, se refinó localmente con paso 1 para obtener el $N$ mínimo consistente con el criterio de estabilidad. Este análisis se muestra en la figura \ref{fig:meto_convergencia_nlt}, con la evolución del error relativo $\varepsilon$ para los percentiles $p16$, $p50$ y $p84$ en un sitio representativo, junto con el criterio de convergencia aplicado.
+Para reducir costo, $N$ se exploró primero en una malla gruesa (incrementos de 100 ramas) y, al detectar convergencia al $2\%$, se refinó localmente con paso 1 para obtener el $N$ mínimo consistente con el criterio de estabilidad. Este análisis se muestra en la figura \ref{fig:meto_convergencia_nlt}, con la evolución del error relativo $\varepsilon$ para los percentiles \pSixteen{}, \pFifty{} y \pEightyFour{} en un sitio representativo, junto con el criterio de convergencia aplicado.
 
 \begin{figure}[H]
 	\centering
@@ -1158,12 +1167,12 @@ Para reducir costo, $N$ se exploró primero en una malla gruesa (incrementos de 
 		\includegraphics[width=\textwidth]{figuras_tesis/metodologia/PGA_Panels_VertLines.png}
 		\subcaption{PGA}
 	\end{minipage}
-	\\[8pt]
+	\par\smallskip
 	\begin{minipage}{0.95\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{figuras_tesis/metodologia/SA(1.0)_Panels_VertLines.png}
 		\subcaption{SA(1.0)}
 	\end{minipage}
-	\caption{Análisis de convergencia del número de ramas del árbol lógico requeridas para estabilizar percentiles de intensidad equivalente en PSHA. Se evalúan percentiles p16, p50 y p84 (que corresponden a $-1\sigma$, mediana y $+1\sigma$) con tolerancia de convergencia del 2\% en ventana de estabilidad de 3 pasos. Las líneas verticales indican el número mínimo de ramas que satisface el criterio de convergencia simultánea para ambas medidas de intensidad.}
+	\caption{Análisis de convergencia del número de ramas del árbol lógico requeridas para estabilizar percentiles de intensidad equivalente en PSHA. Se evalúan percentiles \pSixteen{}, \pFifty{} y \pEightyFour{} (que corresponden a $-1\sigma$, mediana y $+1\sigma$) con tolerancia de convergencia del 2\% en ventana de estabilidad de 3 pasos. Las líneas verticales indican el número mínimo de ramas que satisface el criterio de convergencia simultánea para ambas medidas de intensidad.}
 	\label{fig:meto_convergencia_nlt}
 \end{figure}

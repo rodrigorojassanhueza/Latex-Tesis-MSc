@@ -11,10 +11,10 @@
 
 % CONFIGURACIONES GENERALES
 \def\documentfontsize {12}         % Tamaño de la fuente del documento [pt]
-\def\documentinterline {1.0}       % Interlineado del documento [factor]
+\def\documentinterline {1.15}      % Interlineado del documento [factor]
 \def\documentparindent {15}        % Tamaño del indentado de párrafos [pt]
-\def\documentparskip {0}           % Tamaño adicional entre párrafos (+/-) [pt]
-\def\fontdocument {lmodern}        % Tipografía base, ver soportadas en manual
+\def\documentparskip {12}          % Tamaño adicional entre párrafos (+/-) [pt]
+\def\fontdocument {times}          % Tipografía base, ver soportadas en manual
 \def\fonttypewriter {tmodern}      % Tipografía de \texttt, ver manual
 \def\fonturl {same}                % Tipo de fuente url {tt,sf,rm,same}
 \def\graphicxdraft {false}         % En true no carga las imágenes (modo draft)
@@ -100,7 +100,7 @@
 \def\apaciterefnumber {false}      % Lista de referencias con números
 \def\apaciterefsep {5}             % Separación entre refs. {apacite} [pt]
 \def\apaciteshowurl {false}        % Muestra las url en las referencias
-\def\apacitestyle {apacite}        % Formato refs. apacite {apa,ieeetr,etc..}
+\def\apacitestyle {apacite_noinitials} % Formato refs. apacite {apa,ieeetr,etc..}
 \def\appendixindepobjnum {true}    % Anexo usa n° objetos independientes
 \def\backrefpagecite {false}       % Las citas en bibliografía poseen nº de pag.
 \def\bibtexindexbibliography{true} % Función \bibliography se inserta en índice
@@ -248,9 +248,9 @@
 \def\indextitlecolor {black}       % Color de los títulos del índice
 \def\itemizeitemcolor {black}      % Color de los ítems por defecto
 \def\linenumbercolor {gray}        % Color del n° de línea (\showlinenumbers)
-\def\linkcolor {black}             % Color de los links del documento
 \def\maintextcolor {black}         % Color principal del texto
-\def\numcitecolor {black}          % Color del n° de las referencias o citas
+\def\linkcolor {\maintextcolor}    % Color de los links del documento
+\def\numcitecolor {\maintextcolor} % Color del n° de las referencias o citas
 \def\pagescolor {white}            % Color de la página
 \def\paragcolor {black}            % Color de los paragraph
 \def\paragsubcolor {black}         % Color de los subparagraph
@@ -263,7 +263,7 @@
 \def\tablelinecolor {black}        % Color de las líneas de las tablas
 \def\tablerowfirstcolor {none}     % Primer color de celda de las tablas
 \def\tablerowsecondcolor {gray!20} % Segundo color de celda de las tablas
-\def\urlcolor {magenta}            % Color de los enlaces web (\href,\url)
+\def\urlcolor {\maintextcolor}     % Color de los enlaces web (\href,\url)
 
 % MÁRGENES DE PÁGINA
 \def\pagemarginbottom {2}          % Margen inferior página [cm]

@@ -2,15 +2,16 @@
 
 \section{Condiciones de suelo}
 
-La cuenca de Santiago presenta una composición heterogénea de suelos, que puede clasificarse en distintas unidades de acuerdo con Leyton et al. (2011). Dichas unidades se caracterizan por propiedades geotécnicas y dinámicas que condicionan la propagación de las ondas sísmicas. Para cada unidad se definieron perfiles representativos de velocidad de onda de corte (\(V_s\)), considerando las frecuencias predominantes asociadas y la interpretación de la profundidad del basamento rocoso (Acevedo, 2021). Estos perfiles permiten modelar la respuesta sísmica del suelo en los distintos sectores de la cuenca.
+La cuenca de Santiago presenta una composición heterogénea de suelos, que puede clasificarse en distintas unidades de acuerdo con \citeA{leyton2011seismic}. Dichas unidades se caracterizan por propiedades geotécnicas y dinámicas que condicionan la propagación de las ondas sísmicas. Para cada unidad se definieron perfiles representativos de velocidad de onda de corte (\(V_s\)), considerando las frecuencias predominantes asociadas y la interpretación de la profundidad del basamento rocoso \shortcite{acevedo2021modelo}. Estos perfiles permiten modelar la respuesta sísmica del suelo en los distintos sectores de la cuenca.
 
-La Figura \ref{fig:MapaUnidadesSuelos} muestra la distribución espacial de las unidades de suelo empleadas en este trabajo \shortcite{leyton2011seismic}. A partir de dicha clasificación, se implementó un modelo de velocidad de onda de corte \shortcite{acevedo2021modelo}, con perfiles característicos para cada zona identificada. Estos perfiles se resumen en la Tabla \ref{tab:perfiles_vs}, donde se indican los rangos de profundidad y las velocidades de onda de corte asociadas. Adicionalmente, se elaboraron mapas de \(V_{s30}\) (velocidad de onda de corte promedio en los primeros 30 m) para toda la cuenca, incorporando mediciones específicas \shortcite{FRUZ} obtenidas en las inmediaciones de la Falla San Ramón (FSR), como se presenta en la Figura \ref{fig:mapas_vs30}.
+La Figura \ref{fig:MapaUnidadesSuelos} muestra la distribución espacial de las unidades de suelo empleadas en este trabajo \shortcite{leyton2011seismic}. A partir de dicha clasificación, se implementó un modelo de velocidad de onda de corte \shortcite{acevedo2021modelo}, con perfiles característicos para cada zona identificada. Estos perfiles se resumen en la Tabla \ref{tab:perfiles_vs}, donde se indican los rangos de profundidad y las velocidades de onda de corte asociadas. \ifincludeprivatedata Adicionalmente, se elaboraron mapas de \(V_{s30}\) (velocidad de onda de corte promedio en los primeros 30 m) para toda la cuenca, incorporando mediciones específicas \shortcite{FRUZ} obtenidas en las inmediaciones de la Falla San Ramón (FSR), como se presenta en la Figura \ref{fig:mapas_vs30}.\else Adicionalmente, se elaboraron mapas de \(V_{s30}\) (velocidad de onda de corte promedio en los primeros 30 m) para toda la cuenca, como se presenta en la Figura \ref{fig:mapas_vs30}.\fi
 
 \begin{figure}[H]
     \centering 
     \includegraphics[width=0.5\linewidth]{figuras_tesis/contexto_geologico/Unidades_propuestas.png} 
-    \caption{Mapa de unidades de suelo utilizadas. Recuperado de Ortiz et al. (2022).} 
+    \caption{Mapa de unidades de suelo utilizadas.} 
     \label{fig:MapaUnidadesSuelos} 
+    {\footnotesize Fuente: \citeA{OrtizWall2022}.\par}
 \end{figure}
 
 \begin{table}[H]
@@ -64,7 +65,7 @@ C2
 \begin{tablenotes}[flushleft]
 \footnotesize
 \item \textit{Nota.} La tabla presenta perfiles representativos de velocidad de onda de corte para las unidades consideradas. \(V_{sg1}(Z)\), \(V_{sg2}(Z)\) y \(V_{sc1}(Z)\) corresponden a modelos de velocidad dependientes de la profundidad \(Z\) (en metros), medida desde la superficie.
-\item Referencia: Acevedo et al. (2021).
+\item Referencia: \citeA{acevedo2021modelo}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -90,7 +91,7 @@ Además, se implementó un modelo de velocidad de onda de corte para la Formaci�
 \end{tabular}
 \begin{tablenotes}[flushleft]
 \footnotesize
-\item \textit{Nota.} Las velocidades de onda de corte corresponden a valores adoptados para el basamento rocoso a diferentes profundidades. Modificado de Ortiz et al. (2022).
+\item \textit{Nota.} Las velocidades de onda de corte corresponden a valores adoptados para el basamento rocoso a diferentes profundidades. Modificado de \citeA{OrtizWall2022}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -98,29 +99,38 @@ Además, se implementó un modelo de velocidad de onda de corte para la Formaci�
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{figuras_tesis/contexto_geologico/mapa_vs30_ruz.png}
-	\caption{Mapas de velocidad de onda de corte en los primeros 30\,m (\(V_{s30}\)) en la cuenca de Santiago, basados en el modelo de Acevedo et al. (2021). Se incorporan mediciones locales de \(V_{s30}\), obtenidas de Ruz (2024), para comparación en direcciones norte--sur (izquierda) y este--oeste (derecha).}
+	\caption{Mapas de velocidad de onda de corte en los primeros 30\,m (\(V_{s30}\)) en la cuenca de Santiago, para comparación en direcciones norte--sur (izquierda) y este--oeste (derecha).}
 	\label{fig:mapas_vs30}
+	\ifincludeprivatedata
+	{\footnotesize Basado en el modelo de \citeA{acevedo2021modelo}; mediciones locales de \(V_{s30}\) obtenidas de \citeA{FRUZ}.\par}
+	\else
+	{\footnotesize Basado en el modelo de \citeA{acevedo2021modelo}.\par}
+	\fi
 \end{figure}
 
 \section{Antecedentes de sismicidad}
 
 \subsection{Fuente sísmica interplaca e intraplaca}
 
-Poulos et al. (2019) modelaron la recurrencia de eventos sísmicos en la zona de subducción en Chile. En dicho trabajo se propone dividir el área de contacto entre placas en siete zonas, de las cuales tres corresponden a fuentes interplaca y cuatro a fuentes intraplaca. Los parámetros del modelo de Gutenberg--Richter estimados para cada zona se presentan en la Tabla \ref{tab:parametros_GR}. La Figura \ref{fig: Modelo de subduccion} muestra la ubicación espacial de estas zonas, representadas a partir de la superficie superior de la losa subductada (slab surface) del modelo Slab2. En Chile Central, aproximadamente el 95\% de la sismicidad registrada se asocia al proceso de subducción a lo largo de la Fosa Chilena \shortcite{Ammirati2019}.
+\citeA{Poulos2019} modelaron la recurrencia de eventos sísmicos en la zona de subducción en Chile. En dicho trabajo se propone dividir el área de contacto entre placas en siete zonas, de las cuales tres corresponden a fuentes interplaca y cuatro a fuentes intraplaca. Los parámetros del modelo de Gutenberg--Richter estimados para cada zona se presentan en la Tabla \ref{tab:parametros_GR}. La Figura \ref{fig:modelo_subduccion} muestra la ubicación espacial de estas zonas, representadas a partir de la superficie superior de la losa subductada (slab surface) del modelo Slab2. En Chile Central, aproximadamente el 95\% de la sismicidad registrada se asocia al proceso de subducción a lo largo de la Fosa Chilena \shortcite{Ammirati2019}.
 
 \begin{table}[H]
 \centering
-\caption{Parámetros de Gutenberg--Richter para cada zona sísmica de la subducción. Los parámetros \(a\), \(b\) y \(M_{\text{max}}\) se basan en Poulos et al. (2019).}
-\begin{tabular}{llccc}
-\hline
-\textbf{Tipo de fuente} & \textbf{Zona} & \textbf{\textit{a}} & \textbf{\textit{b}} & \(M_{\text{max}}\) \\ \hline
+\caption{Parámetros de Gutenberg--Richter para cada zona sísmica de la subducción.}
+{\footnotesize Fuente: \citeA{Poulos2019}.\par}
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Tipo de fuente} & \textbf{Zona} & \textbf{\textit{a}} & \textbf{\textit{b}} & \(M_{\text{max}}\) \\
+\midrule
 Interplaca              & 1             & 5.15                & 0.87                & 9.2                        \\
                         & 2             & 5.36                & 0.88                & 9.3                        \\
                         & 3             & 4.26                & 0.77                & 9.6                        \\
 Intraplaca              & 4             & 5.11                & 0.90                & 8.6                        \\
                         & 5             & 6.37                & 1.04                & 8.4                        \\
                         & 6             & 6.12                & 1.11                & 8.4                        \\
-                        & 7             & 5.32                & 0.98                & 8.5                        \\ \hline
+                        & 7             & 5.32                & 0.98                & 8.5                        \\
+\bottomrule
 \end{tabular}
 \label{tab:parametros_GR}
 \end{table}
@@ -128,22 +138,23 @@ Intraplaca              & 4             & 5.11                & 0.90            
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{figuras_tesis/contexto_geologico/modelo_subduccion.pdf}
-    \caption{Modelo de subducción, obtenido a partir de datos de Slab2 \protect\shortcite{Hayes2018} y de las zonas sísmicas definidas por Poulos et al. (2019).}
-    \label{fig: Modelo de subduccion}
+    \caption{Modelo de subducción, obtenido a partir de datos de Slab2 y de zonas sísmicas definidas para Chile.}
+    \label{fig:modelo_subduccion}
+    {\footnotesize Fuente: Slab2 \shortcite{Hayes2018} y zonas sísmicas de \citeA{Poulos2019}.\par}
 \end{figure}
 
 \subsection{Falla San Ramón}
 
-La Falla San Ramón (FSR) corresponde a una falla inversa emplazada en el piedemonte de la Cordillera de los Andes, en el sector oriente de Santiago, con traza general de orientación norte--sur. La literatura reporta distintas longitudes para la FSR, típicamente entre 30 y 50 km \shortcite{Armijo2010, Estay2016, Ammirati2019}. De acuerdo con el trazado adoptado en este estudio, la falla atraviesa las comunas de Lo Barnechea, Vitacura, Las Condes, La Reina, Peñalolén, La Florida, Puente Alto y Pirque. Los ángulos de inclinación propuestos para el plano de falla varían entre 34\(^\circ\) y 60\(^\circ\) \shortcite{Perez2014, Estay2016, campillay2025san}.
+La Falla San Ramón (FSR) corresponde a una falla inversa emplazada en el piedemonte de la Cordillera de los Andes, en el sector oriente de Santiago, con traza general de orientación norte--sur. La literatura reporta distintas longitudes para la FSR, típicamente entre 30 y 50 km \shortcite{Armijo2010, Estay2016, Ammirati2019}. De acuerdo con el trazado adoptado en este estudio, la falla atraviesa las comunas de Lo Barnechea, Vitacura, Las Condes, La Reina, Peñalolén, La Florida, Puente Alto y Pirque. \ifincludeprivatedata Los ángulos de inclinación propuestos para el plano de falla varían entre 34\(^\circ\) y 60\(^\circ\) \shortcite{Perez2014, Estay2016, campillay2025san}.\else Los ángulos de inclinación propuestos para el plano de falla varían entre 34\(^\circ\) y 60\(^\circ\) \shortcite{Perez2014, Estay2016}.\fi
 
-La evidencia paleosismológica indica la ocurrencia de, al menos, dos eventos sísmicos en esta falla, con edades aproximadas de 8\,000 y 17\,000 años, y desplazamientos coseísmicos estimados entre 4.7 y 4.9 m por evento \shortcite{Vargas2014, Ammirati2019}. A partir de la extensión y el desplazamiento asociados a dichos eventos, se han inferido magnitudes entre \(M_w\) 7.2 y 7.5. Estudios previos han modelado escenarios que reportan aceleraciones máximas del orden de 0.7--0.9 g en las proximidades del escarpe de la falla y superiores a 0.3 g en sectores del área metropolitana de Santiago \shortcite{Vargas2014, Estay2016, Ammirati2019, Dominguez2023}.
+La evidencia paleosismológica indica la ocurrencia de, al menos, dos eventos sísmicos en esta falla, con edades aproximadas de 8\,000 y 17\,000 años, y desplazamientos coseísmicos estimados entre 4.7 y 4.9 m por evento \shortcite{Vargas2014, Ammirati2019}. A partir de la extensión y el desplazamiento asociados a dichos eventos, se han inferido magnitudes entre \(\Mw{}\,7.2\) y \(\Mw{}\,7.5\). Estudios previos han modelado escenarios que reportan aceleraciones máximas del orden de 0.7--0.9 g en las proximidades del escarpe de la falla y superiores a 0.3 g en sectores del área metropolitana de Santiago \shortcite{Vargas2014, Estay2016, Ammirati2019, Dominguez2023}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figuras_tesis/contexto_geologico/Trazas FSR.png}
-    \caption{Traza de la Falla San Ramón. Se muestran los tres modelos de ruptura considerados: (izquierda) Principal Poniente, (centro) Principal Oriente y (derecha) Multitraza. El trazado se basa en Campillay et al. (2025).}
-    \label{fig:Traza FSR}
+    \caption{Traza de la Falla San Ramón. Se muestran los tres modelos de ruptura considerados: (izquierda) Principal Poniente, (centro) Principal Oriente y (derecha) Multitraza.}
+    \label{fig:traza_fsr}
+    \ifincludeprivatedata
+    {\footnotesize Fuente: \citeA{campillay2025san}.\par}
+    \fi
 \end{figure}
-
-
-

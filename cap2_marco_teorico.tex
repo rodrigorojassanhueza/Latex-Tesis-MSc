@@ -58,7 +58,7 @@ El análisis probabilista de amenaza sísmica (PSHA) estima la tasa o probabilid
 
 El PSHA combina \cite{Cornell1968}:
 \begin{enumerate}
-    \item \textbf{Modelo de sitio}: describe las caracterísitcas del suelo en el sitio de interés, que afectan la respuesta sísmica.
+    \item \textbf{Modelo de sitio}: describe las características del suelo en el sitio de interés, que afectan la respuesta sísmica.
     \item \textbf{Modelos de fuente}: describen recurrencia (tasa de actividad) y caracterización de rupturas (distribuciones de magnitud, geometría y localización).
     \item \textbf{GMM (\textit{Ground Motion Model})}: entregan la distribución de \(IM\) condicionada a parámetros de fuente, trayectoria y sitio.
 \end{enumerate}
@@ -110,7 +110,7 @@ Una forma estándar de expresar la tasa media anual de excedencia en formulació
 \end{equation}
 donde \(\lambda_i\) es la tasa anual total de la fuente \(i\) y \(f_i(m,r)\) es la densidad conjunta de magnitud y distancia para dicha fuente.
 
-\subsubsection{Probabilidad condicional \(P(IM > im \mid \cdot)\) a partir de una GMPE}
+\subsubsection{\texorpdfstring{Probabilidad condicional \(P(IM > im \mid \cdot)\) a partir de una GMPE}{Probabilidad condicional P(IM > im | ...) a partir de una GMPE}}
 
 En una GMPE, \(\ln(IM)\) se modela típicamente como normal con media \(\mu_{\ln IM}\) y desviación estándar \(\sigma_{\ln IM}\) condicionadas a un vector de predictores \(\mathbf{X}\) \cite{BakerBradleyStafford2021}. Bajo esta suposición:
 \begin{equation}
@@ -167,18 +167,16 @@ con \(\beta=\ln(10)\,b\).
 
 \subsection{Relación entre magnitud de momento y geometría de ruptura}
 
-Wells y Coppersmith establecen relaciones empíricas entre geometría y \(M_w\) \cite{WellsCoppersmith1994}. Para fallas corticales inversas:
+Wells y Coppersmith establecen relaciones empíricas entre geometría y \(\Mw{}\) \cite{WellsCoppersmith1994}. Para fallas corticales inversas:
 \begin{equation}
-\log (SRL) = -2.86 + 0.63\,M_w,
+\log (SRL) = -2.86 + 0.63\,\Mw{},
 \label{eq:WC1_v2}
 \end{equation}
 \begin{equation}
-\log (RW) = -1.61 + 0.41\,M_w.
+\log (RW) = -1.61 + 0.41\,\Mw{}.
 \label{eq:WC2_v2}
 \end{equation}
 donde \(SRL\) es el largo de ruptura superficial \([\text{km}]\) y \(RW\) el ancho de ruptura \([\text{km}]\).
-
-\newpage
 
 \section{Riesgo Sísmico}
 
@@ -206,7 +204,7 @@ Se consideran los tres componentes clásicos:
 
 \subsection{Daño: funciones de fragilidad}
 
-Una función de fragilidad entrega la probabilidad de alcanzar o exceder un estado de daño \(DS_i\) condicionado a \(IM=x\). En su forma lognormal \cite{Baker_Bradley_Stafford_2021}:
+Una función de fragilidad entrega la probabilidad de alcanzar o exceder un estado de daño \(DS_i\) condicionado a \(IM=x\). En su forma lognormal \cite{BakerBradleyStafford2021}:
 \begin{equation}
 P(DS \geq DS_i \mid IM = x) = \Phi\left(\frac{\ln(x) - \ln(\theta_i)}{\beta_i}\right).
 \label{eq:fragility_function_v2}
@@ -291,4 +289,3 @@ En cálculo basado en eventos, se simulan realizaciones del proceso sísmico y s
 \lambda(C > c) = \frac{1}{n_{\text{sim}}}\sum_{i=1}^{n_{\text{sim}}}\hat{I}(C_i > c)\,\lambda_i.
 \label{eq:monte_carlo_risk_v2}
 \end{equation}
-
