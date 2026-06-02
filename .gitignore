@@ -18,9 +18,12 @@
 
 # PDFs and generated documents
 *.pdf
-!presentacion_defensa/figures/*.pdf
+!dist/Tesis_Rodrigo_Rojas_con_datos.pdf
+!dist/Presentacion_V1.pdf
 
 # Figures and images excluded from GitHub sync
+_graph_generation_work/
+presentacion_defensa/figures/
 figs/
 figuras_tesis/
 img/
