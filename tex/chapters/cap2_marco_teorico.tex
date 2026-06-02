@@ -1,0 +1,291 @@
+\chapter{Marco Teórico}
+
+\section{Amenaza Sísmica}
+
+\subsection{Notación básica}
+
+A lo largo de esta sección se utiliza la siguiente notación:
+\begin{itemize}
+    \item \(IM\): medida de intensidad del movimiento del suelo, como \(PGA\) (aceleración máxima absoluta del suelo) o \(SA(T^*)\) (aceleración espectral para un período \(T^*\)).
+    \item \(im\): umbral de \(|IM\).
+    \item \(\lambda(IM>im)\): tasa media anual de excedencia del umbral \(im\) \([\text{1/año}]\).
+    \item \(T\): horizonte temporal \([\text{años}]\).
+    \item \(RP\): periodo de retorno \([\text{años}]\).
+    \item \(\Phi(\cdot)\): función de distribución acumulada normal estándar.
+\end{itemize}
+
+\subsection{Medidas de intensidad del movimiento del suelo}
+
+Una medida de intensidad (\(IM\), \textit{Intensity Measure}) es una variable escalar que resume la severidad del movimiento del suelo relevante para la respuesta estructural \cite{BakerBradleyStafford2021}.
+
+\subsection{Curva de amenaza y relación tasa--probabilidad}
+
+La curva de amenaza se expresa como \cite{Cornell1968}:
+\begin{equation}
+\lambda(IM > im).
+\label{eq:hazard_curve_def}
+\end{equation}
+
+Bajo un supuesto poissoniano para la ocurrencia de excedencias, la probabilidad de exceder \(im\) en un horizonte temporal \(T\) se relaciona con \(\lambda\) mediante \cite{Cornell1968}:
+\begin{equation}
+P(IM > im \mid T) = 1 - \exp\left[-\lambda(IM > im)\,T\right].
+\label{eq:poe_from_lambda}
+\end{equation}
+donde \(P(IM>im\mid T)\) denota la probabilidad de excedencia del umbral en un horizonte temporal \(T\).
+
+Invirtiendo la relación anterior, la tasa equivalente asociada a una probabilidad \(P(IM>im\mid T)\) es \cite{McGuire2004}:
+\begin{equation}
+\lambda(IM > im) = -\frac{\ln\left(1 - P(IM > im \mid T)\right)}{T}.
+\label{eq:lambda_from_poe}
+\end{equation}
+
+Cuando se utiliza un periodo de retorno \(RP\) asociado a una tasa objetivo, se adopta usualmente \cite{BakerBradleyStafford2021}:
+\begin{equation}
+\lambda_{\text{obj}} = \frac{1}{RP}.
+\label{eq:rp_to_lambda}
+\end{equation}
+donde \(\lambda_{\text{obj}}\) es la tasa anual objetivo \([\text{1/año}]\).
+
+\subsection{Análisis Determinista de Amenaza Sísmica (DSHA)}
+
+El análisis determinista de amenaza sísmica (DSHA) evalúa el movimiento del suelo asociado a uno o varios escenarios específicos de ruptura, seleccionados por representar condiciones severas (p.\ ej., magnitud máxima y distancia mínima relevantes) \cite{Bommer2002}. En DSHA, la amenaza se interpreta como la intensidad estimada en el sitio para un escenario particular, sin integrar explícitamente la probabilidad de ocurrencia del escenario \cite{Bommer2002}.
+
+\subsection{Análisis Probabilista de Amenaza Sísmica (PSHA)}
+
+El análisis probabilista de amenaza sísmica (PSHA) estima la tasa o probabilidad de excedencia de un nivel \(im\) de \(IM\), integrando todas las rupturas consideradas en el modelo y sus incertidumbres. En PSHA, la amenaza resulta de la contribución conjunta de múltiples magnitudes, distancias, geometrías y de la variabilidad del movimiento del suelo.
+
+\subsubsection{Componentes del PSHA}
+
+El PSHA combina \cite{Cornell1968}:
+\begin{enumerate}
+    \item \textbf{Modelo de sitio}: describe las características del suelo en el sitio de interés, que afectan la respuesta sísmica.
+    \item \textbf{Modelos de fuente}: describen recurrencia (tasa de actividad) y caracterización de rupturas (distribuciones de magnitud, geometría y localización).
+    \item \textbf{GMM (\textit{Ground Motion Model})}: entregan la distribución de \(IM\) condicionada a parámetros de fuente, trayectoria y sitio.
+\end{enumerate}
+
+\subsubsection{Formulación discreta por fuentes y rupturas}
+
+Bajo independencia entre fuentes sísmicas, la probabilidad de excedencia del umbral \(im\) en el periodo \(T\) puede expresarse como \cite{McGuire2004}:
+\begin{equation}
+P(IM \geq im \mid T) = 1 - \prod_{i=1}^{I} P_{src_i}(IM < im \mid T),
+\label{eq:prob_exceedance_sources_v2}
+\end{equation}
+donde \(I\) es el número total de fuentes y \(P_{src_i}(IM<im\mid T)\) corresponde a la no excedencia debida a la fuente \(i\).
+
+\subsubsection{Modelo poissoniano de ocurrencia}
+
+En el modelo poissoniano, la ocurrencia de rupturas se asume independiente y con tasa constante \(\lambda_{ij}\) \cite{Cornell1968,McGuire2004}:
+\begin{equation}
+P_{\text{rup},ij}(k \mid T) = \exp(-\lambda_{ij}T)\,\frac{(\lambda_{ij}T)^k}{k!}.
+\label{eq:poisson_prob_k_occurrences_v2}
+\end{equation}
+
+\subsubsection{Modelo de recurrencia dependiente del tiempo: Brownian Passage Time (BPT)}
+
+Para incorporar dependencia del tiempo transcurrido desde el último evento, se utiliza un modelo de renovación como el \textit{Brownian Passage Time} (BPT). La PDF (\textit{Probability Density Function}) del tiempo entre eventos se expresa como \cite{MatthewsEllsworthReasenberg2002}:
+\begin{equation}
+f_{\text{BPT}}(t) = \sqrt{\frac{\mu}{2\pi\alpha^2 t^3}} \exp \left[-\frac{(t-\mu)^2}{2\mu\alpha^2 t}\right],
+\label{eq:bpt_pdf_v2}
+\end{equation}
+donde \(t\) es el tiempo desde el último evento, \(\mu\) el periodo medio de recurrencia y \(\alpha\) la aperiodicidad.
+
+La CDF (\textit{Cumulative Distribution Function}) del modelo BPT está dada por \cite{MatthewsEllsworthReasenberg2002}:
+\begin{equation}
+F_{\text{BPT}}(t) = \Phi\left(\frac{t - \mu}{\alpha\sqrt{\mu t}}\right) + \exp \left(\frac{2}{\alpha^2}\right)\Phi\left(-\frac{t + \mu}{\alpha\sqrt{\mu t}}\right).
+\label{eq:bpt_cdf_v2}
+\end{equation}
+
+La probabilidad condicional de ocurrencia de al menos un evento en un periodo de tiempo \(T\), dado que han transcurrido \(t_p\) años desde el último evento, se expresa como \cite{MatthewsEllsworthReasenberg2002}:
+\begin{equation}
+P(T \mid t_p) = \frac{F_{\text{BPT}}(t_p + T) - F_{\text{BPT}}(t_p)}{1 - F_{\text{BPT}}(t_p)}.
+\label{eq:bpt_conditional_probability_v2}
+\end{equation}
+
+\subsubsection{Tasa media anual de excedencia}
+
+Una forma estándar de expresar la tasa media anual de excedencia en formulación continua (en magnitud \(m\) y distancia \(r\)) es \cite{BakerBradleyStafford2021}:
+\begin{equation}
+\lambda(IM > im) = \sum_{i=1}^{I}\lambda_i \int \int f_i(m,r)\,P(IM > im \mid m,r)\,dm\,dr,
+\label{eq:lambda_continuous_rate_v2}
+\end{equation}
+donde \(\lambda_i\) es la tasa anual total de la fuente \(i\) y \(f_i(m,r)\) es la densidad conjunta de magnitud y distancia para dicha fuente.
+
+\subsubsection{\texorpdfstring{Probabilidad condicional \(P(IM > im \mid \cdot)\) a partir de una GMPE}{Probabilidad condicional P(IM > im | ...) a partir de una GMPE}}
+
+En una GMPE, \(\ln(IM)\) se modela típicamente como normal con media \(\mu_{\ln IM}\) y desviación estándar \(\sigma_{\ln IM}\) condicionadas a un vector de predictores \(\mathbf{X}\) \cite{BakerBradleyStafford2021}. Bajo esta suposición:
+\begin{equation}
+P(IM > im \mid \mathbf{X}) = 1 - \Phi\left(\frac{\ln(im) - \mu_{\ln IM}(\mathbf{X})}{\sigma_{\ln IM}(\mathbf{X})}\right).
+\label{eq:gmpe_exceedance_probability}
+\end{equation}
+
+\subsubsection{PSHA basado en eventos y Monte Carlo}
+
+Una alternativa computacional a la integración directa consiste en simular rupturas y realizaciones del movimiento del suelo, estimando \(\lambda(IM>im)\) mediante conteo de excedencias ponderado por tasas \cite{EbelKafka1999,AssatouriansAtkinson2013,BakerBradleyStafford2021}:
+\begin{equation}
+\lambda(IM > im) = \sum_{i=1}^{n_{\text{rup}}}\left(\frac{1}{n_{\text{gm}}}\sum_{k=1}^{n_{\text{gm}}}\hat{I}\big(im_k > im \mid \text{rup}_i,\text{site}\big)\right)\lambda(\text{rup}_i).
+\label{eq:psha_monte_carlo_v2}
+\end{equation}
+
+
+\subsubsection{Incertidumbre en PSHA}
+
+\paragraph{Incertidumbre epistémica}
+La incertidumbre epistémica representa falta de conocimiento sobre el modelo (p.\ ej., geometría de fuentes, tasas, GMPEs y parámetros). Se representa mediante árboles lógicos, donde cada rama corresponde a una alternativa modelística con un peso \(w\) \cite{BakerBradleyStafford2021}.
+
+\paragraph{Incertidumbre aleatoria}
+La incertidumbre aleatoria corresponde a variabilidad inherente (p.\ ej., variabilidad del movimiento del suelo para un mismo evento). En GMPEs se captura mediante \(\sigma_{\ln IM}\) y, en formulaciones más detalladas, por componentes inter- e intra-evento \cite{BakerBradleyStafford2021}.
+
+\subsubsection{Desagregación de amenaza}
+
+La desagregación identifica qué combinaciones de variables (por ejemplo \(m\), \(r\) y residual estandarizado \(\varepsilon\)) contribuyen mayormente a \(\lambda(IM>im)\) \cite{BazzurroCornell1999}. Normalizando una contribución diferencial \(\Delta\lambda\) por la tasa total:
+\begin{equation}
+w(m,r,\varepsilon \mid im) = \frac{\Delta\lambda(m,r,\varepsilon; IM>im)}{\lambda(IM>im)}.
+\label{eq:hazard_deaggregation_weight}
+\end{equation}
+donde \(\varepsilon\) se define como \(\varepsilon = \frac{\ln(IM)-\mu_{\ln IM}}{\sigma_{\ln IM}}\) \cite{BakerCornell2005}. Esta herramienta permite interpretar qué escenarios controlan un nivel de amenaza dado \cite{BazzurroCornell1999}.
+
+\subsection{Caracterización de frecuencia de ruptura}
+
+\subsubsection{Distribución de Gutenberg-Richter}
+
+La relación frecuencia--magnitud propuesta por Gutenberg y Richter \cite{GutenbergRichter1944} se expresa como:
+\begin{equation}
+\log_{10} N(M \geq m) = a - b\,m,
+\label{eq:gutenberg_richter_v2}
+\end{equation}
+donde \(N(M\ge m)\) es el número acumulado de eventos con magnitud \(\ge m\), y \(a\), \(b\) son parámetros del modelo.
+
+\subsubsection{Distribución exponencial doblemente truncada}
+
+Una formulación truncada para la magnitud es \cite{CornellVanmarcke1969}:
+\begin{equation}
+f_M(m) = \frac{\beta \exp\left[-\beta (m - m_{\text{min}})\right]}{1 - \exp\left[-\beta (m_{\text{max}} - m_{\text{min}})\right]}, \quad m_{\text{min}} \leq m \leq m_{\text{max}},
+\label{eq:doubly_truncated_exponential_v2}
+\end{equation}
+con \(\beta=\ln(10)\,b\).
+
+
+\subsection{Relación entre magnitud de momento y geometría de ruptura}
+
+Wells y Coppersmith establecen relaciones empíricas entre geometría y \(\Mw{}\) \cite{WellsCoppersmith1994}. Para fallas corticales inversas:
+\begin{equation}
+\log (SRL) = -2.86 + 0.63\,\Mw{},
+\label{eq:WC1_v2}
+\end{equation}
+\begin{equation}
+\log (RW) = -1.61 + 0.41\,\Mw{}.
+\label{eq:WC2_v2}
+\end{equation}
+donde \(SRL\) es el largo de ruptura superficial \([\text{km}]\) y \(RW\) el ancho de ruptura \([\text{km}]\).
+
+\section{Riesgo Sísmico}
+
+El riesgo sísmico cuantifica consecuencias (por ejemplo, pérdidas económicas) producto de la interacción entre amenaza, exposición y vulnerabilidad \cite{KaplanGarrick1981,McGuire2004,BakerBradleyStafford2021}. Mientras la amenaza describe el movimiento del suelo esperado, el riesgo lo traduce a daño y pérdidas para un portafolio definido \cite{McGuire2004}.
+
+\subsection{Notación básica}
+
+Se adopta la siguiente notación en esta sección:
+\begin{itemize}
+    \item \(a=1,\dots,N\): índice de activos; \(V_a\): valor económico del activo \(a\).
+    \item \(V_{\text{tot}}\): valor total expuesto.
+    \item \(DS_i\): estado de daño \(i\); \(\theta_i\), \(\beta_i\): parámetros de fragilidad.
+    \item \(LR_i\): razón de pérdida asociado a \(DS_i\).
+    \item \(C\): pérdida agregada; \(c\): umbral de pérdida.
+\end{itemize}
+
+\subsection{Componentes del riesgo: amenaza, exposición y vulnerabilidad}
+
+Se consideran los tres componentes clásicos:
+\begin{itemize}
+    \item \textbf{Amenaza}: caracterización del \textit{nivel de movimiento del suelo esperado en un sitio} como resultado de la ocurrencia de terremotos en una o más fuentes sísmicas, integrando la \textit{frecuencia, magnitud, geometría y cinemática} de las rupturas y su \textit{propagación} hacia el sitio mediante modelos de predicción del movimiento del suelo. Operacionalmente, puede representarse \textit{determinísticamente} mediante escenarios (valores de \(IM\) asociados a un evento específico bajo hipótesis definidas) o \textit{probabilísticamente} mediante curvas de excedencia y probabilidades en un horizonte temporal.
+    \item \textbf{Exposición}: inventario de elementos en riesgo (ubicación, tipología, valor), que define qué activos pueden verse afectados y dónde se concentran.
+    \item \textbf{Vulnerabilidad}: relación entre \(IM\) y consecuencias (daño o pérdida), que traduce la demanda sísmica en resultados mediante funciones de fragilidad y modelos de consecuencias.
+\end{itemize}
+
+\subsection{Daño: funciones de fragilidad}
+
+Una función de fragilidad entrega la probabilidad de alcanzar o exceder un estado de daño \(DS_i\) condicionado a \(IM=x\). En su forma lognormal \cite{BakerBradleyStafford2021}:
+\begin{equation}
+P(DS \geq DS_i \mid IM = x) = \Phi\left(\frac{\ln(x) - \ln(\theta_i)}{\beta_i}\right).
+\label{eq:fragility_function_v2}
+\end{equation}
+
+La probabilidad de estar exactamente en el estado \(DS_i\) se obtiene por diferencia:
+\begin{equation}
+P(DS = DS_i \mid IM = x) = P(DS \geq DS_i \mid IM = x) - P(DS \geq DS_{i+1} \mid IM = x).
+\label{eq:exact_damage_state_v2}
+\end{equation}
+
+
+\subsection{Consecuencia y vulnerabilidad}
+
+\subsubsection{Funciones de consecuencia}
+
+Una función de consecuencia asigna, para cada estado \(DS_i\), una consecuencia esperada. En pérdidas económicas, es común definir una razón de pérdida \(LR_i\) asociado a \(DS_i\) \cite{FEMA_P58_2018_V1}.
+
+\subsubsection{De fragilidad a vulnerabilidad}
+
+La vulnerabilidad económica puede expresarse como el valor esperado de la razón de pérdida condicionado a \(IM=x\):
+\begin{equation}
+E[LR \mid IM = x] = \sum_{i=0}^{n_{DS}} LR_i \, P(DS = DS_i \mid IM = x).
+\label{eq:expected_loss_ratio_from_ds}
+\end{equation}
+
+La pérdida esperada del activo \(a\) condicionada a \(IM=x\) se obtiene multiplicando por su valor:
+\begin{equation}
+E[L_a \mid IM = x] = V_a \, E[LR_a \mid IM = x].
+\label{eq:expected_loss_asset}
+\end{equation}
+
+Una medida de dispersión habitual para pérdidas condicionadas es:
+\begin{equation}
+CV(L_a \mid IM=x) = \frac{\sigma(L_a \mid IM=x)}{E[L_a \mid IM=x]}.
+\label{eq:cv_loss}
+\end{equation}
+
+\subsection{Curvas de excedencia de pérdidas}
+
+\subsubsection{Curva de excedencia de pérdidas (LEC)}
+
+La curva de excedencia de pérdidas describe la frecuencia con que \(C\) excede \(c\) \cite{BakerBradleyStafford2021}:
+\begin{equation}
+\lambda(C > c) = \int_{0}^{\infty} P(C > c \mid IM = x)\, d\lambda(IM > x).
+\label{eq:loss_exceedance_curve_v2}
+\end{equation}
+
+\subsubsection{Pérdida anual promedio (AAL) y razón relativa (AALR)}
+
+La pérdida anual promedio puede obtenerse directamente integrando la curva de excedencia de pérdidas \cite{McGuire2004,BakerBradleyStafford2021}:
+\begin{equation}
+AAL \equiv E[C] = \int_{0}^{\infty} \lambda(C > c)\, dc.
+\label{eq:average_annual_loss_v2}
+\end{equation}
+
+La pérdida anual promedio relativa se define como \cite{McGuire2004}:
+\begin{equation}
+AALR = \frac{AAL}{V_{\text{tot}}}.
+\label{eq:aalr_def}
+\end{equation}
+
+\subsubsection{AEP y OEP: excedencia anual agregada y por peor evento}
+
+En catálogos estocásticos, se distingue entre excedencia por el peor evento del año (OEP) y excedencia por la suma anual (AEP) \cite{GrossiKunreuther2005,MitchellWallaceEtAl2017}. Si los eventos \(e\) siguen un proceso de Poisson con tasas \(\nu_e\) y pérdidas aleatorias \(L_e\), la probabilidad anual de que el máximo exceda \(\ell\) es \cite{GrossiKunreuther2005,MitchellWallaceEtAl2017}:
+\begin{equation}
+P(\max(L) > \ell \mid 1\,\text{año}) = 1 - \exp\left[-\sum_{e}\nu_e\,P(L_e > \ell)\right].
+\label{eq:oep_probability}
+\end{equation}
+
+La tasa OEP equivalente se define como \cite{GrossiKunreuther2005}:
+\begin{equation}
+\lambda_{\text{OEP}}(\ell) = \sum_{e}\nu_e\,P(L_e > \ell).
+\label{eq:oep_rate}
+\end{equation}
+
+
+\subsection{Riesgo basado en eventos y simulación Monte Carlo}
+
+En cálculo basado en eventos, se simulan realizaciones del proceso sísmico y sus campos de movimiento del suelo, obteniendo pérdidas \(C_i\) con una tasa asociada \(\lambda_i\) \cite{SilvaEtAl2014}. Un estimador de la curva de excedencia de pérdidas es:
+\begin{equation}
+\lambda(C > c) = \frac{1}{n_{\text{sim}}}\sum_{i=1}^{n_{\text{sim}}}\hat{I}(C_i > c)\,\lambda_i.
+\label{eq:monte_carlo_risk_v2}
+\end{equation}

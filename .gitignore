@@ -1,4 +1,10 @@
-# LaTeX build outputs
+# Build and distribution outputs
+/build/
+/dist/*
+!/dist/Tesis_Rodrigo_Rojas_con_datos.pdf
+!/dist/Presentacion_V1.pdf
+
+# LaTeX auxiliary files
 *.aux
 *.bbl
 *.bcf
@@ -15,18 +21,36 @@
 *.synctex*.gz
 *.toc
 *.vrb
+*.xdv
+_minted-*/
+*.pyg
 
-# PDFs and generated documents
-*.pdf
-!dist/Tesis_Rodrigo_Rojas_con_datos.pdf
-!dist/Presentacion_V1.pdf
+# Generated and historical PDFs outside final deliverables
+/*.pdf
+/archive/old-versions/pdf/
+/archive/old-versions/correcciones/
+/archive/old-versions/build-artifacts/
+/archive/review-needed/**/*.pdf
 
-# Figures and images excluded from GitHub sync
-_graph_generation_work/
-presentacion_defensa/figures/
-figs/
-figuras_tesis/
-img/
+# Local graphic assets excluded from GitHub sync
+/assets/figures/
+/_graph_generation_work/
+/figuras_tesis/
+/presentacion_defensa/
+/img/
+/figs/
+/archive/unused/figuras_tesis/
+/archive/unused/img/
+/archive/unused/presentation/figures/
+/archive/unused/desktop_ini/
+/archive/review-needed/figs/
+/archive/review-needed/graph_generation_work/
+/archive/review-needed/graph_generation_logs/
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.eps
 
 # OS/editor files
 desktop.ini
