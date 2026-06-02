@@ -2,10 +2,12 @@
 
 Proyecto LaTeX de la tesis **"Estudio de amenaza y vulnerabilidad sismica de Falla San Ramon"** y de la presentacion de defensa asociada.
 
-El alcance final del repositorio son dos entregables:
+El alcance final del proyecto son dos entregables locales:
 
 - `dist/Tesis_Rodrigo_Rojas_con_datos.pdf`
 - `dist/Presentacion_V1.pdf`
+
+Los PDFs no se versionan ni se sincronizan con GitHub; se generan localmente desde los fuentes.
 
 ## Entrypoints
 
@@ -38,7 +40,7 @@ Copy-Item build/main_con_datos_privados.pdf dist/Tesis_Rodrigo_Rojas_con_datos.p
 Copy-Item build/Presentacion_V1.pdf dist/Presentacion_V1.pdf
 ```
 
-Solo esos dos PDFs finales de `dist/` deben versionarse. Cualquier otra salida generada en `dist/` queda ignorada.
+Los PDFs finales de `dist/` quedan ignorados por Git y no se suben a GitHub.
 
 Si tienes `make` en un entorno POSIX/Git Bash:
 
@@ -57,7 +59,7 @@ make pdf
 - `bibliography/`: `.bib` y estilos `.bst` usados.
 - `scripts/`: herramientas reproducibles o auxiliares.
 - `build/`: auxiliares y PDFs intermedios generados por `latexmk`.
-- `dist/`: PDFs finales copiados para entrega.
+- `dist/`: PDFs finales locales copiados para entrega; no versionados.
 - `archive/`: archivos antiguos, duplicados, no usados o que requieren revision.
 
 ## Limpieza
@@ -71,4 +73,4 @@ Para una limpieza completa, elimina `build/` y `dist/` despues de cerrar visores
 
 ## Notas de archivo
 
-Los activos usados estan en `assets/` y deben versionarse. Los PDFs historicos, auxiliares antiguos, figuras no referenciadas y variantes no finales se movieron a `archive/` sin borrado definitivo. Parte de ese archivo local queda ignorado por `.gitignore` para evitar subir salidas pesadas o no usadas a GitHub.
+Los activos graficos y PDFs generados quedan como material local ignorado por Git. Los PDFs historicos, auxiliares antiguos, figuras no referenciadas y variantes no finales se movieron a `archive/` sin borrado definitivo cuando correspondia.

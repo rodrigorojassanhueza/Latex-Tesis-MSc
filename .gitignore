@@ -1,8 +1,6 @@
 # Build and distribution outputs
 /build/
 /dist/*
-!/dist/Tesis_Rodrigo_Rojas_con_datos.pdf
-!/dist/Presentacion_V1.pdf
 
 # LaTeX auxiliary files
 *.aux
@@ -25,7 +23,8 @@
 _minted-*/
 *.pyg
 
-# Generated and historical PDFs outside final deliverables
+# Generated PDFs and historical PDFs
+*.pdf
 /*.pdf
 /archive/old-versions/pdf/
 /archive/old-versions/correcciones/

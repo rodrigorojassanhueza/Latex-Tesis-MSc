@@ -98,7 +98,7 @@ tex/presentation/main.tex -> bibliography/library.bib
 - Se eliminaron las 4 rutas absolutas hacia `Modelos_v2025` copiando los PDFs necesarios a `assets/figures/thesis/resultados_perdida/risk_maps/`.
 - Se corrigio la ruta de `vulnerabilidad_junemann_paper.png` para que compile en sistemas sensibles a mayusculas/minusculas.
 - `latexmkrc` usa `build/` como `out_dir`; los PDFs finales se copian a `dist/` para evitar opciones no portables de separacion de aux/PDF.
-- `.gitignore` permite versionar solo `dist/Tesis_Rodrigo_Rojas_con_datos.pdf` y `dist/Presentacion_V1.pdf`; cualquier otra salida en `dist/` queda ignorada.
+- `.gitignore` ignora todos los PDFs, incluidos los entregables en `dist/`; las salidas finales se generan y conservan localmente, pero no se sincronizan con GitHub.
 - Los assets usados dejaron de estar ignorados; los archivos historicos o no usados de gran tamano siguen archivados localmente e ignorados.
 
 ## Verificacion ejecutada
@@ -116,6 +116,8 @@ Resultado final:
 |---|---:|---:|
 | `dist/Tesis_Rodrigo_Rojas_con_datos.pdf` | 128 | 69,126,503 |
 | `dist/Presentacion_V1.pdf` | 32 | 21,217,554 |
+
+Estos PDFs son resultados locales verificados; no quedan versionados en Git.
 
 No quedaron auxiliares LaTeX sueltos en la raiz. No quedaron referencias a `figuras_tesis/`, `presentacion_defensa/`, `img/` ni rutas absolutas `G:/.../Modelos_v2025` en los `.tex` o `.fls` verificados.
 
