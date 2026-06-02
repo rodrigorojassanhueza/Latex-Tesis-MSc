@@ -1,0 +1,772 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{dove}
+\usefonttheme{professionalfonts}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usepackage{etoolbox}
+\usepackage{url}
+\usepackage[nosectionbib]{apacite}
+\usetikzlibrary{positioning,arrows.meta,calc}
+
+\renewcommand{\bibliographytypesize}{\fontsize{5.4}{6.0}\selectfont\raggedright}
+\AtBeginDocument{%
+  \pdfpagewidth=160mm%
+  \pdfpageheight=90mm%
+  \pdfpageattr{/Rotate 0}%
+}
+
+\graphicspath{{figures/}}
+
+\definecolor{uchileblue}{RGB}{0,58,112}
+\definecolor{accentred}{RGB}{128,32,46}
+\definecolor{softgray}{RGB}{246,247,249}
+\definecolor{textgray}{RGB}{42,46,51}
+\definecolor{captiongray}{RGB}{88,92,98}
+
+\setbeamercolor{structure}{fg=uchileblue}
+\setbeamercolor{frametitle}{fg=white,bg=uchileblue}
+\setbeamercolor{title}{fg=uchileblue}
+\setbeamercolor{block title}{fg=white,bg=uchileblue}
+\setbeamercolor{block body}{fg=textgray,bg=softgray}
+\setbeamercolor{alerted text}{fg=accentred}
+\setbeamercolor{normal text}{fg=textgray}
+\setbeamercolor{bibliography item}{fg=uchileblue}
+\setbeamercolor{bibliography entry author}{fg=textgray}
+\setbeamercolor{bibliography entry title}{fg=textgray}
+\setbeamercolor{bibliography entry location}{fg=textgray}
+\setbeamercolor{bibliography entry note}{fg=textgray}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamersize{text margin left=0.9em,text margin right=0.9em}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\raise0.2ex\hbox{\scriptsize$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\raise0.15ex\hbox{\tiny$\bullet$}}
+\setbeamertemplate{bibliography item}{}
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.76\paperwidth,ht=2.6ex,dp=1.1ex,leftskip=1.1em]{author in head/foot}%
+      \scriptsize Estudio de amenaza y vulnerabilidad sísmica de Falla San Ramón
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.24\paperwidth,ht=2.6ex,dp=1.1ex,rightskip=1.1em plus1fil]{date in head/foot}%
+      \scriptsize \insertframenumber/23
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\AtBeginEnvironment{thebibliography}{%
+  \fontsize{5.4}{6.0}\selectfont
+  \raggedright
+  \setlength{\itemsep}{0.18em}
+  \setlength{\parsep}{0pt}
+}
+
+\newcommand{\Mw}{\ensuremath{M_w}}
+\newcommand{\pSixteen}{\ensuremath{p_{16}}}
+\newcommand{\pFifty}{\ensuremath{p_{50}}}
+\newcommand{\pEightyFour}{\ensuremath{p_{84}}}
+\newcommand{\tightlist}{\setlength{\itemsep}{0.28em}}
+\newcounter{presfig}
+\newcounter{prestab}
+\newcounter{appfig}
+\newcounter{apptab}
+\newcommand{\captionbody}[2]{%
+  \vspace{0.16em}
+  {\scriptsize\color{captiongray}\begin{minipage}{\linewidth}\centering\textbf{#1.} #2\end{minipage}\par}
+}
+\newcommand{\figcaption}[1]{%
+  \refstepcounter{presfig}\captionbody{Figura \arabic{presfig}}{#1}
+}
+\newcommand{\tabcaption}[1]{%
+  \refstepcounter{prestab}
+  {\scriptsize\color{captiongray}\begin{minipage}{\linewidth}\raggedright\textbf{Tabla \arabic{prestab}.} #1\end{minipage}\par}
+  \vspace{0.18em}
+}
+\newcommand{\appfigcaption}[1]{%
+  \refstepcounter{appfig}\captionbody{Figura A.\arabic{appfig}}{#1}
+}
+\newcommand{\apptabcaption}[1]{%
+  \refstepcounter{apptab}
+  {\scriptsize\color{captiongray}\begin{minipage}{\linewidth}\raggedright\textbf{Tabla A.\arabic{apptab}.} #1\end{minipage}\par}
+  \vspace{0.18em}
+}
+\newcommand{\notecaption}[1]{%
+  \vspace{0.16em}
+  {\scriptsize\color{captiongray}\begin{minipage}{\linewidth}\centering #1\end{minipage}\par}
+}
+\newcommand{\figimage}[2][]{%
+  \centering\includegraphics[#1]{#2}\par
+}
+
+\title[Defensa de tesis]{Estudio de amenaza y vulnerabilidad sísmica de Falla San Ramón}
+\subtitle{Defensa de tesis}
+\author[R. Rojas]{Rodrigo Matías Rojas Sanhueza}
+\institute[Universidad de Chile]{%
+  Universidad de Chile\\
+  Facultad de Ciencias Físicas y Matemáticas\\
+  Departamento de Ingeniería Civil}
+\date{Santiago de Chile, 2026}
+\titlegraphic{\includegraphics[height=1.25cm]{uchile2.pdf}}
+
+\begin{document}
+
+% 1
+\begin{frame}[plain]
+  \titlepage
+  \vspace{-1.2em}
+  \begin{center}
+  \footnotesize
+  Profesor guía: Rubén Boroschek Krauskopf\\
+  Comisión: Pablo Heresi Venegas, Iván López Jara, Ana Acevedo Jaramillo\\
+  Tesis para optar al grado de Magíster en Ciencias de la Ingeniería, mención Ingeniería Estructural, Sísmica y Geotécnica, y al título de Ingeniero Civil
+  \end{center}
+\end{frame}
+
+% 2
+\begin{frame}[t]{Introducción: Santiago expone una falla cortical cercana}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.50\textwidth}
+    \begin{itemize}\tightlist
+      \item Santiago reúne población, infraestructura y valor económico en una cuenca sísmicamente activa.
+      \item La Falla San Ramón (FSR) es una falla cortical inversa ubicada en el piedemonte andino.
+      \item La traza considerada atraviesa comunas del sector oriente y suroriente de Santiago.
+      \item Estudios previos reportan eventos del orden \(\Mw\,7.2\)--\(\Mw\,7.5\) y aceleraciones próximas al escarpe de 0.7--0.9 \(g\).
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.46\textwidth}
+    \figimage[width=\linewidth,height=0.70\textheight,keepaspectratio]{trazas_fsr.png}
+    \figcaption{Traza completa y modelos de ruptura de la FSR usados para representar la fuente cortical dentro de Santiago.}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 3
+\begin{frame}[t]{Introducción: la amenaza local debe traducirse a pérdida}
+\begin{block}{Hipótesis de trabajo}
+La Falla San Ramón, como fuente sísmica cortical, podría generar intensidades suficientes para causar daños materiales y pérdidas económicas en áreas cercanas a su ubicación.
+\end{block}
+\vspace{0.25em}
+\begin{itemize}\tightlist
+  \item La modificación del PRMS define una franja teórica de ruptura superficial de 300 m: 100 m al oeste y 200 m al este.
+  \item La escala relevante no es solo la intensidad, sino la combinación amenaza--exposición--vulnerabilidad.
+  \item La amenaza se evalúa en la cuenca; el riesgo se cuantifica en la franja de análisis en torno a la FSR.
+\end{itemize}
+\begin{block}{Pregunta práctica}
+¿Cuánto cambia el riesgo local cuando la FSR se incorpora explícitamente al modelo multifuente?
+\end{block}
+\end{frame}
+
+% 4
+\begin{frame}[t]{Introducción: amenaza y riesgo se integran en la tesis}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.48\textwidth}
+    \begin{block}{Lo conocido}
+      \begin{itemize}\tightlist
+        \item La FSR ha sido estudiada como fuente cortical relevante para Santiago.
+        \item La cuenca también está controlada por sismicidad interplaca e intraplaca.
+        \item El movimiento esperado depende de geometría, sitio, magnitud y GMPE.
+      \end{itemize}
+    \end{block}
+  \end{column}
+  \begin{column}{0.48\textwidth}
+    \begin{block}{Lo que faltaba integrar}
+      \begin{itemize}\tightlist
+        \item Un modelo multifuente comparable en DSHA y PSHA.
+        \item Recurrencia Poisson y Brownian Passage Time (BPT) para la FSR.
+        \item Exposición y vulnerabilidad para transformar intensidades en pérdidas.
+      \end{itemize}
+    \end{block}
+  \end{column}
+\end{columns}
+\vspace{0.45em}
+\begin{itemize}\tightlist
+  \item La tesis aborda esa brecha conectando amenaza determinista, amenaza probabilística y riesgo sísmico.
+\end{itemize}
+\end{frame}
+
+% 5
+\begin{frame}[t]{Introducción: comparar escenarios, excedencia y pérdidas}
+\begin{block}{Pregunta guía derivada de los objetivos}
+¿Qué tan relevante es la FSR para la amenaza y el riesgo de Santiago cuando se compara con subducción interplaca e intraplaca, y cuando las intensidades se traducen a pérdidas?
+\end{block}
+\vspace{0.2em}
+\textbf{Objetivo general}
+\begin{itemize}\tightlist
+  \item Analizar escenarios sísmicos asociados a la FSR, evaluando aceleraciones espectrales máximas y estimando pérdidas en zonas cercanas a la falla.
+\end{itemize}
+\textbf{Objetivos específicos sintetizados}
+\begin{itemize}\tightlist
+  \item Modelar la geometría 3D de la FSR y fuentes de subducción.
+  \item Simular amenaza sísmica con OpenQuake.
+  \item Integrar exposición y vulnerabilidad para estimar riesgo.
+\end{itemize}
+\end{frame}
+
+% 6
+\begin{frame}[t]{Introducción: modelo integrado de amenaza y riesgo para la FSR}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \begin{block}{Amenaza}
+      \begin{itemize}\tightlist
+        \item Modelo conjunto FSR + interplaca + intraplaca.
+        \item DSHA para escenarios representativos.
+        \item PSHA con Poisson y BPT.
+        \item Desagregación por fuente en sitios de control.
+      \end{itemize}
+    \end{block}
+  \end{column}
+  \begin{column}{0.49\textwidth}
+    \begin{block}{Riesgo}
+      \begin{itemize}\tightlist
+        \item Inventario habitacional en la franja FSR.
+        \item Vulnerabilidad nacional y HAZUS.
+        \item Pérdidas por escenario.
+        \item AAL, AALR y curvas OEP.
+      \end{itemize}
+    \end{block}
+  \end{column}
+\end{columns}
+\vspace{0.45em}
+\begin{block}{Aporte defendible}
+La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada a la subducción en métricas probabilísticas regionales.
+\end{block}
+\end{frame}
+
+% 7
+\begin{frame}[t]{Marco teórico: DSHA, PSHA y riesgo separan métricas}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.60\textwidth}
+    \centering
+    \begin{tikzpicture}[
+      scale=0.89,
+      transform shape,
+      node distance=0.86cm,
+      box/.style={draw=uchileblue, thick, rounded corners=2pt, fill=softgray, align=center, minimum width=2.85cm, minimum height=0.82cm},
+      arrow/.style={-{Latex[length=2.2mm]}, thick, draw=uchileblue}
+    ]
+      \node[box] (haz) {Amenaza\\PGA, \(SA(1.0)\)};
+      \node[box, below left=of haz, xshift=-0.15cm] (dsha) {DSHA\\escenarios};
+      \node[box, below right=of haz, xshift=0.15cm] (psha) {PSHA\\PoE, \(\lambda(IM>im)\)};
+      \node[box, below=1.15cm of haz] (risk) {Riesgo\\pérdida, AAL, AALR, OEP};
+      \node[box, below=of risk] (terr) {Lectura territorial\\priorización local};
+      \draw[arrow] (haz) -- (dsha);
+      \draw[arrow] (haz) -- (psha);
+      \draw[arrow] (dsha) -- (risk);
+      \draw[arrow] (psha) -- (risk);
+      \draw[arrow] (risk) -- (terr);
+    \end{tikzpicture}
+    \figcaption{Relación conceptual entre métricas de amenaza y métricas de riesgo usadas en la defensa.}
+  \end{column}
+  \begin{column}{0.36\textwidth}
+    \begin{itemize}\tightlist
+      \item DSHA identifica demanda máxima plausible.
+      \item PSHA integra recurrencia e incertidumbre epistémica.
+      \item El riesgo combina amenaza, exposición y vulnerabilidad.
+      \item Las tres lecturas no son equivalentes, sino complementarias.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 8
+\begin{frame}[t]{Contexto geológico y sísmico: subducción regional y FSR coexisten}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.56\textheight,keepaspectratio]{modelo_subduccion.pdf}
+    \figcaption{Geometría de subducción usada para representar fuentes interplaca e intraplaca de escala regional.}
+  \end{column}
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.56\textheight,keepaspectratio]{trazas_fsr.png}
+    \figcaption{Representación superficial de la FSR y alternativas de ruptura cortical dentro del área urbana.}
+  \end{column}
+\end{columns}
+\vspace{0.15em}
+\begin{itemize}\tightlist
+  \item Subducción: zonas interplaca e intraplaca con recurrencia Gutenberg--Richter.
+  \item FSR: fuente cortical con alternativas de traza, inclinación, profundidad y recurrencia.
+  \item Sitio: malla con \(V_{S30}\), \(Z_{1.0}\) y \(Z_{2.5}\).
+\end{itemize}
+\end{frame}
+
+% 9
+\begin{frame}[t]{Metodología: 3.320 roles expuestos en la franja de la FSR}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.51\textwidth}
+    \scriptsize
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.12}
+    \tabcaption{Composición del inventario expuesto; el valor fiscal total del portafolio es \(1{,}016.2\times10^9\) CLP.}
+    \begin{tabularx}{\linewidth}{@{}Xrr@{}}
+      \toprule
+      \textbf{Grupo estructural} & \textbf{Roles} & \textbf{\% valor} \\
+      \midrule
+      Albañilería 1--3 pisos & 2\,666 & 52.52 \\
+      Hormigón armado, todos los rangos & 383 & 44.67 \\
+      Madera 1--3 pisos & 250 & 2.62 \\
+      Adobe 1--3 pisos & 21 & 0.18 \\
+      \midrule
+      \textbf{Total} & \textbf{3\,320} & \textbf{100.00} \\
+      \bottomrule
+    \end{tabularx}
+  \end{column}
+  \begin{column}{0.45\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{exposicion_composicion.pdf}
+    \figcaption{Distribución del valor expuesto por tipología; albañilería y hormigón armado concentran casi todo el valor.}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 10
+\begin{frame}[t]{Metodología: árbol lógico de fuente, recurrencia y GMPE}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.79\textwidth}
+    \centering
+    \resizebox{!}{0.75\textheight}{\input{figures/fig_4_3_arbol_logico_tikz.tex}}\par
+    \figcaption{Estructura del árbol lógico probabilístico para la modelación multifuente, con alternativas de FSR, BPT y GMPEs de subducción.}
+  \end{column}
+  \begin{column}{0.18\textwidth}
+    \scriptsize
+    \textbf{Lectura}\\[-0.1em]
+    Cada rama combina fuente, recurrencia y GMPE. El mismo árbol permite comparar Poisson y BPT aislando la memoria temporal de la FSR.
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 11
+\begin{frame}[t]{Metodología: cuatro familias de cálculo}
+\centering
+\begin{tikzpicture}[
+  node distance=0.70cm,
+  stage/.style={draw=uchileblue, thick, fill=softgray, rounded corners=2pt, align=center, minimum height=0.88cm},
+  arr/.style={-{Latex[length=2mm]}, thick, draw=uchileblue}
+]
+  \node[stage, text width=3.05cm] (in) {Entradas\\fuentes, sitio, GMPE, exposición, vulnerabilidad};
+  \node[stage, right=0.70cm of in, text width=2.65cm] (oq) {OpenQuake\\Engine v3.23.2};
+  \node[stage, right=0.70cm of oq, text width=3.00cm] (post) {Postproceso\\curvas, mapas, métricas};
+  \node[stage, below=0.90cm of oq, text width=11.4cm] (families) {
+    DSHA \(\rightarrow\) PSHA Poisson/BPT \(\rightarrow\) riesgo por escenarios \(\rightarrow\) riesgo event-based
+  };
+  \draw[arr] (in) -- (oq);
+  \draw[arr] (oq) -- (post);
+  \draw[arr] (oq) -- (families);
+\end{tikzpicture}
+\figcaption{Cadena de cálculo que permite comparar amenaza determinista, amenaza probabilística y pérdida.}
+\vspace{0.15em}
+\begin{itemize}\tightlist
+  \item Amenaza: malla regular de 300 m con 7\,817 sitios.
+  \item Riesgo: franja FSR con resultados por manzana y portafolio.
+  \item Productos: mapas DSHA/PSHA, desagregaciones, AAL, AALR y OEP.
+\end{itemize}
+\end{frame}
+
+% 12
+\begin{frame}[t]{Metodología: geometrías deterministas comparadas}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.75\textwidth}
+    \figimage[width=\linewidth,height=0.70\textheight,keepaspectratio]{fig_4_2_escenarios_simulados.pdf}
+    \figcaption{Geometrías en planta de los escenarios deterministas considerados para FSR, subducción interplaca e intraplaca.}
+  \end{column}
+  \begin{column}{0.22\textwidth}
+    \scriptsize
+    \begin{itemize}\tightlist
+      \item FSR: \(\Mw=7.5\), dip \(34^\circ/60^\circ\), profundidad mínima \(0/5\) km.
+      \item Interplaca: \(\Mw=9.3\), zona de subducción representativa.
+      \item Intraplaca: \(\Mw=8.0\), rotaciones \(0/20/40^\circ\).
+      \item Métricas: el PGA y \(SA(1.0)\).
+      \item Esta geometría sostiene los mapas DSHA y las pérdidas por escenario.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 13
+\begin{frame}[t]{Metodología: BPT incorpora memoria temporal en la FSR}
+\scriptsize
+\setlength{\abovedisplayskip}{0.35em}
+\setlength{\belowdisplayskip}{0.35em}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.58\textwidth}
+    \begin{block}{Densidad y distribución acumulada}
+    \[
+      f_{\mathrm{BPT}}(t)=
+      \sqrt{\frac{\mu}{2\pi\alpha^2t^3}}
+      \exp\!\left[-\frac{(t-\mu)^2}{2\mu\alpha^2t}\right]
+    \]
+    \[
+      \begin{aligned}
+      F_{\mathrm{BPT}}(t)
+      &= \Phi\!\left(\frac{t-\mu}{\alpha\sqrt{\mu t}}\right)\\
+      &\quad + \exp\!\left(\frac{2}{\alpha^2}\right)
+      \Phi\!\left(-\frac{t+\mu}{\alpha\sqrt{\mu t}}\right)
+      \end{aligned}
+    \]
+    \end{block}
+  \end{column}
+  \begin{column}{0.38\textwidth}
+    \begin{block}{Probabilidad condicional}
+    \[
+      P(T\mid t_p)=
+      \frac{F_{\mathrm{BPT}}(t_p+T)-F_{\mathrm{BPT}}(t_p)}
+      {1-F_{\mathrm{BPT}}(t_p)}
+    \]
+    \end{block}
+    \begin{itemize}\tightlist
+      \item \(t_p\): tiempo desde el último evento.
+      \item \(T=50\) años.
+      \item \(\alpha=0.38\).
+    \end{itemize}
+  \end{column}
+\end{columns}
+\vspace{0.1em}
+\begin{block}{Implementación en la tesis}
+  \begin{itemize}\tightlist
+    \item Se evalúan \(\mu\) y \(t_p\) entre 6500 y 8000 años, con incrementos de 500 años.
+    \item El árbol lógico se mantiene comparable para aislar el efecto temporal frente a Poisson.
+  \end{itemize}
+\end{block}
+\notecaption{Ecuaciones BPT usadas para traducir recurrencia dependiente del tiempo en probabilidad condicional de ocurrencia de la FSR.}
+\end{frame}
+
+% 14
+\begin{frame}[t]{Metodología: intensidad se traduce a pérdida}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \begin{block}{Conversión fragilidad \(\rightarrow\) vulnerabilidad}
+    \[
+      \mu_{LR}(IM)=\mathrm{E}[LR\mid IM]=\sum_{i=1}^{n} p_i(IM)\,\mu_i
+    \]
+    \end{block}
+    \begin{itemize}\tightlist
+      \item \(p_i(IM)\): probabilidad de estado de daño.
+      \item \(\mu_i\): pérdida relativa media asociada a ese estado.
+      \item La salida es una pérdida esperada condicionada a la intensidad.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \begin{block}{Dos lecturas de vulnerabilidad}
+      \begin{itemize}\tightlist
+        \item Modelo nacional: Jünemann + Cabrera para tipologías chilenas.
+        \item HAZUS: referencia comparativa para fragilidad, consecuencias y vulnerabilidad.
+        \item HAZUS no cubre adobe en la comparación usada.
+      \end{itemize}
+    \end{block}
+    \notecaption{Ecuación de pérdida esperada: los estados de daño se ponderan por su probabilidad y severidad económica.}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 15
+\begin{frame}[t]{Resultados: la FSR concentra PGA junto al borde oriental}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.33\textwidth}
+    \figimage[width=\linewidth,height=0.55\textheight,keepaspectratio]{dsha_inter_pga.pdf}
+    \figcaption{Interplaca \(\Mw=9.3\): campo de PGA suave a escala de cuenca.}
+  \end{column}
+  \begin{column}{0.33\textwidth}
+    \figimage[width=\linewidth,height=0.55\textheight,keepaspectratio]{dsha_fsr_pga.pdf}
+    \figcaption{FSR \(\Mw=7.5\): gradiente fuerte y máximos alineados con la traza.}
+  \end{column}
+  \begin{column}{0.33\textwidth}
+    \figimage[width=\linewidth,height=0.55\textheight,keepaspectratio]{dsha_intra_pga.pdf}
+    \figcaption{Intraplaca \(\Mw=8.0\): valores altos y más homogéneos.}
+  \end{column}
+\end{columns}
+\vspace{0.2em}
+\scriptsize
+\begin{itemize}\tightlist
+  \item El PGA de la FSR reorganiza la amenaza local cerca del piedemonte.
+  \item La subducción mantiene patrones de mayor escala espacial.
+\end{itemize}
+\end{frame}
+
+% 16
+\begin{frame}[t]{Resultados: FSR e intraplaca elevan pérdidas deterministas}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.74\textwidth}
+    \figimage[width=\linewidth,height=0.69\textheight,keepaspectratio]{fig_5_30_perdidas_comuna_materialidad.pdf}
+    \figcaption{Comparación por comuna entre exposición, materialidad, pérdida estructural absoluta y pérdida relativa para escenarios deterministas.}
+  \end{column}
+  \begin{column}{0.23\textwidth}
+    \scriptsize
+    \begin{itemize}\tightlist
+      \item Modelo nacional: FSR \(8.29\times10^{10}\) CLP e intraplaca \(7.02\times10^{10}\) CLP.
+      \item HAZUS: FSR \(4.57\times10^{11}\) CLP e intraplaca \(4.54\times10^{11}\) CLP.
+      \item Interplaca queda por debajo de ambas fuentes en los escenarios de pérdida.
+      \item La vulnerabilidad cambia el nivel absoluto y la lectura de criticidad territorial.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 17
+\begin{frame}[t]{Resultados: curvas de PGA dominadas por subducción}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.74\textwidth}
+    \figimage[width=\linewidth,height=0.69\textheight,keepaspectratio]{fig_5_18_psha_curvas_pga_poisson.pdf}
+    \figcaption{Curvas de amenaza de PGA para cinco sitios bajo modelo Poisson, separando aportes de FSR, interplaca, intraplaca y total.}
+  \end{column}
+  \begin{column}{0.23\textwidth}
+    \scriptsize
+    \begin{itemize}\tightlist
+      \item El PGA probabilístico se evalúa con PoE 10\% y 2\% en 50 años.
+      \item Las curvas totales quedan dominadas por las fuentes de subducción.
+      \item La FSR aporta de forma localizada en los sitios próximos a la traza.
+      \item Esta lectura se complementa con la desagregación por fuente de la Figura 5.22.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 18
+\begin{frame}[t]{Resultados: la desagregación mide el aporte de la FSR}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.74\textwidth}
+    \figimage[width=\linewidth,height=0.69\textheight,keepaspectratio]{fig_5_22_disagg_pga_poisson.pdf}
+    \figcaption{Desagregación de PGA por fuente bajo modelo Poisson; muestra los aportes relativos de FSR, interplaca e intraplaca en sitios de control.}
+  \end{column}
+  \begin{column}{0.23\textwidth}
+    \scriptsize
+    \begin{itemize}\tightlist
+      \item En PGA, la FSR aporta 1--3\% en Sitios 1--3 para PoE 2\% en 50 años.
+      \item El aporte cortical es nulo en Sitios 4--5 bajo el modelo Poisson.
+      \item Interplaca e intraplaca concentran la mayor parte de la excedencia.
+      \item La lectura BPT se deja como respaldo en el anexo.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 19
+\begin{frame}[t]{Resultados: AAL y AALR cambian poco a escala de portafolio}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.59\textwidth}
+    \scriptsize
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.12}
+    \tabcaption{Pérdidas anualizadas con y sin fuente cortical; la diferencia agregada es pequeña respecto del portafolio.}
+    \begin{tabularx}{\linewidth}{@{}ll>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X@{}}
+      \toprule
+      \textbf{Modelo} & \textbf{Caso} & \textbf{AAL \(\pFifty\) [CLP/año]} & \textbf{AALR \(\pFifty\) [\textperthousand]} \\
+      \midrule
+      Nacional & Sin FSR & \(9.14\times10^{8}\) & 0.88 \\
+      Nacional & Con FSR & \(9.31\times10^{8}\) & 0.90 \\
+      HAZUS & Sin FSR & \(7.70\times10^{9}\) & 7.42 \\
+      HAZUS & Con FSR & \(7.76\times10^{9}\) & 7.47 \\
+      \bottomrule
+    \end{tabularx}
+  \end{column}
+  \begin{column}{0.37\textwidth}
+    \begin{itemize}\tightlist
+      \item Nacional: \(\Delta\)AAL \(=1.70\times10^7\) CLP/año, equivalente a 1.86\%.
+      \item HAZUS: \(\Delta\)AAL \(=6.00\times10^7\) CLP/año, equivalente a 0.78\%.
+      \item La señal existe, pero el promedio de portafolio la atenúa.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 20
+\begin{frame}[t]{Resultados: AALR cambia localmente al incorporar la FSR}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.68\textwidth}
+    \figimage[trim=5 20 10 30,clip,width=\linewidth,height=0.74\textheight,keepaspectratio]{fig_5_41_aalr_cambio_rel_pct.pdf}
+    \figcaption{Mapas de cambio relativo porcentual en AALR asociados a variaciones entre escenarios con y sin FSR.}
+  \end{column}
+  \begin{column}{0.29\textwidth}
+    \scriptsize
+    \begin{itemize}\tightlist
+      \item El incremento de AALR es positivo en el dominio analizado.
+      \item Los máximos locales son del orden de 2.1\%.
+      \item El patrón espacial permite identificar zonas donde la fuente cortical pesa más.
+      \item La escala local revela una señal que queda diluida en el agregado de portafolio.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 21
+\begin{frame}[t]{Resultados: OEP y \(\Delta\lambda\) muestran pérdidas frecuentes}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{fig_5_42_oep_relativo.pdf}
+    \figcaption{Curvas OEP relativas para pérdida normalizada por exposición, comparando modelos con y sin FSR.}
+  \end{column}
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{fig_5_43_delta_lambda.pdf}
+    \figcaption{Cambio en tasa de excedencia de pérdida al incorporar la FSR para modelos Nacional y HAZUS.}
+  \end{column}
+\end{columns}
+\vspace{0.1em}
+\scriptsize
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \begin{itemize}\tightlist
+      \item Las curvas \(\Delta\lambda(L)\) son positivas.
+      \item La diferencia disminuye hacia cero al aumentar el umbral de pérdida.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.49\textwidth}
+    \begin{itemize}\tightlist
+      \item La cola extrema queda dominada por eventos de subducción de escala regional.
+      \item La FSR se expresa mejor en pérdidas frecuentes de baja a mediana severidad.
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% 22
+\begin{frame}[t]{Discusión y conclusiones: tres escalas ordenan los resultados}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.32\textwidth}
+    \begin{block}{Escenario}
+      \begin{itemize}\tightlist
+        \item La FSR domina máximos locales en el borde oriental.
+        \item El DSHA muestra un gradiente alineado con la traza.
+      \end{itemize}
+    \end{block}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \begin{block}{Probabilidad}
+      \begin{itemize}\tightlist
+        \item La subducción controla la excedencia regional.
+        \item BPT aumenta la señal cortical sin invertir la dominancia.
+      \end{itemize}
+    \end{block}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \begin{block}{Riesgo}
+      \begin{itemize}\tightlist
+        \item La vulnerabilidad controla pérdidas absolutas.
+        \item La FSR genera una señal local positiva y coherente.
+      \end{itemize}
+    \end{block}
+  \end{column}
+\end{columns}
+\vspace{0.45em}
+\begin{block}{Lectura integrada}
+La FSR no reemplaza la amenaza de subducción, pero sí debe incorporarse en evaluaciones locales de riesgo y planificación territorial.
+\end{block}
+\end{frame}
+
+% 23
+\begin{frame}[t]{Discusión y conclusiones: la FSR reorganiza el riesgo local}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.56\textwidth}
+    \begin{itemize}\tightlist
+      \item En DSHA, la FSR controla máximos locales hacia el piedemonte oriental.
+      \item En PSHA, la subducción controla la excedencia regional; BPT aumenta la participación cortical.
+      \item En riesgo, la elección de vulnerabilidad domina el nivel absoluto de pérdida.
+      \item En la franja FSR, la señal cortical es pequeña en portafolio, pero espacialmente consistente y localmente relevante.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.40\textwidth}
+    \begin{block}{Contribuciones}
+      \begin{itemize}\tightlist
+        \item Modelo integrado multifuente.
+        \item Comparación Poisson--BPT.
+        \item Traducción de amenaza a pérdida.
+        \item Evidencia para priorización local.
+      \end{itemize}
+    \end{block}
+    \vspace{0.45em}
+    \centering
+    \Large Gracias
+  \end{column}
+\end{columns}
+\end{frame}
+
+\appendix
+\setbeamertemplate{footline}{}
+\setcounter{appfig}{0}
+\setcounter{apptab}{0}
+
+\begin{frame}[noframenumbering,t]{Anexo}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.47\textwidth}
+    \figimage[width=\linewidth,height=0.49\textheight,keepaspectratio]{anexo_convergencia_nlt_pga.png}
+    \appfigcaption{Convergencia de PGA respecto del número de ramas del árbol lógico.}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \figimage[width=\linewidth,height=0.49\textheight,keepaspectratio]{anexo_convergencia_nlt_sa10.png}
+    \appfigcaption{Convergencia de \(SA(1.0)\) respecto del número de ramas del árbol lógico.}
+  \end{column}
+\end{columns}
+\vspace{0.1em}
+\begin{itemize}\tightlist
+  \item La tesis adopta \(N_{\mathrm{LT}}=310\) ramas para el cálculo PSHA.
+  \item Estas figuras justifican que el tamaño del árbol lógico no controle artificialmente los resultados.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering,t]{Anexo}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{anexo_convergencia_gmf_pga020.pdf}
+    \appfigcaption{Convergencia del número de GMFs para PGA \(=0.20\,g\); estabiliza el cálculo estocástico de riesgo.}
+  \end{column}
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{anexo_convergencia_gmf_pga040.pdf}
+    \appfigcaption{Convergencia del número de GMFs para PGA \(=0.40\,g\); respalda la elección de \(n=860\) simulaciones.}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[noframenumbering,t]{Anexo}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.32\textwidth}
+    \figimage[width=\linewidth,height=0.53\textheight,keepaspectratio]{anexo_vulnerabilidad_junemann.png}
+    \appfigcaption{Modelo Jünemann para tipologías de albañilería y hormigón armado.}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \figimage[width=\linewidth,height=0.53\textheight,keepaspectratio]{anexo_vulnerabilidad_cabrera.png}
+    \appfigcaption{Modelo Cabrera para adobe y madera en la formulación nacional.}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \figimage[width=\linewidth,height=0.53\textheight,keepaspectratio]{anexo_vulnerabilidad_hazus.png}
+    \appfigcaption{Modelo HAZUS usado como referencia comparativa de vulnerabilidad.}
+  \end{column}
+\end{columns}
+\vspace{0.1em}
+\begin{itemize}\tightlist
+  \item Estas curvas explican la diferencia de escala entre pérdidas Nacional y HAZUS.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering,t]{Anexo}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{fig_5_19_psha_curvas_pga_bpt.pdf}
+    \appfigcaption{Curvas de amenaza de PGA con recurrencia BPT para la FSR.}
+  \end{column}
+  \begin{column}{0.49\textwidth}
+    \figimage[width=\linewidth,height=0.58\textheight,keepaspectratio]{fig_5_23_disagg_pga_bpt.pdf}
+    \appfigcaption{Desagregación de PGA con BPT; permite comparar el aumento relativo de la FSR frente al caso Poisson.}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[noframenumbering,t]{Anexo}
+\centering
+\figimage[width=0.90\linewidth,height=0.72\textheight,keepaspectratio]{fig_5_25_disagg_sa10_bpt.pdf}
+\appfigcaption{Desagregación de \(SA(1.0)\) con BPT; resultado representativo que justifica la discusión sobre la señal cortical en periodos estructurales.}
+\end{frame}
+
+\input{references_nocite.tex}
+\setbeamertemplate{frametitle continuation}{}
+\begin{frame}[allowframebreaks,noframenumbering,plain,t]{Bibliografía}
+\bibliographystyle{apacite_noinitials}
+\bibliography{references}
+\end{frame}
+
+\end{document}

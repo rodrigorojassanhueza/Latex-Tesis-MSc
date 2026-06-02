@@ -8,13 +8,17 @@
 *.lof
 *.log
 *.lot
+*.nav
 *.out
 *.run.xml
+*.snm
 *.synctex*.gz
 *.toc
+*.vrb
 
 # PDFs and generated documents
 *.pdf
+!presentacion_defensa/figures/*.pdf
 
 # Figures and images excluded from GitHub sync
 figs/
