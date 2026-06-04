@@ -23,31 +23,6 @@ Los PDFs no se versionan ni se sincronizan con GitHub; se generan localmente des
 - No requiere `shell-escape`.
 - Scripts opcionales: `scripts/postprocess_resultado_perdida_svgs.py` requiere Inkscape y puede usar `TESIS_RESULTS_DIR` e `INKSCAPE_EXE` como variables de entorno.
 
-## Compilacion
-
-Con `latexmk` desde la raiz:
-
-```powershell
-latexmk -pdf main_con_datos_privados.tex
-latexmk -pdf -jobname=Presentacion_V1 tex/presentation/main.tex
-```
-
-`latexmkrc` manda la compilacion a `build/`. Para dejar los PDFs finales en `dist/`:
-
-```powershell
-New-Item -ItemType Directory -Force dist
-Copy-Item build/main_con_datos_privados.pdf dist/Tesis_Rodrigo_Rojas_con_datos.pdf
-Copy-Item build/Presentacion_V1.pdf dist/Presentacion_V1.pdf
-```
-
-Los PDFs finales de `dist/` quedan ignorados por Git y no se suben a GitHub.
-
-Si tienes `make` en un entorno POSIX/Git Bash:
-
-```bash
-make pdf
-```
-
 ## Estructura
 
 - `tex/chapters/`: capitulos y secciones reales de la tesis.
@@ -61,16 +36,3 @@ make pdf
 - `build/`: auxiliares y PDFs intermedios generados por `latexmk`.
 - `dist/`: PDFs finales locales copiados para entrega; no versionados.
 - `archive/`: archivos antiguos, duplicados, no usados o que requieren revision.
-
-## Limpieza
-
-```powershell
-latexmk -c main_con_datos_privados.tex
-latexmk -c -jobname=Presentacion_V1 tex/presentation/main.tex
-```
-
-Para una limpieza completa, elimina `build/` y `dist/` despues de cerrar visores PDF.
-
-## Notas de archivo
-
-Los activos graficos y PDFs generados quedan como material local ignorado por Git. Los PDFs historicos, auxiliares antiguos, figuras no referenciadas y variantes no finales se movieron a `archive/` sin borrado definitivo cuando correspondia.
