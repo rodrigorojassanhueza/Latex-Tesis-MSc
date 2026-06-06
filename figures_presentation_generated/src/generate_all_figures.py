@@ -1709,7 +1709,7 @@ def plot_slab_depth_map(
         contours,
         levels=label_levels,
         fmt=lambda value: f"{int(value)}",
-        fontsize=5.6,
+        fontsize=6.2,
         inline=True,
         inline_spacing=-3.0,
     )
@@ -1738,8 +1738,8 @@ def plot_slab_depth_map(
     cax = ax.inset_axes([0.045, 0.055, 0.040, 0.27])
     cbar = ax.figure.colorbar(filled, cax=cax, orientation="vertical")
     cbar.set_ticks([tick for tick in np.arange(0, 701, 100) if levels[0] <= tick <= levels[-1]])
-    cbar.ax.tick_params(labelsize=5.4, colors="#111111", labelcolor="#111111", length=1.8, width=0.45, pad=1.0)
-    cbar.set_label("km", fontsize=6.0, color="#111111", labelpad=0.5)
+    cbar.ax.tick_params(labelsize=6.6, colors="#111111", labelcolor="#111111", length=1.8, width=0.45, pad=1.0)
+    cbar.ax.set_title("km", fontsize=6.7, color="#111111", pad=1.2)
     for tick_label in cbar.ax.get_yticklabels():
         tick_label.set_path_effects([])
     cbar.ax.yaxis.label.set_path_effects([])
@@ -1820,7 +1820,7 @@ def add_panel_label(
         transform=ax.transAxes,
         ha=ha,
         va=va,
-        fontsize=7.8,
+        fontsize=7.0,
         fontweight="bold",
         color=color,
         zorder=40,
@@ -1839,9 +1839,9 @@ def load_santiago_relief_profile() -> pd.DataFrame | None:
     return profile
 
 
-FIG3_AXIS_LABEL_SIZE = 8.8
-FIG3_TICK_LABEL_SIZE = 8.0
-FIG3_PROFILE_YLABEL_X = -0.115
+FIG3_AXIS_LABEL_SIZE = 7.9
+FIG3_TICK_LABEL_SIZE = 7.1
+FIG3_PROFILE_YLABEL_X = -0.108
 
 
 def format_profile_depth_tick(value: float, _pos: int | None = None) -> str:
@@ -2128,7 +2128,7 @@ def generate_subduction_model() -> None:
         label_lat_offsets = {2: 0.95, 4: 0.35}
         label_lat = lat_c + label_lat_offsets.get(zone_idx, 0.0)
         label_lon = polygon_center_lon_at_lat(polygon, label_lat, lon_c) if polygon is not None else lon_c
-        plot_zone_label(ax_map, label_lon, label_lat, zone_idx, color, size=9.8)
+        plot_zone_label(ax_map, label_lon, label_lat, zone_idx, color, size=8.4)
 
     def zones_santiago_line_color(lon: float, lat: float) -> str:
         background = map_background_rgb_at(ax_map, lon, lat)
@@ -2153,12 +2153,12 @@ def generate_subduction_model() -> None:
         SANTIAGO_LON,
         SANTIAGO_LAT + 0.72,
         "Santiago",
-        fontsize=8.7,
+        fontsize=7.6,
         fontweight="bold",
         color=TEXT_GRAY,
         ha="center",
         va="bottom",
-        path_effects=[pe.withStroke(linewidth=2.0, foreground="white")],
+        path_effects=[pe.withStroke(linewidth=1.5, foreground="white")],
         zorder=8,
     )
 
@@ -2188,7 +2188,7 @@ def generate_subduction_model() -> None:
             zone_profile_extents.append((float(np.nanmin(x_ordered)), float(np.nanmax(x_ordered))))
         if len(x_ordered) >= 2:
             label_idx = int(round(0.54 * (len(x_ordered) - 1)))
-            plot_zone_label(ax_profile, float(x_ordered[label_idx]), float(y_ordered[label_idx]), zone_idx, color, size=7.3)
+            plot_zone_label(ax_profile, float(x_ordered[label_idx]), float(y_ordered[label_idx]), zone_idx, color, size=6.9)
 
     if ax_relief is None or relief_profile is None:
         fsr_depth_profile_segments = []
@@ -2199,7 +2199,7 @@ def generate_subduction_model() -> None:
     for fsr_x, fsr_y in fsr_depth_profile_segments:
         ax_profile.plot(fsr_x, fsr_y, color=FSR_MAP_TRACE, linewidth=2.1, zorder=5)
         label_idx = int(round(0.62 * (len(fsr_x) - 1)))
-        plot_named_source_label(ax_profile, float(fsr_x[label_idx] + 42.0), float(fsr_y[label_idx] + 2.0), "FSR", FSR_MAP_TRACE, size=7.5)
+        plot_named_source_label(ax_profile, float(fsr_x[label_idx] + 42.0), float(fsr_y[label_idx] + 2.0), "FSR", FSR_MAP_TRACE, size=6.9)
 
     ax_profile.set_xlabel("Distancia E-O desde Santiago (km)", fontsize=FIG3_AXIS_LABEL_SIZE, labelpad=1.5)
     ax_profile.set_ylabel("Profundidad (km)", fontsize=FIG3_AXIS_LABEL_SIZE, labelpad=1.5)

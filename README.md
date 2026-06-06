@@ -5,7 +5,7 @@ Proyecto LaTeX de la tesis **"Estudio de amenaza y vulnerabilidad sismica de Fal
 El alcance final del proyecto son dos entregables locales:
 
 - `dist/Tesis_Rodrigo_Rojas_con_datos.pdf`
-- `dist/Presentacion_V1.pdf`
+- `dist/Presentación.pdf`
 
 Los PDFs no se versionan ni se sincronizan con GitHub; se generan localmente desde los fuentes.
 

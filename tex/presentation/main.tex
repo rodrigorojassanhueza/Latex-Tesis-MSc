@@ -270,32 +270,17 @@ La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada
 \end{frame}
 
 % 9
+\begingroup
+\setbeamerfont{frametitle}{size=\fontsize{14.2}{16.0}\selectfont,series=\bfseries}
 \begin{frame}[t]{Metodología: 3.320 roles expuestos en la franja de la FSR}
-\begin{columns}[T,onlytextwidth]
-  \begin{column}{0.50\textwidth}
-    \scriptsize
-    \setlength{\tabcolsep}{4pt}
-    \renewcommand{\arraystretch}{1.12}
-    \tabcaption{Composición del inventario expuesto; el valor fiscal total del portafolio es \(1{,}016.2\times10^9\) CLP.}
-    \begin{tabularx}{\linewidth}{@{}Xrr@{}}
-      \toprule
-      \textbf{Grupo estructural} & \textbf{Roles} & \textbf{\% valor} \\
-      \midrule
-      Albañilería 1--3 pisos & 2\,666 & 52.52 \\
-      Hormigón armado, todos los rangos & 383 & 44.67 \\
-      Madera 1--3 pisos & 250 & 2.62 \\
-      Adobe 1--3 pisos & 21 & 0.18 \\
-      \midrule
-      \textbf{Total} & \textbf{3\,320} & \textbf{100.00} \\
-      \bottomrule
-    \end{tabularx}
-  \end{column}
-  \begin{column}{0.47\textwidth}
-    \figimage[width=\linewidth,height=0.60\textheight,keepaspectratio]{exposicion_composicion.pdf}
-    \figcaption{Distribución del valor expuesto por tipología; albañilería y hormigón armado concentran casi todo el valor.}
-  \end{column}
-\end{columns}
+\centering
+\vspace{0.04em}
+\figimage[width=\linewidth,height=0.77\textheight,keepaspectratio]{fig_valor_expuesto_tipologia_heatmap.pdf}
+\refstepcounter{presfig}
+\vspace{0.12em}
+{\scriptsize\color{captiongray}\begin{minipage}{0.86\linewidth}\centering\textbf{Figura \arabic{presfig}.} Distribución del valor expuesto y composición tipológica del inventario: histograma marginal, participación por intervalo de valor y totales por tipología.\end{minipage}\par}
 \end{frame}
+\endgroup
 
 % 10
 \begin{frame}[t]{Metodología: árbol lógico de fuente, recurrencia y GMPE}

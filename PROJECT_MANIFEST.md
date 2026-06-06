@@ -97,7 +97,7 @@ tex/presentation/main.tex -> bibliography/library.bib
 - `main.tex` se mantuvo en la raiz por compatibilidad con Overleaf y flujos LaTeX estandar.
 - Se eliminaron las 4 rutas absolutas hacia `Modelos_v2025` copiando los PDFs necesarios a `assets/figures/thesis/resultados_perdida/risk_maps/`.
 - Se corrigio la ruta de `vulnerabilidad_junemann_paper.png` para que compile en sistemas sensibles a mayusculas/minusculas.
-- `latexmkrc` usa `build/` como `out_dir`; los PDFs finales se copian a `dist/` para evitar opciones no portables de separacion de aux/PDF.
+- `latexmkrc` usa `build/` como `out_dir` por defecto; la presentacion se compila con `-outdir=dist` para conservar un unico PDF final llamado `Presentación.pdf`.
 - `.gitignore` ignora todos los PDFs, incluidos los entregables en `dist/`; las salidas finales se generan y conservan localmente, pero no se sincronizan con GitHub.
 - Los assets usados dejaron de estar ignorados; los archivos historicos o no usados de gran tamano siguen archivados localmente e ignorados.
 
@@ -105,9 +105,9 @@ tex/presentation/main.tex -> bibliography/library.bib
 
 ```powershell
 latexmk -gg -pdf -interaction=nonstopmode -file-line-error -halt-on-error .\main_con_datos_privados.tex
-latexmk -gg -pdf -interaction=nonstopmode -file-line-error -halt-on-error -jobname=Presentacion_V1 .\tex\presentation\main.tex
+latexmk -pdf -outdir=dist -jobname="Presentación" .\tex\presentation\main.tex
 Copy-Item build/main_con_datos_privados.pdf dist/Tesis_Rodrigo_Rojas_con_datos.pdf
-Copy-Item build/Presentacion_V1.pdf dist/Presentacion_V1.pdf
+Remove-Item -LiteralPath "dist/Presentación.aux","dist/Presentación.bbl","dist/Presentación.blg","dist/Presentación.fdb_latexmk","dist/Presentación.fls","dist/Presentación.log","dist/Presentación.nav","dist/Presentación.out","dist/Presentación.snm","dist/Presentación.toc" -Force -ErrorAction SilentlyContinue
 ```
 
 Resultado final:
@@ -115,7 +115,7 @@ Resultado final:
 | PDF | Paginas | Bytes |
 |---|---:|---:|
 | `dist/Tesis_Rodrigo_Rojas_con_datos.pdf` | 128 | 69,126,503 |
-| `dist/Presentacion_V1.pdf` | 32 | 21,217,554 |
+| `dist/Presentación.pdf` | 32 | 8,747,238 |
 
 Estos PDFs son resultados locales verificados; no quedan versionados en Git.
 
