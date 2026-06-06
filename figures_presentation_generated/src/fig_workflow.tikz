@@ -1,0 +1,25 @@
+\begin{tikzpicture}[
+  node distance=0.68cm,
+  stage/.style={
+    draw=uchileblue,
+    line width=0.72pt,
+    fill=softgray,
+    rounded corners=2pt,
+    align=center,
+    minimum height=0.88cm,
+    inner xsep=5pt,
+    inner ysep=4pt,
+    font=\scriptsize
+  },
+  arr/.style={-{Latex[length=2mm]}, line width=0.72pt, draw=uchileblue}
+]
+  \node[stage, text width=3.05cm] (in) {Entradas\\fuentes, sitio, GMPE, exposicion, vulnerabilidad};
+  \node[stage, right=0.68cm of in, text width=2.58cm] (oq) {OpenQuake\\Engine v3.23.2};
+  \node[stage, right=0.68cm of oq, text width=3.00cm] (post) {Postproceso\\curvas, mapas, metricas};
+  \node[stage, below=0.88cm of oq, text width=11.2cm] (families) {
+    DSHA \(\rightarrow\) PSHA Poisson/BPT \(\rightarrow\) riesgo por escenarios \(\rightarrow\) riesgo event-based
+  };
+  \draw[arr] (in) -- (oq);
+  \draw[arr] (oq) -- (post);
+  \draw[arr] (oq) -- (families);
+\end{tikzpicture}

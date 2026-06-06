@@ -1,0 +1,27 @@
+\begin{tikzpicture}[
+  node distance=0.86cm,
+  presbox/.style={
+    draw=uchileblue,
+    line width=0.72pt,
+    rounded corners=2pt,
+    fill=softgray,
+    align=center,
+    inner xsep=5pt,
+    inner ysep=4pt,
+    minimum width=2.85cm,
+    minimum height=0.78cm,
+    font=\scriptsize
+  },
+  presarrow/.style={-{Latex[length=2.1mm]}, line width=0.72pt, draw=uchileblue}
+]
+  \node[presbox] (haz) {Amenaza\\PGA, \(SA(1.0)\)};
+  \node[presbox, below left=of haz, xshift=-0.12cm] (dsha) {DSHA\\escenarios};
+  \node[presbox, below right=of haz, xshift=0.12cm] (psha) {PSHA\\PoE, \(\lambda(IM>im)\)};
+  \node[presbox, below=1.12cm of haz, text width=3.30cm] (risk) {Riesgo\\perdida, AAL, AALR, OEP};
+  \node[presbox, below=of risk, text width=3.15cm] (terr) {Lectura territorial\\priorizacion local};
+  \draw[presarrow] (haz) -- (dsha);
+  \draw[presarrow] (haz) -- (psha);
+  \draw[presarrow] (dsha) -- (risk);
+  \draw[presarrow] (psha) -- (risk);
+  \draw[presarrow] (risk) -- (terr);
+\end{tikzpicture}

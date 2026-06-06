@@ -1,0 +1,62 @@
+# Scientific presentation style for thesis Beamer figures.
+# Adapted from https://github.com/K-Dense-AI/scientific-agent-skills/scientific-visualization.
+# Tuned for projected 16:9 slides: larger text and heavier strokes than paper.
+
+figure.dpi: 100
+figure.facecolor: white
+figure.constrained_layout.use: False
+
+font.size: 10.8
+font.family: sans-serif
+font.sans-serif: Arial, Helvetica, DejaVu Sans, Liberation Sans
+
+axes.linewidth: 0.9
+axes.labelsize: 10.9
+axes.titlesize: 11.4
+axes.labelweight: normal
+axes.spines.top: False
+axes.spines.right: False
+axes.edgecolor: 2A2E33
+axes.labelcolor: 2A2E33
+axes.axisbelow: True
+axes.grid: False
+axes.prop_cycle: cycler('color', ['003A70', 'D55E00', '0072B2', 'E69F00', '009E73', 'CC79A7', '8A929B'])
+
+xtick.major.size: 3.0
+xtick.minor.size: 2.0
+xtick.major.width: 0.8
+xtick.minor.width: 0.6
+xtick.labelsize: 9.6
+xtick.direction: out
+xtick.color: 2A2E33
+
+ytick.major.size: 3.0
+ytick.minor.size: 2.0
+ytick.major.width: 0.8
+ytick.minor.width: 0.6
+ytick.labelsize: 9.6
+ytick.direction: out
+ytick.color: 2A2E33
+
+lines.linewidth: 2.05
+lines.markersize: 5.6
+lines.markeredgewidth: 1.0
+
+legend.fontsize: 9.6
+legend.frameon: False
+
+grid.color: D9DEE5
+grid.linewidth: 0.55
+grid.alpha: 0.70
+
+savefig.dpi: 300
+savefig.format: pdf
+savefig.bbox: tight
+savefig.pad_inches: 0.08
+savefig.facecolor: white
+savefig.transparent: False
+
+pdf.fonttype: 42
+ps.fonttype: 42
+svg.fonttype: none
+image.cmap: viridis
