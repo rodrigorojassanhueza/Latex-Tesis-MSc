@@ -1,12 +1,20 @@
 \begin{tikzpicture}[
   lvlname/.style={
+    text width=2.62cm,
     align=right,
-    font=\scriptsize\color{textgray},
+    font=\fontsize{6.4}{7.2}\selectfont\color{textgray},
+    anchor=east
+  },
+  lvlnamebpt/.style={
+    text width=2.62cm,
+    align=right,
+    font=\fontsize{6.4}{7.2}\selectfont\bfseries\color{accentred},
     anchor=east
   },
   lvlnote/.style={
-    font=\tiny\itshape\color{captiongray},
-    align=right
+    font=\fontsize{5.3}{6.0}\selectfont\itshape\color{accentred},
+    align=right,
+    inner sep=0pt
   },
   opt/.style={
     rectangle,
@@ -17,108 +25,116 @@
     minimum width=0.96cm,
     minimum height=0.40cm,
     align=center,
-    font=\scriptsize,
+    font=\fontsize{6.4}{7.2}\selectfont,
     inner sep=1.45pt
   },
   optbpt/.style={
     rectangle,
     draw=accentred,
     line width=0.58pt,
-    fill=accentred!6,
+    fill=white,
     rounded corners=1pt,
     minimum width=0.96cm,
     minimum height=0.40cm,
     align=center,
-    font=\scriptsize,
+    font=\fontsize{6.4}{7.2}\selectfont,
     inner sep=1.45pt
   },
-  weight/.style={font=\tiny\itshape\color{captiongray}, below=0.6pt},
+  wtag/.style={
+    font=\fontsize{6.4}{7.2}\selectfont\color{captiongray},
+    anchor=center,
+    align=center
+  },
+  weighthead/.style={
+    font=\fontsize{5.2}{6.0}\selectfont\bfseries\color{textgray},
+    anchor=south,
+    align=center
+  },
   connector/.style={draw=uchileblue, line width=0.58pt},
-  fork/.style={draw=uchileblue, line width=0.58pt}
+  fork/.style={draw=uchileblue, line width=0.58pt},
+  bptline/.style={draw=accentred, line width=0.58pt}
 ]
-  \def\xlabel{-4.05}
-  \def\xsep{-3.62}
+  \def\xlabel{-3.05}
+  \def\xsep{-2.66}
   \def\xc{1.18}
+  \def\xweight{4.62}
 
   \def\yI{0}
-  \def\yII{-0.88}
-  \def\yIII{-1.76}
-  \def\yIV{-2.72}
-  \def\yV{-3.68}
-  \def\yVI{-4.64}
-  \def\yVII{-5.66}
+  \def\yII{-0.82}
+  \def\yIII{-1.64}
+  \def\yIV{-2.54}
+  \def\yV{-3.44}
+  \def\yVI{-4.34}
+  \def\yVII{-5.24}
 
-  \draw[uchileblue!12, line width=1.4pt] (\xsep, 0.28) -- (\xsep, \yVII-0.30);
+  \draw[black!10, line width=0.8pt] (\xsep, 0.28) -- (\xsep, \yVII-0.30);
 
   \node[lvlname] at (\xlabel, \yI) {Modelo FSR};
+  \node[weighthead] at (\xweight, \yI+0.34) {Peso por rama\\dentro del nivel};
   \node[opt] (L1_l) at (0.05, \yI) {PO};
   \node[opt] (L1_c) at (\xc, \yI) {PP};
   \node[opt] (L1_r) at (2.31, \yI) {PP+RO};
-  \node[weight] at (L1_l.south) {$w=1/3$};
-  \node[weight] at (L1_c.south) {$w=1/3$};
-  \node[weight] at (L1_r.south) {$w=1/3$};
+  \node[wtag] at (\xweight, \yI) {1/3};
   \coordinate (start) at (\xc, \yI+0.43);
   \draw[connector] (start) -- (L1_c.north);
   \draw[fork] (start) -- (\xc, \yI+0.25) -| (L1_l.north);
   \draw[fork] (\xc, \yI+0.25) -| (L1_r.north);
 
-  \node[lvlname] at (\xlabel, \yII) {Inclinacion FSR};
+  \node[lvlname] at (\xlabel, \yII) {Inclinación FSR};
   \node[opt] (L2_l) at (0.56, \yII) {$34^\circ$};
   \node[opt] (L2_r) at (1.80, \yII) {$60^\circ$};
-  \node[weight] at (L2_l.south) {$w=1/2$};
-  \node[weight] at (L2_r.south) {$w=1/2$};
+  \node[wtag] at (\xweight, \yII) {1/2};
   \draw[connector] (L1_c.south) ++(0,-0.16) -- (\xc, \yII+0.26) -| (L2_l.north);
   \draw[fork] (\xc, \yII+0.26) -| (L2_r.north);
 
-  \node[lvlname] at (\xlabel, \yIII) {Profundidad minima\\de ruptura};
+  \node[lvlname] at (\xlabel, \yIII) {Profundidad mínima\\de ruptura};
   \node[opt] (L3_l) at (0.56, \yIII) {0 km};
   \node[opt] (L3_r) at (1.80, \yIII) {5 km};
-  \node[weight] at (L3_l.south) {$w=1/2$};
-  \node[weight] at (L3_r.south) {$w=1/2$};
+  \node[wtag] at (\xweight, \yIII) {1/2};
   \draw[connector] (\xc, \yII-0.36) -- (\xc, \yIII+0.26) -| (L3_l.north);
   \draw[fork] (\xc, \yIII+0.26) -| (L3_r.north);
 
-  \node[lvlname] at (\xlabel, \yIV) {GMPE cortical};
+  \node[lvlname] at (\xlabel, \yIV) {GMM cortical};
   \node[opt] (L4_a) at (-0.72, \yIV) {ASK};
   \node[opt] (L4_b) at ( 0.55, \yIV) {BSSA};
   \node[opt] (L4_c) at ( 1.82, \yIV) {CB};
   \node[opt] (L4_d) at ( 3.09, \yIV) {CY};
-  \foreach \n in {a,b,c,d} \node[weight] at (L4_\n.south) {$w=1/4$};
+  \node[wtag] at (\xweight, \yIV) {1/4};
   \draw[connector] (\xc, \yIII-0.36) -- (\xc, \yIV+0.26) -| (L4_a.north);
   \draw[fork] (\xc, \yIV+0.26) -| (L4_b.north);
   \draw[fork] (\xc, \yIV+0.26) -| (L4_c.north);
   \draw[fork] (\xc, \yIV+0.26) -| (L4_d.north);
 
-  \node[lvlname] at (\xlabel, \yV) {Periodo de retorno\\FSR (anos)};
+  \node[lvlname] at (\xlabel, \yV) {Período de retorno FSR};
   \node[opt] (L5_a) at (-0.72, \yV) {6500};
   \node[opt] (L5_b) at ( 0.55, \yV) {7000};
   \node[opt] (L5_c) at ( 1.82, \yV) {7500};
   \node[opt] (L5_d) at ( 3.09, \yV) {8000};
-  \foreach \n in {a,b,c,d} \node[weight] at (L5_\n.south) {$w=1/4$};
+  \node[wtag] at (\xweight, \yV) {1/4};
   \draw[connector] (\xc, \yIV-0.36) -- (\xc, \yV+0.26) -| (L5_a.north);
   \draw[fork] (\xc, \yV+0.26) -| (L5_b.north);
   \draw[fork] (\xc, \yV+0.26) -| (L5_c.north);
   \draw[fork] (\xc, \yV+0.26) -| (L5_d.north);
 
-  \node[lvlname] (L6_lbl) at (\xlabel, \yVI) {Tiempo desde el\\ultimo evento (anos)};
-  \node[lvlnote, below=0pt of L6_lbl.south east, anchor=north east] {(solo BPT)};
+  \node[lvlnamebpt] (L6_lbl) at (\xlabel, \yVI) {Tiempo desde el último evento};
+  \node[lvlnote, below=-0.6pt of L6_lbl.south east, anchor=north east] {Solo BPT};
   \node[optbpt] (L6_a) at (-0.72, \yVI) {6500};
   \node[optbpt] (L6_b) at ( 0.55, \yVI) {7000};
   \node[optbpt] (L6_c) at ( 1.82, \yVI) {7500};
   \node[optbpt] (L6_d) at ( 3.09, \yVI) {8000};
-  \foreach \n in {a,b,c,d} \node[weight] at (L6_\n.south) {$w=1/4$};
-  \draw[connector] (\xc, \yV-0.36) -- (\xc, \yVI+0.26) -| (L6_a.north);
-  \draw[fork] (\xc, \yVI+0.26) -| (L6_b.north);
-  \draw[fork] (\xc, \yVI+0.26) -| (L6_c.north);
-  \draw[fork] (\xc, \yVI+0.26) -| (L6_d.north);
+  \node[wtag] at (\xweight, \yVI) {1/4};
+  \draw[bptline] (\xc, \yV-0.36) -- (\xc, \yVI+0.26) -| (L6_a.north);
+  \draw[bptline] (\xc, \yVI+0.26) -| (L6_b.north);
+  \draw[bptline] (\xc, \yVI+0.26) -| (L6_c.north);
+  \draw[bptline] (\xc, \yVI+0.26) -| (L6_d.north);
 
-  \node[lvlname] at (\xlabel, \yVII) {GMPE subduccion\\interplaca e intraplaca};
-  \node[opt, minimum width=0.82cm] (L7_a) at (-1.24, \yVII) {AG};
-  \node[opt, minimum width=0.82cm] (L7_b) at (-0.03, \yVII) {KBCG};
-  \node[opt, minimum width=0.82cm] (L7_c) at ( 1.18, \yVII) {PSBAH};
-  \node[opt, minimum width=0.82cm] (L7_d) at ( 2.39, \yVII) {MBR};
-  \node[opt, minimum width=0.82cm] (L7_e) at ( 3.60, \yVII) {BCHU};
-  \foreach \n in {a,b,c,d,e} \node[weight] at (L7_\n.south) {$w=1/5$};
+  \node[lvlname] at (\xlabel, \yVII) {GMM de subducción\\interplaca e intraplaca};
+  \node[opt, minimum width=0.82cm] (L7_a) at (-1.06, \yVII) {AG};
+  \node[opt, minimum width=0.82cm] (L7_b) at ( 0.06, \yVII) {KBCG};
+  \node[opt, minimum width=0.82cm] (L7_c) at (\xc, \yVII) {PSBAH};
+  \node[opt, minimum width=0.82cm] (L7_d) at ( 2.30, \yVII) {MBR};
+  \node[opt, minimum width=0.82cm] (L7_e) at ( 3.42, \yVII) {BCHU};
+  \node[wtag] at (\xweight, \yVII) {1/5};
   \draw[connector] (\xc, \yVI-0.36) -- (\xc, \yVII+0.26) -| (L7_a.north);
   \draw[fork] (\xc, \yVII+0.26) -| (L7_b.north);
   \draw[fork] (\xc, \yVII+0.26) -- (L7_c.north);
