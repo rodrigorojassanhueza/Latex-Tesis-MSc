@@ -1,25 +1,51 @@
 \begin{tikzpicture}[
-  node distance=0.68cm,
-  stage/.style={
+  panel/.style={
     draw=uchileblue,
-    line width=0.72pt,
+    line width=0.78pt,
     fill=softgray,
-    rounded corners=2pt,
-    align=center,
-    minimum height=0.88cm,
-    inner xsep=5pt,
-    inner ysep=4pt,
-    font=\scriptsize
+    rounded corners=5pt,
+    minimum width=5.95cm,
+    minimum height=5.35cm
   },
-  arr/.style={-{Latex[length=2mm]}, line width=0.72pt, draw=uchileblue}
+  analysisbox/.style={
+    draw=uchileblue,
+    line width=0.82pt,
+    fill=white,
+    rounded corners=3pt,
+    align=center,
+    inner xsep=7pt,
+    inner ysep=6.5pt,
+    minimum height=0.86cm,
+    text width=4.75cm,
+    font=\fontsize{8.3}{9.3}\selectfont\bfseries
+  },
+  domaintitle/.style={
+    align=center,
+    text=uchileblue,
+    font=\fontsize{15.6}{17.0}\selectfont\bfseries
+  },
+  domainsubtitle/.style={
+    align=center,
+    text=captiongray,
+    font=\fontsize{8.8}{10.0}\selectfont\bfseries
+  }
 ]
-  \node[stage, text width=3.05cm] (in) {Entradas\\fuentes, sitio, GMPE, exposicion, vulnerabilidad};
-  \node[stage, right=0.68cm of in, text width=2.58cm] (oq) {OpenQuake\\Engine v3.23.2};
-  \node[stage, right=0.68cm of oq, text width=3.00cm] (post) {Postproceso\\curvas, mapas, metricas};
-  \node[stage, below=0.88cm of oq, text width=11.2cm] (families) {
-    DSHA \(\rightarrow\) PSHA Poisson/BPT \(\rightarrow\) riesgo por escenarios \(\rightarrow\) riesgo event-based
-  };
-  \draw[arr] (in) -- (oq);
-  \draw[arr] (oq) -- (post);
-  \draw[arr] (oq) -- (families);
+  \node[panel] (basin) at (-3.25,-0.24) {};
+  \node[panel] (buffer) at (3.25,-0.24) {};
+
+  \node[domaintitle] at (-3.25,1.72) {CUENCA};
+  \node[domainsubtitle] at (-3.25,1.20) {Amenaza sísmica};
+
+  \node[analysisbox] at (-3.25,0.25) {DSHA};
+  \node[analysisbox] at (-3.25,-1.18) {PSHA clásico\\[-0.1ex]
+    {\fontsize{7.2}{8.1}\selectfont\mdseries\textcolor{captiongray}{Poisson · BPT}}};
+
+  \node[domaintitle] at (3.25,1.72) {BUFFER FSR};
+  \node[domainsubtitle] at (3.25,1.20) {Riesgo sísmico};
+
+  \node[analysisbox] at (3.25,0.55) {Riesgo por escenarios};
+  \node[analysisbox] at (3.25,-0.78) {Basado en eventos\\[-0.1ex]
+    {\fontsize{7.2}{8.1}\selectfont\mdseries\textcolor{captiongray}{con FSR · Poisson}}};
+  \node[analysisbox] at (3.25,-2.10) {Basado en eventos\\[-0.1ex]
+    {\fontsize{7.2}{8.1}\selectfont\mdseries\textcolor{captiongray}{sin FSR · Poisson}}};
 \end{tikzpicture}
