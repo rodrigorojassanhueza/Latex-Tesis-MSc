@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image, ImageEnhance, ImageFilter
 from matplotlib.lines import Line2D
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Patch, Rectangle
 import matplotlib.patheffects as pe
 from matplotlib.ticker import LogFormatterMathtext, LogLocator
 from matplotlib import image as mpimg
@@ -64,6 +64,10 @@ WRAPPER_DIR = SRC_DIR / "wrappers"
 WRAPPER_BUILD = SRC_DIR / "_wrapper_build"
 TILE_CACHE_DIR = SRC_DIR / "tile_cache"
 RELIEF_PROFILE_CSV = GEN / "data" / "processed" / "relief_profile_latS33p459_lon80W_64W.csv"
+DATA_EXTERNAL_DIR = GEN / "data" / "external"
+SCENARIO_RUPTURE_EDGE_WIDTH = 0.55
+SCENARIO_URBAN_BOUNDARY_WIDTH = 2.0 * SCENARIO_RUPTURE_EDGE_WIDTH
+SCENARIO_URBAN_BOUNDARY_HALO_WIDTH = SCENARIO_URBAN_BOUNDARY_WIDTH + 0.85
 
 ASSETS_PRESENTATION = REPO / "assets" / "figures" / "presentation"
 ASSETS_TEMPLATE = REPO / "assets" / "figures" / "template" / "departamentos"
@@ -107,6 +111,14 @@ SUBDUCTION_MAT = (
 )
 FSR_RUPTURE_XML = MODELOS / "hazard" / "scenario" / "geometrias" / "NT_75_34.xml"
 SUBDUCTION_MODEL_OUTPUT = "modelo_subduccion_zonas_centradas.pdf"
+SANTIAGO_URBAN_BOUNDARY_URL = (
+    "https://lineasdebasepublicas.mma.gob.cl/datos_abiertos/dataset/"
+    "68659b39-fbd5-4997-b9b6-b93d55036dcc/resource/"
+    "72db15a6-6519-48ec-a17a-325f0bc3b5b3/download/"
+    "prc-region-metropolitana-limite-urbano_geojson.zip"
+)
+SANTIAGO_URBAN_BOUNDARY_ZIP = DATA_EXTERNAL_DIR / "prc-region-metropolitana-limite-urbano_geojson.zip"
+SANTIAGO_URBAN_BOUNDARY_LABEL = "Límite urbano RM"
 
 
 @dataclass
@@ -1829,6 +1841,22 @@ def add_panel_label(
     )
 
 
+def add_scenario_panel_letter(ax: mpl.axes.Axes, label: str) -> None:
+    color = "#111111" if label == "A" else "white"
+    ax.text(
+        0.025,
+        0.975,
+        f"({label})",
+        transform=ax.transAxes,
+        ha="left",
+        va="top",
+        fontsize=7.1,
+        fontweight="bold",
+        color=color,
+        zorder=72,
+    )
+
+
 def load_santiago_relief_profile() -> pd.DataFrame | None:
     if not RELIEF_PROFILE_CSV.exists():
         return None
@@ -2005,6 +2033,759 @@ def read_nrml_poslist(pos_list: ET.Element | None) -> np.ndarray | None:
         return None
     points = np.array(pos_list.text.strip().split(), dtype=float).reshape(-1, 3)
     return points if np.all(np.isfinite(points)) else None
+
+
+def ensure_cached_download(url: str, destination: Path) -> Path:
+    if destination.exists() and destination.stat().st_size > 0:
+        return destination
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    request = Request(url, headers={"User-Agent": "LATEX_TESIS figure generator"})
+    with urlopen(request, timeout=90) as response, destination.open("wb") as fh:
+        shutil.copyfileobj(response, fh)
+    return destination
+
+
+def source_crs_from_geojson(data: dict[str, object]) -> str:
+    crs = data.get("crs")
+    if isinstance(crs, dict):
+        properties = crs.get("properties")
+        if isinstance(properties, dict):
+            name = properties.get("name")
+            if isinstance(name, str) and name:
+                if "CRS84" in name or "4326" in name:
+                    return "EPSG:4326"
+                return name
+    return "EPSG:4326"
+
+
+def coordinate_transformer(source_crs: str, target_crs: str) -> Callable[[float, float], tuple[float, float]] | None:
+    if source_crs.upper() == target_crs.upper():
+        return None
+    try:
+        from pyproj import Transformer
+    except Exception as exc:
+        raise RuntimeError(f"No se pudo reproyectar {source_crs} a {target_crs}; falta pyproj.") from exc
+    transformer = Transformer.from_crs(source_crs, target_crs, always_xy=True)
+    return lambda lon, lat: transformer.transform(lon, lat)
+
+
+def ring_area_xy(ring: np.ndarray) -> float:
+    if len(ring) < 4:
+        return 0.0
+    x = ring[:, 0]
+    y = ring[:, 1]
+    return float(0.5 * abs(np.dot(x[:-1], y[1:]) - np.dot(y[:-1], x[1:])))
+
+
+def clean_geojson_ring(
+    coords: list[object],
+    transform: Callable[[float, float], tuple[float, float]] | None,
+) -> np.ndarray | None:
+    points: list[tuple[float, float]] = []
+    for coord in coords:
+        if not isinstance(coord, (list, tuple)) or len(coord) < 2:
+            continue
+        try:
+            lon = float(coord[0])
+            lat = float(coord[1])
+        except (TypeError, ValueError):
+            continue
+        if not (math.isfinite(lon) and math.isfinite(lat)):
+            continue
+        if transform is not None:
+            lon, lat = transform(lon, lat)
+        point = (lon, lat)
+        if not points or not math.isclose(points[-1][0], lon, abs_tol=1e-10) or not math.isclose(points[-1][1], lat, abs_tol=1e-10):
+            points.append(point)
+    if len(points) < 3:
+        return None
+    if not (
+        math.isclose(points[0][0], points[-1][0], abs_tol=1e-10)
+        and math.isclose(points[0][1], points[-1][1], abs_tol=1e-10)
+    ):
+        points.append(points[0])
+    ring = np.asarray(points, dtype=float)
+    if len(ring) < 4 or ring_area_xy(ring) <= 1e-12:
+        return None
+    return ring
+
+
+def iter_geojson_polygon_rings(geometry: dict[str, object]) -> list[list[object]]:
+    geom_type = geometry.get("type")
+    coordinates = geometry.get("coordinates")
+    if not isinstance(coordinates, list):
+        return []
+    if geom_type == "Polygon":
+        return [ring for ring in coordinates if isinstance(ring, list)]
+    if geom_type == "MultiPolygon":
+        rings: list[list[object]] = []
+        for polygon in coordinates:
+            if isinstance(polygon, list):
+                rings.extend([ring for ring in polygon if isinstance(ring, list)])
+        return rings
+    return []
+
+
+def iter_geojson_polygon_exterior_rings(geometry: dict[str, object]) -> list[list[object]]:
+    geom_type = geometry.get("type")
+    coordinates = geometry.get("coordinates")
+    if not isinstance(coordinates, list):
+        return []
+    if geom_type == "Polygon":
+        return [coordinates[0]] if coordinates and isinstance(coordinates[0], list) else []
+    if geom_type == "MultiPolygon":
+        rings: list[list[object]] = []
+        for polygon in coordinates:
+            if isinstance(polygon, list) and polygon and isinstance(polygon[0], list):
+                rings.append(polygon[0])
+        return rings
+    return []
+
+
+def make_ogr_geometry_valid(geometry: object) -> object:
+    try:
+        if hasattr(geometry, "MakeValid") and not geometry.IsValid():
+            geometry = geometry.MakeValid()
+    except Exception:
+        pass
+    try:
+        if not geometry.IsValid():
+            buffered = geometry.Buffer(0)
+            if buffered is not None and not buffered.IsEmpty():
+                geometry = buffered
+    except Exception:
+        pass
+    return geometry
+
+
+def collect_ogr_polygons(geometry: object, polygons: list[object]) -> None:
+    geom_name = geometry.GetGeometryName().upper()
+    if geom_name == "POLYGON":
+        polygons.append(geometry.Clone())
+        return
+    if geom_name in {"MULTIPOLYGON", "GEOMETRYCOLLECTION"}:
+        for idx in range(geometry.GetGeometryCount()):
+            collect_ogr_polygons(geometry.GetGeometryRef(idx), polygons)
+
+
+def extract_urban_boundary_with_ogr(
+    features: list[dict[str, object]],
+    transform: Callable[[float, float], tuple[float, float]] | None,
+) -> list[np.ndarray] | None:
+    try:
+        from osgeo import ogr
+    except Exception:
+        return None
+
+    multipolygon = ogr.Geometry(ogr.wkbMultiPolygon)
+    for feature in features:
+        geometry = feature.get("geometry")
+        if not isinstance(geometry, dict):
+            continue
+        ogr_geometry = ogr.CreateGeometryFromJson(json.dumps(geometry))
+        if ogr_geometry is None:
+            continue
+        ogr_geometry = make_ogr_geometry_valid(ogr_geometry)
+        polygons: list[object] = []
+        collect_ogr_polygons(ogr_geometry, polygons)
+        for polygon in polygons:
+            if polygon is not None and not polygon.IsEmpty():
+                multipolygon.AddGeometry(make_ogr_geometry_valid(polygon))
+
+    if multipolygon.GetGeometryCount() == 0:
+        return None
+
+    try:
+        dissolved = multipolygon.UnionCascaded()
+    except Exception:
+        dissolved = None
+        for idx in range(multipolygon.GetGeometryCount()):
+            part = multipolygon.GetGeometryRef(idx)
+            if part is None or part.IsEmpty():
+                continue
+            dissolved = part.Clone() if dissolved is None else dissolved.Union(part)
+
+    if dissolved is None or dissolved.IsEmpty():
+        return None
+    dissolved = make_ogr_geometry_valid(dissolved)
+
+    polygons: list[object] = []
+    collect_ogr_polygons(dissolved, polygons)
+    boundaries: list[np.ndarray] = []
+    for polygon in polygons:
+        if polygon.GetGeometryCount() < 1:
+            continue
+        ring_ref = polygon.GetGeometryRef(0)
+        points: list[tuple[float, float]] = []
+        for point_idx in range(ring_ref.GetPointCount()):
+            lon, lat, *_ = ring_ref.GetPoint(point_idx)
+            if transform is not None:
+                lon, lat = transform(lon, lat)
+            points.append((float(lon), float(lat)))
+        ring = np.asarray(points, dtype=float)
+        if len(ring) < 4:
+            continue
+        if not np.allclose(ring[0], ring[-1]):
+            ring = np.vstack([ring, ring[:1]])
+        if ring_area_xy(ring) > 1e-12:
+            boundaries.append(ring)
+
+    return boundaries or None
+
+
+def dissolve_numpy_polygon_exteriors(polygons: list[np.ndarray]) -> list[np.ndarray]:
+    if len(polygons) <= 1:
+        return polygons
+    try:
+        from osgeo import ogr
+    except Exception:
+        return dissolve_polygon_boundaries(polygons)
+
+    multipolygon = ogr.Geometry(ogr.wkbMultiPolygon)
+    for polygon in polygons:
+        coords = np.asarray(polygon, dtype=float)
+        if len(coords) < 3 or not np.all(np.isfinite(coords)):
+            continue
+        if not np.allclose(coords[0], coords[-1]):
+            coords = np.vstack([coords, coords[:1]])
+        ring = ogr.Geometry(ogr.wkbLinearRing)
+        for lon, lat in coords[:, :2]:
+            ring.AddPoint(float(lon), float(lat))
+        ogr_polygon = ogr.Geometry(ogr.wkbPolygon)
+        ogr_polygon.AddGeometry(ring)
+        ogr_polygon = make_ogr_geometry_valid(ogr_polygon)
+        if not ogr_polygon.IsEmpty():
+            multipolygon.AddGeometry(ogr_polygon)
+
+    if multipolygon.GetGeometryCount() == 0:
+        return dissolve_polygon_boundaries(polygons)
+
+    try:
+        dissolved = multipolygon.UnionCascaded()
+    except Exception:
+        dissolved = None
+        for idx in range(multipolygon.GetGeometryCount()):
+            part = multipolygon.GetGeometryRef(idx)
+            if part is None or part.IsEmpty():
+                continue
+            dissolved = part.Clone() if dissolved is None else dissolved.Union(part)
+
+    if dissolved is None or dissolved.IsEmpty():
+        return dissolve_polygon_boundaries(polygons)
+    dissolved = make_ogr_geometry_valid(dissolved)
+
+    ogr_polygons: list[object] = []
+    collect_ogr_polygons(dissolved, ogr_polygons)
+    exteriors: list[np.ndarray] = []
+    for ogr_polygon in ogr_polygons:
+        if ogr_polygon.GetGeometryCount() < 1:
+            continue
+        ring_ref = ogr_polygon.GetGeometryRef(0)
+        points = [
+            (float(ring_ref.GetPoint(idx)[0]), float(ring_ref.GetPoint(idx)[1]))
+            for idx in range(ring_ref.GetPointCount())
+        ]
+        ring = np.asarray(points, dtype=float)
+        if len(ring) < 4:
+            continue
+        if not np.allclose(ring[0], ring[-1]):
+            ring = np.vstack([ring, ring[:1]])
+        if ring_area_xy(ring) > 1e-12:
+            exteriors.append(ring)
+
+    return exteriors or dissolve_polygon_boundaries(polygons)
+
+
+def load_santiago_urban_boundary(base_crs: str = "EPSG:4326") -> list[np.ndarray]:
+    zip_path = ensure_cached_download(SANTIAGO_URBAN_BOUNDARY_URL, SANTIAGO_URBAN_BOUNDARY_ZIP)
+    with zipfile.ZipFile(zip_path) as archive:
+        geojson_name = next(
+            (name for name in archive.namelist() if name.lower().endswith((".geojson", ".json"))),
+            None,
+        )
+        if geojson_name is None:
+            raise FileNotFoundError(f"No se encontro GeoJSON dentro de {zip_path}")
+        with archive.open(geojson_name) as fh:
+            data = json.load(fh)
+
+    transform = coordinate_transformer(source_crs_from_geojson(data), base_crs)
+    features = [feature for feature in data.get("features", []) if isinstance(feature, dict)]
+    ogr_boundary = extract_urban_boundary_with_ogr(features, transform)
+    if ogr_boundary:
+        return ogr_boundary
+
+    rings: list[np.ndarray] = []
+    for feature in features:
+        geometry = feature.get("geometry")
+        if not isinstance(geometry, dict):
+            continue
+        for ring_coords in iter_geojson_polygon_exterior_rings(geometry):
+            ring = clean_geojson_ring(ring_coords, transform)
+            if ring is not None:
+                rings.append(ring)
+
+    if not rings:
+        raise RuntimeError("No se obtuvieron geometrias validas del limite urbano PRC RM.")
+    return dissolve_polygon_boundaries(rings)
+
+
+def trace_from_shallow_points(points_xy: np.ndarray) -> np.ndarray:
+    if len(points_xy) < 2:
+        return np.empty((0, 2), dtype=float)
+    xy = np.asarray(points_xy, dtype=float)
+    _, idx = np.unique(np.round(xy, 7), axis=0, return_index=True)
+    xy = xy[np.sort(idx)]
+    if len(xy) < 2:
+        return np.empty((0, 2), dtype=float)
+    center = xy.mean(axis=0)
+    cov = (xy - center).T @ (xy - center)
+    eigvals, eigvecs = np.linalg.eigh(cov)
+    direction = eigvecs[:, int(np.argmax(eigvals))]
+    return xy[np.argsort((xy - center) @ direction)]
+
+
+def append_unique_vertex(vertices: list[np.ndarray], point: np.ndarray, *, atol: float = 1e-7) -> None:
+    xy = np.asarray(point, dtype=float)[:2]
+    if vertices and np.allclose(vertices[-1], xy, atol=atol):
+        return
+    vertices.append(xy)
+
+
+def dissolve_polygon_boundaries(polygons: list[np.ndarray]) -> list[np.ndarray]:
+    if len(polygons) <= 1:
+        return polygons
+
+    def vertex_key(point: np.ndarray) -> tuple[float, float]:
+        return (round(float(point[0]), 8), round(float(point[1]), 8))
+
+    edge_map: dict[
+        tuple[tuple[float, float], tuple[float, float]],
+        tuple[tuple[float, float], tuple[float, float], np.ndarray, np.ndarray],
+    ] = {}
+    for poly in polygons:
+        coords = np.asarray(poly, dtype=float)
+        if len(coords) < 4:
+            continue
+        if not np.allclose(coords[0], coords[-1]):
+            coords = np.vstack([coords, coords[:1]])
+        for start, end in zip(coords[:-1], coords[1:]):
+            u = vertex_key(start)
+            v = vertex_key(end)
+            if u == v:
+                continue
+            key = tuple(sorted((u, v)))
+            if key in edge_map:
+                del edge_map[key]
+            else:
+                edge_map[key] = (u, v, np.asarray(start, dtype=float), np.asarray(end, dtype=float))
+    if not edge_map:
+        return polygons
+
+    edges = list(edge_map.values())
+    incident: dict[tuple[float, float], list[int]] = {}
+    for idx, (u, v, _start, _end) in enumerate(edges):
+        incident.setdefault(u, []).append(idx)
+        incident.setdefault(v, []).append(idx)
+
+    unused = set(range(len(edges)))
+    rings: list[np.ndarray] = []
+    while unused:
+        first_idx = unused.pop()
+        u, v, start_arr, end_arr = edges[first_idx]
+        start_key = u
+        current_key = v
+        ring = [start_arr, end_arr]
+
+        guard = 0
+        while current_key != start_key and guard < len(edges) + 5:
+            guard += 1
+            candidates = [idx for idx in incident.get(current_key, []) if idx in unused]
+            if not candidates:
+                break
+            next_idx = candidates[0]
+            unused.remove(next_idx)
+            next_u, next_v, next_start, next_end = edges[next_idx]
+            if next_u == current_key:
+                ring.append(next_end)
+                current_key = next_v
+            else:
+                ring.append(next_start)
+                current_key = next_u
+
+        if len(ring) >= 4 and current_key == start_key:
+            ring_arr = np.vstack(ring)
+            if not np.allclose(ring_arr[0], ring_arr[-1]):
+                ring_arr = np.vstack([ring_arr, ring_arr[:1]])
+            rings.append(ring_arr)
+
+    return rings or polygons
+
+
+def parse_scenario_rupture_xml(path: Path) -> tuple[list[np.ndarray], np.ndarray, tuple[float, float] | None]:
+    ns = {"nrml": "http://openquake.org/xmlns/nrml/0.5", "gml": "http://www.opengis.net/gml"}
+    root = ET.parse(path).getroot()
+    hypocenter = root.find(".//nrml:hypocenter", ns)
+    if hypocenter is None:
+        hypocenter = root.find(".//hypocenter")
+    hypo: tuple[float, float] | None = None
+    if hypocenter is not None:
+        try:
+            hypo = (float(hypocenter.attrib["lon"]), float(hypocenter.attrib["lat"]))
+        except (KeyError, ValueError):
+            hypo = None
+
+    top = root.find(".//nrml:faultTopEdge/gml:LineString/gml:posList", ns)
+    bottom = root.find(".//nrml:faultBottomEdge/gml:LineString/gml:posList", ns)
+    top_points = read_nrml_poslist(top)
+    bottom_points = read_nrml_poslist(bottom)
+    if top_points is not None and bottom_points is not None:
+        ring = np.vstack([top_points[:, :2], bottom_points[::-1, :2], top_points[:1, :2]])
+        return [ring], top_points[:, :2], hypo
+
+    polygons: list[np.ndarray] = []
+    shallow_points: list[np.ndarray] = []
+    top_edge: list[np.ndarray] = []
+    bottom_edge: list[np.ndarray] = []
+    contiguous_strip = True
+    for kite_surface in root.findall(".//nrml:kiteSurface", ns):
+        profiles = kite_surface.findall(".//nrml:profile", ns)
+        if len(profiles) < 2:
+            continue
+        first = read_nrml_poslist(profiles[0].find(".//gml:posList", ns))
+        second = read_nrml_poslist(profiles[1].find(".//gml:posList", ns))
+        if first is None or second is None:
+            continue
+        a_shallow, a_deep = first[int(np.nanargmin(first[:, 2]))], first[int(np.nanargmax(first[:, 2]))]
+        b_shallow, b_deep = second[int(np.nanargmin(second[:, 2]))], second[int(np.nanargmax(second[:, 2]))]
+        shallow_points.extend([a_shallow[:2], b_shallow[:2]])
+        polygons.append(np.vstack([a_shallow[:2], b_shallow[:2], b_deep[:2], a_deep[:2], a_shallow[:2]]))
+
+        if top_edge and not np.allclose(top_edge[-1], a_shallow[:2], atol=1e-7):
+            contiguous_strip = False
+        if bottom_edge and not np.allclose(bottom_edge[-1], a_deep[:2], atol=1e-7):
+            contiguous_strip = False
+        append_unique_vertex(top_edge, a_shallow[:2])
+        append_unique_vertex(bottom_edge, a_deep[:2])
+        append_unique_vertex(top_edge, b_shallow[:2])
+        append_unique_vertex(bottom_edge, b_deep[:2])
+
+    if contiguous_strip and len(top_edge) >= 2 and len(bottom_edge) >= 2:
+        top_arr = np.vstack(top_edge)
+        bottom_arr = np.vstack(bottom_edge)
+        ring = np.vstack([top_arr, bottom_arr[::-1], top_arr[:1]])
+        return [ring], top_arr, hypo
+
+    trace = trace_from_shallow_points(np.vstack(shallow_points)) if shallow_points else np.empty((0, 2), dtype=float)
+    polygons = dissolve_numpy_polygon_exteriors(polygons)
+    return polygons, trace, hypo
+
+
+def format_lon_w_compact(value: float, _pos: int | None = None) -> str:
+    abs_value = abs(value)
+    decimals = 0 if math.isclose(abs_value, round(abs_value), abs_tol=0.04) else 1
+    return f"{abs_value:.{decimals}f}\N{DEGREE SIGN}W"
+
+
+def format_lat_s_compact(value: float, _pos: int | None = None) -> str:
+    abs_value = abs(value)
+    decimals = 0 if math.isclose(abs_value, round(abs_value), abs_tol=0.04) else 1
+    return f"{abs_value:.{decimals}f}\N{DEGREE SIGN}S"
+
+
+def finish_scenario_map_axis(
+    ax: mpl.axes.Axes,
+    bbox: tuple[float, float, float, float],
+    *,
+    xticks: list[float],
+    yticks: list[float],
+    show_ylabel: bool = True,
+    anchor: str = "C",
+    ytick_label_side: str = "left",
+) -> None:
+    ax.set_xlim(bbox[0], bbox[1])
+    ax.set_ylim(bbox[2], bbox[3])
+    ax.set_aspect(1 / math.cos(math.radians(-30.0)), adjustable="box")
+    ax.set_anchor(anchor)
+    ax.set_xlabel("Longitud", fontsize=FIG3_AXIS_LABEL_SIZE, labelpad=1.5)
+    ax.set_ylabel("Latitud" if show_ylabel else "", fontsize=FIG3_AXIS_LABEL_SIZE, labelpad=1.5)
+    ax.set_xticks(xticks)
+    ax.set_yticks(yticks)
+    ax.xaxis.set_major_formatter(mpl.ticker.FuncFormatter(format_lon_w_compact))
+    ax.yaxis.set_major_formatter(mpl.ticker.FuncFormatter(format_lat_s_compact))
+    ax.tick_params(
+        axis="both",
+        labelsize=FIG3_TICK_LABEL_SIZE,
+        colors=TEXT_GRAY,
+        length=2.8,
+        width=0.72,
+        top=True,
+        right=True,
+        labeltop=False,
+        labelright=False,
+        direction="out",
+    )
+    ax.tick_params(
+        axis="y",
+        labelleft=ytick_label_side == "left",
+        labelright=ytick_label_side == "right",
+    )
+    ax.grid(False)
+    set_four_sided_axis(ax, linewidth=0.65)
+
+
+def plot_scenario_geometries_on_axis(
+    ax: mpl.axes.Axes,
+    bbox: tuple[float, float, float, float],
+    geometries: list[dict[str, object]],
+    urban_boundary: list[np.ndarray],
+    *,
+    show_zoom_box: bool,
+    show_santiago_label: bool,
+    show_urban_boundary: bool = True,
+    zoom_box_bbox: tuple[float, float, float, float] | None = None,
+) -> None:
+    if not plot_sober_land_background(ax, bbox):
+        ax.set_facecolor(FIG3_MAP_OCEAN)
+        ax.axvspan(bbox[0], -70.0, color=FIG3_MAP_OCEAN, zorder=0.1)
+        ax.axvspan(-70.0, bbox[1], color=FIG3_MAP_LAND, zorder=0.1)
+
+    for geom in geometries:
+        label = str(geom["label"])
+        color = str(geom["color"])
+        is_fsr = bool(geom["is_fsr"])
+        alpha = 1.0
+        edgecolor = "#000000"
+        linewidth = SCENARIO_RUPTURE_EDGE_WIDTH
+        antialiased = True
+        zorder = 32 if is_fsr else 3 if label == "Interplaca" else 4
+        for polygon in geom["polygons"]:  # type: ignore[index]
+            poly = np.asarray(polygon, dtype=float)
+            patches = ax.fill(
+                poly[:, 0],
+                poly[:, 1],
+                facecolor=color,
+                edgecolor=edgecolor,
+                linewidth=linewidth,
+                alpha=alpha,
+                antialiased=antialiased,
+                zorder=zorder,
+            )
+
+    for geom in geometries:
+        color = str(geom["color"])
+        if bool(geom["is_fsr"]):
+            continue
+        trace = np.asarray(geom["trace"], dtype=float)
+        if len(trace) >= 2:
+            ax.plot(
+                trace[:, 0],
+                trace[:, 1],
+                color="#000000",
+                linewidth=SCENARIO_RUPTURE_EDGE_WIDTH,
+                alpha=1.0,
+                solid_capstyle="round",
+                zorder=6,
+            )
+
+    if show_zoom_box:
+        zoom_bbox = zoom_box_bbox or (-71.26, -70.08, -34.02, -32.95)
+        ax.add_patch(
+            Rectangle(
+                (zoom_bbox[0], zoom_bbox[2]),
+                zoom_bbox[1] - zoom_bbox[0],
+                zoom_bbox[3] - zoom_bbox[2],
+                facecolor="none",
+                edgecolor="#1F2429",
+                linewidth=0.70,
+                linestyle=(0, (4, 2.5)),
+                zorder=50,
+            )
+        )
+
+    for geom in geometries:
+        if not bool(geom["is_fsr"]):
+            continue
+        color = str(geom["color"])
+        for polygon in geom["polygons"]:  # type: ignore[index]
+            poly = np.asarray(polygon, dtype=float)
+            ax.fill(
+                poly[:, 0],
+                poly[:, 1],
+                facecolor=color,
+                edgecolor="#000000",
+                linewidth=SCENARIO_RUPTURE_EDGE_WIDTH,
+                alpha=1.0,
+                antialiased=True,
+                zorder=64,
+            )
+
+    if show_urban_boundary:
+        for boundary in urban_boundary:
+            line = np.asarray(boundary, dtype=float)
+            if len(line) < 2:
+                continue
+            ax.plot(
+                line[:, 0],
+                line[:, 1],
+                color="#111111",
+                linewidth=SCENARIO_URBAN_BOUNDARY_WIDTH,
+                alpha=1.0,
+                solid_capstyle="round",
+                solid_joinstyle="round",
+                zorder=70,
+                path_effects=[pe.withStroke(linewidth=SCENARIO_URBAN_BOUNDARY_HALO_WIDTH, foreground="white")],
+            )
+
+
+def generate_scenario_geometry_vector() -> None:
+    geom_dir = MODELOS / "hazard" / "scenario" / "geometrias"
+    specs = [
+        ("Interplaca", "rupture_inter_93.xml", INTER_BLUE, "*", False),
+        ("Intraplaca", "rupture_intra_80.xml", INTRA_GOLD, "D", False),
+        ("FSR", "NT_75_34.xml", FSR_MAP_TRACE, "^", True),
+    ]
+    geometries: list[dict[str, object]] = []
+    missing = [geom_dir / file_name for _label, file_name, _color, _marker, _is_fsr in specs if not (geom_dir / file_name).exists()]
+    if missing:
+        raise FileNotFoundError("Faltan XML de geometrias DSHA: " + ", ".join(as_posix(path) for path in missing))
+    for label, file_name, color, marker, is_fsr in specs:
+        polygons, trace, hypo = parse_scenario_rupture_xml(geom_dir / file_name)
+        geometries.append(
+            {
+                "label": label,
+                "color": color,
+                "marker": marker,
+                "is_fsr": is_fsr,
+                "polygons": polygons,
+                "trace": trace,
+                "hypo": hypo,
+            }
+        )
+    urban_boundary = load_santiago_urban_boundary()
+
+    regional_bbox = (-75.6, -68.6, -36.6, -24.6)
+    zoom_bbox = (-71.26, -70.08, -34.02, -32.95)
+    fig = plt.figure(figsize=(5.28, 3.04), constrained_layout=False)
+    grid = fig.add_gridspec(1, 2, width_ratios=[0.84, 1.58], wspace=0.145)
+    ax_regional = fig.add_subplot(grid[0, 0])
+    ax_zoom = fig.add_subplot(grid[0, 1])
+
+    plot_scenario_geometries_on_axis(
+        ax_regional,
+        regional_bbox,
+        geometries,
+        urban_boundary,
+        show_zoom_box=True,
+        show_santiago_label=False,
+        show_urban_boundary=False,
+        zoom_box_bbox=zoom_bbox,
+    )
+    finish_scenario_map_axis(
+        ax_regional,
+        regional_bbox,
+        xticks=[-75, -70],
+        yticks=[-35, -30, -25],
+        show_ylabel=True,
+        anchor="E",
+    )
+    add_south_america_locator_inset(ax_regional, regional_bbox)
+
+    plot_scenario_geometries_on_axis(
+        ax_zoom,
+        zoom_bbox,
+        geometries,
+        urban_boundary,
+        show_zoom_box=False,
+        show_santiago_label=True,
+    )
+    finish_scenario_map_axis(
+        ax_zoom,
+        zoom_bbox,
+        xticks=[-71.0, -70.5],
+        yticks=[-34.0, -33.5, -33.0],
+        show_ylabel=False,
+        anchor="NW",
+        ytick_label_side="right",
+    )
+
+    add_scenario_panel_letter(ax_regional, "A")
+    add_scenario_panel_letter(ax_zoom, "B")
+    fsr_handle = Patch(
+        facecolor=FSR_MAP_TRACE,
+        edgecolor="#000000",
+        alpha=1.0,
+        linewidth=SCENARIO_RUPTURE_EDGE_WIDTH,
+        label="FSR",
+    )
+    inter_handle = Patch(
+        facecolor=INTER_BLUE,
+        edgecolor="#000000",
+        alpha=1.0,
+        linewidth=SCENARIO_RUPTURE_EDGE_WIDTH,
+        label="Interplaca",
+    )
+    intra_handle = Patch(
+        facecolor=INTRA_GOLD,
+        edgecolor="#000000",
+        alpha=1.0,
+        linewidth=SCENARIO_RUPTURE_EDGE_WIDTH,
+        label="Intraplaca",
+    )
+    urban_handle = Line2D(
+        [0],
+        [0],
+        color="#111111",
+        linewidth=SCENARIO_URBAN_BOUNDARY_WIDTH,
+        label=SANTIAGO_URBAN_BOUNDARY_LABEL,
+    )
+    fig.subplots_adjust(left=0.082, right=0.982, top=0.952, bottom=0.265)
+    regional_pos = ax_regional.get_position()
+    zoom_pos = ax_zoom.get_position()
+    group_center_x = 0.5 * (regional_pos.x0 + zoom_pos.x1)
+    group_bottom_y = min(regional_pos.y0, zoom_pos.y0)
+    legend = fig.legend(
+        handles=[fsr_handle, inter_handle, intra_handle, urban_handle],
+        loc="upper center",
+        bbox_to_anchor=(group_center_x, group_bottom_y - 0.095),
+        bbox_transform=fig.transFigure,
+        ncol=2,
+        fontsize=5.65,
+        frameon=True,
+        framealpha=0.92,
+        facecolor="white",
+        edgecolor="#D8DDE0",
+        borderpad=0.32,
+        handlelength=1.35,
+        handletextpad=0.40,
+        columnspacing=0.85,
+        labelspacing=0.28,
+    )
+    legend.set_zorder(70)
+
+    remove_manifest_for_output("fig_4_2_escenarios_simulados.pdf")
+    save_plot(
+        fig,
+        "fig_4_2_escenarios_simulados.pdf",
+        original_path="assets/figures/presentation/fig_4_2_escenarios_simulados.pdf",
+        slide="12",
+        change=(
+            "Redibujada desde XML como cartografia vectorial con el mismo lenguaje visual de la Figura 3: "
+            "fondo mar/tierra sobrio, minimapa regional, paneles (A)-(B), ejes geograficos, "
+            "tipografia sans-serif y rupturas con jerarquia visual; la FSR se reconstruye "
+            "desde el borde somero y profundo real de las superficies kiteSurface del XML "
+            "y queda resaltada con halo; superpone el contorno exterior disuelto de la capa oficial "
+            "PRC Limite Urbano RM MMA-MINVU, preservando islas urbanas externas, sin relleno "
+            "ni bordes internos."
+        ),
+        source_data=(
+            f"{as_posix(geom_dir / 'NT_75_34.xml')}; "
+            f"{as_posix(geom_dir / 'rupture_intra_80.xml')}; "
+            f"{as_posix(geom_dir / 'rupture_inter_93.xml')}; "
+            "Natural Earth 1:50m land GeoJSON para fondo cartografico; "
+            f"{SANTIAGO_URBAN_BOUNDARY_URL}"
+        ),
+        png_dpi=600,
+    )
 
 
 def interpolate_point_at_latitude(a: np.ndarray, b: np.ndarray, target_lat: float) -> np.ndarray | None:
@@ -2913,6 +3694,7 @@ def normalize_wrapped_figures() -> None:
 def restyle_identified_sources() -> None:
     generate_qgis_trazas()
     generate_subduction_model()
+    generate_scenario_geometry_vector()
     prepare_qgis_map_inputs()
     generate_qgis_maps()
 
@@ -2950,24 +3732,6 @@ def restyle_identified_sources() -> None:
             ),
             script_or_source=f"{as_posix(Path(__file__))}; {as_posix(QGIS_MAP_HELPER)}",
         )
-
-    remove_manifest_for_output("fig_4_2_escenarios_simulados.pdf")
-    add_manifest(
-        original_path="assets/figures/presentation/fig_4_2_escenarios_simulados.pdf",
-        new_path=PDF_DIR / "fig_4_2_escenarios_simulados.pdf",
-        slide="12",
-        original_type="pdf",
-        new_type="pdf/svg/png",
-        change="Regenerada como layout QGIS desde los XML originales de geometria DSHA, manteniendo vista regional, zoom, superficies, trazas y epicentros; se agrega fondo satelital y marco cebra.",
-        source_data=(
-            f"{as_posix(MODELOS / 'hazard' / 'scenario' / 'geometrias' / 'NT_75_34.xml')}; "
-            f"{as_posix(MODELOS / 'hazard' / 'scenario' / 'geometrias' / 'rupture_intra_80.xml')}; "
-            f"{as_posix(MODELOS / 'hazard' / 'scenario' / 'geometrias' / 'rupture_inter_93.xml')}; "
-            f"notebook: {as_posix(MODELOS / 'hazard' / 'scenario' / 'codigos_apoyo' / 'graficar_geometrias_dsha.ipynb')}"
-        ),
-        script_or_source=f"{as_posix(Path(__file__))}; {as_posix(QGIS_MAP_HELPER)}",
-        limitation="Se usa fondo satelital XYZ de Esri World Imagery desde QGIS; si no hay red disponible durante la regeneracion, QGIS puede exportar sin teselas aunque las geometrias y puntos cientificos se preservan.",
-    )
 
     remove_manifest_for_output("fig_5_41_aalr_cambio_rel_pct.pdf")
     add_manifest(

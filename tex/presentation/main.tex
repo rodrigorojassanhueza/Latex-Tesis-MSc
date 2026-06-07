@@ -310,19 +310,27 @@ La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada
 % 12
 \begin{frame}[t]{Metodología: geometrías deterministas comparadas}
 \begin{columns}[T,onlytextwidth]
-  \begin{column}{0.75\textwidth}
+  \begin{column}{0.68\textwidth}
     \figimage[width=\linewidth,height=0.70\textheight,keepaspectratio]{fig_4_2_escenarios_simulados.pdf}
-    \figcaption{Geometrías en planta de los escenarios deterministas considerados para FSR, subducción interplaca e intraplaca.}
+    \figcaption{Geometrías deterministas en planta para FSR, subducción interplaca e intraplaca, con el límite urbano RM como referencia de exposición.}
   \end{column}
-  \begin{column}{0.22\textwidth}
+  \begin{column}{0.29\textwidth}
     \scriptsize
-    \begin{itemize}\tightlist
-      \item FSR: \(\Mw=7.5\), dip \(34^\circ/60^\circ\), profundidad mínima \(0/5\) km.
-      \item Interplaca: \(\Mw=9.3\), zona de subducción representativa.
-      \item Intraplaca: \(\Mw=8.0\), rotaciones \(0/20/40^\circ\).
-      \item Métricas: el PGA y \(SA(1.0)\).
-      \item Esta geometría sostiene los mapas DSHA y las pérdidas por escenario.
-    \end{itemize}
+    {\color{captiongray}\textbf{Tabla 1.} Parámetros de los escenarios deterministas.\par}
+    \vspace{0.25em}
+    \setlength{\tabcolsep}{2.6pt}
+    \renewcommand{\arraystretch}{1.18}
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries\raggedright\arraybackslash}p{0.30\linewidth}>{\centering\arraybackslash}p{0.14\linewidth}>{\raggedright\arraybackslash}X@{}}
+      \toprule
+      Escenario & \(\mathbf{M_w}\) & Parámetros \\
+      \midrule
+      FSR & 7.5 & buz. \(34^\circ/60^\circ\); prof. mín. \(0/5\) km \\
+      Interplaca & 9.3 & subducción representativa \\
+      Intraplaca & 8.0 & rot. \(0/20/40^\circ\) \\
+      \midrule
+      Métricas & -- & PGA y \(SA(1.0)\) \\
+      \bottomrule
+    \end{tabularx}
   \end{column}
 \end{columns}
 \end{frame}
