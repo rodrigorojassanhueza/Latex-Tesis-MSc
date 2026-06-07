@@ -336,52 +336,93 @@ La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada
 \end{frame}
 
 % 13
-\begin{frame}[t]{Metodología: BPT incorpora memoria temporal en la FSR}
-\scriptsize
-\setlength{\abovedisplayskip}{0.35em}
-\setlength{\belowdisplayskip}{0.35em}
+\begingroup
+\setbeamerfont{frametitle}{size=\fontsize{12.6}{14.0}\selectfont,series=\bfseries}
+\begin{frame}[t]{Modelo BPT: probabilidad condicionada al tiempo desde el último evento}
+\fontsize{7.05}{7.65}\selectfont
+\setlength{\abovedisplayskip}{0.18em}
+\setlength{\belowdisplayskip}{0.18em}
+\setlength{\jot}{0.08em}
 \begin{columns}[T,onlytextwidth]
-  \begin{column}{0.58\textwidth}
-    \begin{block}{Densidad y distribución acumulada}
+  \begin{column}{0.48\textwidth}
+    \begin{block}{Distribución BPT}
+    \begin{minipage}[t][0.265\textheight][t]{\linewidth}
     \[
+      \resizebox{0.82\linewidth}{!}{$\displaystyle
       f_{\mathrm{BPT}}(t)=
-      \sqrt{\frac{\mu}{2\pi\alpha^2t^3}}
-      \exp\!\left[-\frac{(t-\mu)^2}{2\mu\alpha^2t}\right]
+      \sqrt{\frac{\mu}{2\pi \alpha^2 t^3}}
+      \exp\!\left[-\frac{(t-\mu)^2}{2\mu \alpha^2 t}\right]$}
     \]
+    \vspace{-0.10em}
     \[
-      \begin{aligned}
-      F_{\mathrm{BPT}}(t)
-      &= \Phi\!\left(\frac{t-\mu}{\alpha\sqrt{\mu t}}\right)\\
-      &\quad + \exp\!\left(\frac{2}{\alpha^2}\right)
-      \Phi\!\left(-\frac{t+\mu}{\alpha\sqrt{\mu t}}\right)
-      \end{aligned}
+      \resizebox{0.94\linewidth}{!}{$\displaystyle
+      F_{\mathrm{BPT}}(t)=
+      \Phi\!\left(\frac{t-\mu}{\alpha \sqrt{\mu t}}\right)
+      + \exp\!\left(\frac{2}{\alpha^2}\right)
+      \Phi\!\left(-\,\frac{t+\mu}{\alpha \sqrt{\mu t}}\right)$}
     \]
+    \vspace{-0.25em}
+    {\centering
+      \fontsize{6.75}{7.2}\selectfont
+      \(\mu\): recurrencia media \quad
+      \(\alpha\): aperiodicidad \quad
+      \(t\): tiempo de recurrencia\par}
+    \end{minipage}
     \end{block}
   \end{column}
-  \begin{column}{0.38\textwidth}
-    \begin{block}{Probabilidad condicional}
+  \begin{column}{0.49\textwidth}
+    \begin{block}{Probabilidad condicional \(P_T(t_p)\)}
+    \begin{minipage}[t][0.265\textheight][t]{\linewidth}
     \[
-      P(T\mid t_p)=
-      \frac{F_{\mathrm{BPT}}(t_p+T)-F_{\mathrm{BPT}}(t_p)}
+      \resizebox{0.84\linewidth}{!}{$\displaystyle
+      \begin{aligned}
+      P_T(t_p)
+      &= P\!\left(t_p < \tau \leq t_p+T \mid \tau>t_p\right)\\
+      &= \frac{
+      F_{\mathrm{BPT}}(t_p+T)-F_{\mathrm{BPT}}(t_p)}
       {1-F_{\mathrm{BPT}}(t_p)}
+      \end{aligned}
+      $}
     \]
+    \vspace{-0.16em}
+    {\centering
+    \fontsize{6.95}{7.45}\selectfont
+    \begin{tabular}{@{}>{$}r<{$}@{\,: }l@{}}
+      \tau & tiempo interevento aleatorio\\
+      t_p & tiempo transcurrido desde el último evento
+    \end{tabular}\par}
+    \vspace{0.18em}
+    {\centering\fontsize{7.05}{7.6}\selectfont\bfseries\color{uchileblue}Diferencia clave: BPT depende de \(t_p\); Poisson no.\par}
+    \end{minipage}
     \end{block}
-    \begin{itemize}\tightlist
-      \item \(t_p\): tiempo desde el último evento.
-      \item \(T=50\) años.
-      \item \(\alpha=0.38\).
-    \end{itemize}
   \end{column}
 \end{columns}
-\vspace{0.1em}
+\vspace{0.05em}
 \begin{block}{Implementación en la tesis}
-  \begin{itemize}\tightlist
-    \item Se evalúan \(\mu\) y \(t_p\) entre 6500 y 8000 años, con incrementos de 500 años.
-    \item El árbol lógico se mantiene comparable para aislar el efecto temporal frente a Poisson.
-  \end{itemize}
+  {\centering\fontsize{7.15}{7.7}\selectfont
+  \(\mu,\ t_p \in \{6500,\ 7000,\ 7500,\ 8000\}\ \text{años}\)
+  \par
+  \(T=50\ \text{años},\qquad \alpha=0.38\)\par}
+  \vspace{0.04em}
+  {\centering\fontsize{7.0}{7.5}\selectfont\bfseries Árbol lógico comparable a Poisson; se incorpora memoria temporal mediante BPT.\par}
+  \vspace{0.22em}
+  {\centering
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \draw[captiongray,line width=0.5pt] (0.7,0) -- (10.8,0);
+    \draw[uchileblue,line width=0.7pt] (6.0,0) -- (10.8,0);
+    \fill[uchileblue] (0.7,0) circle (1.2pt);
+    \fill[uchileblue] (6.0,0) circle (1.2pt);
+    \fill[uchileblue] (10.8,0) circle (1.2pt);
+    \node[above,textgray,font=\fontsize{7.05}{7.55}\selectfont] at (0.7,0.04) {\textbf{último evento}};
+    \node[below,captiongray,font=\fontsize{7.05}{7.55}\selectfont] at (3.35,-0.04) {\(t_p\)};
+    \node[above,textgray,font=\fontsize{7.05}{7.55}\selectfont] at (6.0,0.04) {\textbf{presente}};
+    \node[below,captiongray,font=\fontsize{7.05}{7.55}\selectfont] at (8.4,-0.04) {\(T=50\) años};
+    \node[above,textgray,font=\fontsize{7.05}{7.55}\selectfont] at (10.8,0.04) {\textbf{horizonte}};
+  \end{tikzpicture}
+  \par}
 \end{block}
-\notecaption{Ecuaciones BPT usadas para traducir recurrencia dependiente del tiempo en probabilidad condicional de ocurrencia de la FSR.}
 \end{frame}
+\endgroup
 
 % 14
 \begin{frame}[t]{Metodología: intensidad se traduce a pérdida}
