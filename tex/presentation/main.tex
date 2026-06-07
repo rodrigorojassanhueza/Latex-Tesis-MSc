@@ -315,8 +315,11 @@ La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada
     \figcaption{Geometrías deterministas en planta para FSR, subducción interplaca e intraplaca, con el límite urbano RM como referencia de exposición.}
   \end{column}
   \begin{column}{0.29\textwidth}
+    \begin{block}{Escenarios}
     \scriptsize
-    {\color{captiongray}\textbf{Tabla 1.} Parámetros de los escenarios deterministas.\par}
+    {\color{captiongray}\begin{minipage}{\linewidth}\raggedright
+    \textbf{Tabla 1.} Parámetros de los escenarios deterministas.
+    \end{minipage}\par}
     \vspace{0.25em}
     \setlength{\tabcolsep}{2.6pt}
     \renewcommand{\arraystretch}{1.18}
@@ -331,6 +334,7 @@ La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada
       Métricas & -- & PGA y \(SA(1.0)\) \\
       \bottomrule
     \end{tabularx}
+    \end{block}
   \end{column}
 \end{columns}
 \end{frame}
@@ -425,32 +429,90 @@ La tesis cuantifica cuándo la FSR domina localmente y cuándo queda subordinada
 \endgroup
 
 % 14
-\begin{frame}[t]{Metodología: intensidad se traduce a pérdida}
+\begin{frame}[t]{Metodología: vulnerabilidad por pérdida esperada}
+\fontsize{7.0}{7.6}\selectfont
+\setlength{\abovedisplayskip}{0.24em}
+\setlength{\belowdisplayskip}{0.22em}
 \begin{columns}[T,onlytextwidth]
-  \begin{column}{0.49\textwidth}
-    \begin{block}{Conversión fragilidad \(\rightarrow\) vulnerabilidad}
-    \[
-      \mu_{LR}(IM)=\mathrm{E}[LR\mid IM]=\sum_{i=1}^{n} p_i(IM)\,\mu_i
-    \]
+  \begin{column}{0.59\textwidth}
+    \begin{block}{Tipologías consideradas}
+    \begin{minipage}[t][0.715\textheight][t]{\linewidth}
+    \begin{center}
+    \begin{minipage}{0.86\linewidth}
+    {\scriptsize\color{captiongray}\begin{minipage}{\linewidth}\raggedright
+    \textbf{Tabla 2.} Tipologías consideradas y correspondencia con clases HAZUS y nacionales.
+    \end{minipage}\par}
+    \vspace{0.18em}
+    {\scriptsize
+    \setlength{\tabcolsep}{2.6pt}
+    \renewcommand{\arraystretch}{1.12}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.34\linewidth}>{\centering\arraybackslash}p{0.13\linewidth}>{\centering\arraybackslash}p{0.18\linewidth}>{\centering\arraybackslash}X@{}}
+      \toprule
+      \textbf{Material} & \textbf{Pisos} & \textbf{HAZUS} & \textbf{Nacional}\\
+      \midrule
+      Hormigón armado & 1--3 & RC13 & RC13\textsuperscript{C}\\
+       & 4--7 & RC47 & RCBL\textsuperscript{J}\\
+       & 8--9 & RC8 & RCBL\textsuperscript{J}\\
+       & 10--24 & RC8 & RCBM\textsuperscript{J}\\
+       & \(>24\) & RC8 & RCBH\textsuperscript{J}\\
+      Albañilería & 1--3 & RM & RM\textsuperscript{C}\\
+      Madera & 1--3 & Timber & Timber\textsuperscript{C}\\
+      Adobe & 1--3 & -- & Adobe\textsuperscript{C}\\
+      \bottomrule
+    \end{tabularx}\par}
+    \vspace{0.18em}
+    {\tiny\color{captiongray}\begin{minipage}{\linewidth}\raggedright
+    \textsuperscript{J} Jünemann et al. (2024);
+    \textsuperscript{C} Cabrera et al. (2024).
+    Adobe queda fuera de la comparación HAZUS.
+    \end{minipage}\par}
+    \end{minipage}
+    \end{center}
+    \end{minipage}
     \end{block}
-    \begin{itemize}\tightlist
-      \item \(p_i(IM)\): probabilidad de estado de daño.
-      \item \(\mu_i\): pérdida relativa media asociada a ese estado.
-      \item La salida es una pérdida esperada condicionada a la intensidad.
-    \end{itemize}
   \end{column}
-  \begin{column}{0.47\textwidth}
-    \begin{block}{Dos lecturas de vulnerabilidad}
-      \begin{itemize}\tightlist
-        \item Modelo nacional: Jünemann + Cabrera para tipologías chilenas.
-        \item HAZUS: referencia comparativa para fragilidad, consecuencias y vulnerabilidad.
-        \item HAZUS no cubre adobe en la comparación usada.
-      \end{itemize}
+  \begin{column}{0.39\textwidth}
+    \begin{block}{Consecuencias por daño}
+    \begin{minipage}[t][0.715\textheight][t]{\linewidth}
+    \begin{center}
+    \begin{minipage}{0.72\linewidth}
+    {\scriptsize\color{captiongray}\begin{minipage}{\linewidth}\raggedright
+    \textbf{Tabla 3.} \(\mu_i\) y \(\sigma_i\) adoptados por estado.
+    \end{minipage}\par}
+    \vspace{0.18em}
+    {\scriptsize
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.12}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{0.18\linewidth}>{\centering\arraybackslash}p{0.18\linewidth}@{}}
+      \toprule
+      \textbf{Estado} & \(\boldsymbol{\mu_i}\) & \(\boldsymbol{\sigma_i}\)\\
+      \midrule
+      Leve & 0.10 & 0\\
+      Moderado & 0.50 & 0\\
+      Extensivo & 0.75 & 0\\
+      Colapso & 1.00 & 0\\
+      \bottomrule
+    \end{tabularx}\par}
+    \end{minipage}
+    \end{center}
+    \vspace{0.28em}
+    \[
+      \resizebox{0.80\linewidth}{!}{$\displaystyle
+      \mu_{LR}(IM)=\mathrm{E}[LR\mid IM]=\sum_{i=1}^{n}p_i(IM)\,\mu_i$}
+    \]
+    \[
+      \resizebox{0.69\linewidth}{!}{$\displaystyle
+      \sigma^2_{LR}(IM)=\sum_{i=1}^{n}p_i(IM)\,\sigma_i^2=0$}
+    \]
+    \vspace{0.08em}
+    {\centering\bfseries\color{uchileblue}
+    Consecuencias deterministas por nivel de daño.\par}
+    \end{minipage}
     \end{block}
-    \notecaption{Ecuación de pérdida esperada: los estados de daño se ponderan por su probabilidad y severidad económica.}
   \end{column}
 \end{columns}
 \end{frame}
+\setcounter{prestab}{3}
 
 % 15
 \begin{frame}[t]{Resultados: la FSR concentra PGA junto al borde oriental}
