@@ -535,6 +535,579 @@ def plot_deterministic_losses() -> None:
     )
 
 
+def plot_deterministic_losses_by_materiality_updated() -> None:
+    import h5py
+
+    base = MODELOS / "risk" / "scenario" / "resultados_hdf5"
+    calcs = {
+        "FSR": {
+            "Cabrera": base / "calc_249.hdf5",
+            "Junemann": base / "calc_248.hdf5",
+            "HAZUS": base / "calc_247.hdf5",
+        },
+        "INTER": {
+            "Cabrera": base / "calc_246.hdf5",
+            "Junemann": base / "calc_245.hdf5",
+            "HAZUS": base / "calc_244.hdf5",
+        },
+        "INTRA": {
+            "Cabrera": base / "calc_243.hdf5",
+            "Junemann": base / "calc_242.hdf5",
+            "HAZUS": base / "calc_241.hdf5",
+        },
+    }
+    csv_by_model = {
+        "Junemann": MODELOS / "risk" / "scenario" / "exposure_and_site_model" / "Modelos_exposicion" / "Junemann.csv",
+        "Cabrera": MODELOS / "risk" / "scenario" / "exposure_and_site_model" / "Modelos_exposicion" / "Cabrera_2024.csv",
+        "HAZUS": MODELOS / "risk" / "scenario" / "exposure_and_site_model" / "Modelos_exposicion" / "HAZUS_2024.csv",
+    }
+
+    scenarios = [("FSR", "FSR"), ("INTER", "Interplaca"), ("INTRA", "Intraplaca")]
+    cat_order = [
+        "Albañilería",
+        "Hormigón 1-3",
+        "Hormigón 4-7",
+        "Hormigón 10-24",
+        "Madera",
+        "Adobe",
+        "Hormigón 8-9",
+    ]
+    cat_labels = {
+        "Hormigón 1-3": "HA 1-3",
+        "Hormigón 4-7": "HA 4-7",
+        "Hormigón 8-9": "HA 8-9",
+        "Hormigón 10-24": "HA 10-24",
+        "Albañilería": "Albañilería",
+        "Madera": "Madera",
+        "Adobe": "Adobe",
+    }
+    cat_colors = {
+        "Hormigón 1-3": "#324851",
+        "Hormigón 4-7": "#5E9DCA",
+        "Hormigón 8-9": "#34675C",
+        "Hormigón 10-24": "#A7B0B8",
+        "Albañilería": "#C17D4A",
+        "Madera": "#7DA3A1",
+        "Adobe": "#A45C40",
+    }
+    model_colors = {"NAC": UCHILE_BLUE, "HAZ": ACCENT_RED}
+
+    def b2s(value: object) -> str:
+        if isinstance(value, (bytes, bytearray)):
+            for encoding in ("utf-8", "latin1", "cp1252"):
+                try:
+                    return value.decode(encoding)
+                except Exception:
+                    pass
+            return value.decode("latin1", errors="replace")
+        return str(value)
+
+    def read_csv_flexible(path: Path) -> pd.DataFrame:
+        last_error: Exception | None = None
+        for encoding in ("utf-8", "utf-8-sig", "cp1252", "latin1"):
+            try:
+                return pd.read_csv(path, encoding=encoding)
+            except Exception as exc:
+                last_error = exc
+        raise RuntimeError(f"No se pudo leer {as_posix(path)}. Ultimo error: {last_error}")
+
+    def pick_col(columns: list[object], wanted: list[str]) -> object | None:
+        lookup = {str(col).strip().lower(): col for col in columns}
+        for name in wanted:
+            if name.lower() in lookup:
+                return lookup[name.lower()]
+        return None
+
+    def normalize_id(series: pd.Series) -> pd.Series:
+        raw = series.map(b2s).astype("string").str.strip()
+        num = pd.to_numeric(raw, errors="coerce")
+        out = raw.astype(str)
+        ok = np.isfinite(num.to_numpy(float))
+        if np.any(ok):
+            out.loc[ok] = num.loc[ok].astype("Int64").astype(str)
+        return out
+
+    def weighted_percentile_1d(values: np.ndarray, weights: np.ndarray, q: float) -> float:
+        values = np.asarray(values, dtype=float)
+        weights = np.asarray(weights, dtype=float)
+        mask = np.isfinite(values) & np.isfinite(weights) & (weights > 0)
+        values = values[mask]
+        weights = weights[mask]
+        if values.size == 0:
+            return np.nan
+        if values.size == 1:
+            return float(values[0])
+        order = np.argsort(values)
+        values = values[order]
+        weights = weights[order]
+        cdf = np.cumsum(weights) / np.sum(weights)
+        idx = np.searchsorted(cdf, float(q) / 100.0, side="left")
+        return float(values[min(max(idx, 0), values.size - 1)])
+
+    def summarize_percentiles(values_pct: np.ndarray, weights: np.ndarray) -> dict[str, float]:
+        return {
+            "p16": weighted_percentile_1d(values_pct, weights, 16),
+            "p50": weighted_percentile_1d(values_pct, weights, 50),
+            "p84": weighted_percentile_1d(values_pct, weights, 84),
+        }
+
+    def classify_material(
+        taxonomy: object,
+        piso_bin: object | None = None,
+        floors: object | None = None,
+        *,
+        allow_adobe: bool = True,
+    ) -> str | None:
+        text = b2s(taxonomy).upper().strip()
+        if not text or text == "NAN":
+            return None
+        piso = b2s(piso_bin).upper().strip() if piso_bin is not None else ""
+        floor_value = pd.to_numeric(pd.Series([floors]), errors="coerce").iloc[0]
+
+        def concrete_by_height(default: str | None = None) -> str | None:
+            if piso.startswith("1_3") or (np.isfinite(floor_value) and floor_value <= 3):
+                return "Hormigón 1-3"
+            if piso.startswith("4_7") or (np.isfinite(floor_value) and floor_value <= 7):
+                return "Hormigón 4-7"
+            if piso.startswith("8_9") or (np.isfinite(floor_value) and floor_value <= 9):
+                return "Hormigón 8-9"
+            if piso.startswith("10_24") or (np.isfinite(floor_value) and floor_value <= 24):
+                return "Hormigón 10-24"
+            if piso.startswith("GT24") or piso.startswith(">24") or (np.isfinite(floor_value) and floor_value > 24):
+                return "Hormigón >24"
+            return default
+
+        if text.startswith("RC13"):
+            return "Hormigón 1-3"
+        if text.startswith("RC47"):
+            return "Hormigón 4-7"
+        if text.startswith("RC8"):
+            return concrete_by_height("Hormigón 10-24")
+        if text.startswith("RCBL"):
+            return concrete_by_height("Hormigón 8-9")
+        if text.startswith("RCBM"):
+            return concrete_by_height("Hormigón 10-24")
+        if text.startswith("RCBH"):
+            return "Hormigón >24"
+        if text.startswith("RC"):
+            return concrete_by_height()
+        if text.startswith("RM"):
+            return "Albañilería"
+        if "TIMBER" in text or text.startswith("W"):
+            return "Madera"
+        if "ADOBE" in text:
+            return "Adobe" if allow_adobe else None
+        return None
+
+    def load_model_metadata(path: Path, *, allow_adobe: bool) -> pd.DataFrame:
+        df = read_csv_flexible(path)
+        model_id_col = pick_col(list(df.columns), ["id", "asset_ref", "asset_id"])
+        struct_id_col = pick_col(list(df.columns), ["src_id", "source_id", "source_asset_id"])
+        tax_col = pick_col(list(df.columns), ["taxonomy", "tax"])
+        piso_col = pick_col(list(df.columns), ["PISO_BIN", "piso_bin"])
+        floors_col = pick_col(list(df.columns), ["N_PISOS", "n_pisos", "floors"])
+        if model_id_col is None or struct_id_col is None or tax_col is None:
+            raise KeyError(f"{path.name}: faltan columnas id, src_id o taxonomy")
+
+        piso_values = df[piso_col] if piso_col is not None else pd.Series([pd.NA] * len(df), index=df.index)
+        floor_values = df[floors_col] if floors_col is not None else pd.Series([pd.NA] * len(df), index=df.index)
+        out = pd.DataFrame(
+            {
+                "_MODEL_ID": normalize_id(df[model_id_col]),
+                "_STRUCT_ID": normalize_id(df[struct_id_col]),
+                "taxonomy": df[tax_col].map(b2s).astype(str),
+                "PISO_BIN": piso_values.map(b2s).astype(str),
+                "N_PISOS": pd.to_numeric(floor_values, errors="coerce"),
+            }
+        )
+        out["CAT"] = [
+            classify_material(taxonomy, piso_bin, floors, allow_adobe=allow_adobe)
+            for taxonomy, piso_bin, floors in zip(out["taxonomy"], out["PISO_BIN"], out["N_PISOS"])
+        ]
+        duplicated = out[out["_MODEL_ID"].duplicated(keep=False)]
+        if not duplicated.empty:
+            raise RuntimeError(f"{path.name}: ids internos duplicados en modelo de exposicion")
+        return out
+
+    def read_asset_loss_exp_rlzs(
+        calc_path: Path, metadata: pd.DataFrame
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        if not calc_path.exists():
+            raise FileNotFoundError(calc_path)
+        meta = metadata.set_index("_MODEL_ID")
+        with h5py.File(calc_path, "r") as h5:
+            arr = h5["assetcol/array"][:]
+            df = pd.DataFrame.from_records(arr)
+            df.columns = [b2s(col) for col in df.columns]
+            id_col = pick_col(list(df.columns), ["id", "asset_ref", "asset_id"])
+            if id_col is None:
+                raise KeyError(f"{calc_path.name}: no se encontro columna id en assetcol")
+            model_ids = normalize_id(df[id_col])
+            missing_ids = sorted(set(model_ids) - set(meta.index))
+            if missing_ids:
+                preview = ", ".join(missing_ids[:8])
+                raise RuntimeError(f"{calc_path.name}: ids sin metadatos de exposicion: {preview}")
+            aligned_meta = meta.loc[model_ids]
+            joins = aligned_meta["_STRUCT_ID"].astype(str).to_numpy()
+            cats = aligned_meta["CAT"].to_numpy(object)
+            exp_col = pick_col(list(df.columns), ["value-structural", "structural"])
+            if exp_col is None:
+                raise KeyError(f"{calc_path.name}: no se encontro valor structural")
+            exposure = pd.to_numeric(df[exp_col], errors="coerce").fillna(0.0).astype(float).to_numpy()
+            if "avg_losses-rlzs/structural" in h5:
+                losses = np.array(h5["avg_losses-rlzs/structural"][:], dtype=float)
+            elif "avg_losses-stats/structural" in h5:
+                losses = np.array(h5["avg_losses-stats/structural"][:], dtype=float).reshape(-1, 1)
+            else:
+                losses = np.zeros((len(df), 1), dtype=float)
+            if losses.ndim == 1:
+                losses = losses.reshape(-1, 1)
+            if losses.shape[0] != len(df):
+                raise RuntimeError(f"{calc_path.name}: perdidas y activos tienen distinto largo")
+            weights = np.ones(losses.shape[1], dtype=float) / losses.shape[1]
+            if "weights" in h5 and losses.shape[1] > 1:
+                raw_weights = np.array(h5["weights"][()], dtype=float).ravel()
+                if len(raw_weights) == losses.shape[1] and raw_weights.sum() > 0:
+                    weights = raw_weights / raw_weights.sum()
+            cols = [f"L{i}" for i in range(losses.shape[1])]
+            tmp = pd.DataFrame({"_JOIN": joins, "CAT": cats, "exp_CLP": exposure})
+            for i, col in enumerate(cols):
+                tmp[col] = losses[:, i]
+            tmp = tmp.groupby("_JOIN", as_index=False).agg(
+                {"CAT": "first", "exp_CLP": "sum", **{col: "sum" for col in cols}}
+            )
+            return (
+                tmp["_JOIN"].astype(str).to_numpy(),
+                tmp["exp_CLP"].to_numpy(float),
+                tmp[cols].to_numpy(float),
+                weights,
+                tmp["CAT"].to_numpy(object),
+            )
+
+    def aggregate_lr_by_cat(exposure: np.ndarray, losses: np.ndarray, cats: np.ndarray) -> dict[str, np.ndarray]:
+        out: dict[str, np.ndarray] = {}
+        for cat in cat_order:
+            mask = cats == cat
+            if not np.any(mask):
+                out[cat] = np.full(losses.shape[1], np.nan, dtype=float)
+                continue
+            exp_cat = float(np.nansum(exposure[mask]))
+            if exp_cat <= 0:
+                out[cat] = np.full(losses.shape[1], np.nan, dtype=float)
+                continue
+            out[cat] = np.nansum(losses[mask, :], axis=0) / exp_cat
+        return out
+
+    def contribution_by_cat(losses: np.ndarray, cats: np.ndarray, weights: np.ndarray) -> dict[str, dict[str, float]]:
+        total = np.nansum(losses, axis=0)
+        out: dict[str, dict[str, float]] = {}
+        for cat in cat_order:
+            mask = cats == cat
+            if not np.any(mask):
+                out[cat] = {"p16": np.nan, "p50": np.nan, "p84": np.nan}
+                continue
+            cat_loss = np.nansum(losses[mask, :], axis=0)
+            pct = np.full(losses.shape[1], np.nan, dtype=float)
+            ok = total > 0
+            pct[ok] = 100.0 * cat_loss[ok] / total[ok]
+            out[cat] = summarize_percentiles(pct, weights)
+        return out
+
+    meta_cabrera = load_model_metadata(csv_by_model["Cabrera"], allow_adobe=True)
+    meta_junemann = load_model_metadata(csv_by_model["Junemann"], allow_adobe=True)
+    meta_hazus = load_model_metadata(csv_by_model["HAZUS"], allow_adobe=False)
+    meta_nacional = pd.concat([meta_cabrera, meta_junemann], ignore_index=True)
+
+    duplicated_structs = meta_nacional[meta_nacional["_STRUCT_ID"].duplicated(keep=False)]
+    if not duplicated_structs.empty:
+        raise RuntimeError("Modelo Nacional contiene src_id duplicados entre Cabrera y Junemann")
+    nac_ids = set(meta_nacional["_STRUCT_ID"])
+    haz_ids = set(meta_hazus["_STRUCT_ID"])
+    haz_extra = sorted(haz_ids - nac_ids)
+    if haz_extra:
+        preview = ", ".join(haz_extra[:8])
+        raise RuntimeError(f"HAZUS contiene estructuras que no estan en Nacional: {preview}")
+    missing_in_haz = meta_nacional[meta_nacional["_STRUCT_ID"].isin(nac_ids - haz_ids)]
+    if not missing_in_haz.empty and not missing_in_haz["CAT"].eq("Adobe").all():
+        raise RuntimeError("Solo Adobe puede estar ausente en HAZUS respecto del modelo Nacional")
+
+    rows_lr: list[dict[str, object]] = []
+    rows_contrib: list[dict[str, object]] = []
+
+    for scenario, _label in scenarios:
+        j_c, e_c, l_c, w_c, cat_c = read_asset_loss_exp_rlzs(calcs[scenario]["Cabrera"], meta_cabrera)
+        j_j, e_j, l_j, w_j, cat_j = read_asset_loss_exp_rlzs(calcs[scenario]["Junemann"], meta_junemann)
+        j_h, e_h, l_h, w_h, cats_haz = read_asset_loss_exp_rlzs(calcs[scenario]["HAZUS"], meta_hazus)
+
+        n_rlz = min(l_c.shape[1], l_j.shape[1])
+        l_c = l_c[:, :n_rlz]
+        l_j = l_j[:, :n_rlz]
+        weights_nac = w_c[:n_rlz] if len(w_c) >= n_rlz else w_j[:n_rlz]
+        weights_nac = weights_nac / weights_nac.sum()
+
+        all_join = pd.Index(np.union1d(j_c, j_j))
+        idx_c = all_join.get_indexer(j_c)
+        idx_j = all_join.get_indexer(j_j)
+        loss_c = np.zeros((len(all_join), n_rlz), dtype=float)
+        loss_j = np.zeros((len(all_join), n_rlz), dtype=float)
+        exp_c = np.zeros(len(all_join), dtype=float)
+        exp_j = np.zeros(len(all_join), dtype=float)
+        cat_nac = pd.Series(index=all_join, dtype=object)
+        loss_c[idx_c, :] = l_c
+        loss_j[idx_j, :] = l_j
+        exp_c[idx_c] = e_c
+        exp_j[idx_j] = e_j
+        cat_nac.loc[j_c] = cat_c
+        cat_nac.loc[j_j] = cat_j
+        loss_nac = np.maximum(loss_c, loss_j)
+        exp_nac = np.maximum(exp_c, exp_j)
+        cats_nac = cat_nac.reindex(all_join).to_numpy(object)
+        keep_nac = (exp_nac > 0) & np.isin(cats_nac, cat_order)
+        loss_nac = loss_nac[keep_nac, :]
+        exp_nac = exp_nac[keep_nac]
+        cats_nac = cats_nac[keep_nac]
+
+        lr_nac = aggregate_lr_by_cat(exp_nac, loss_nac, cats_nac)
+        contrib_nac = contribution_by_cat(loss_nac, cats_nac, weights_nac)
+        for cat in cat_order:
+            rows_lr.append(
+                {
+                    "Scenario": scenario,
+                    "Group": "NAC",
+                    "CAT": cat,
+                    **summarize_percentiles(100.0 * lr_nac[cat], weights_nac),
+                }
+            )
+            rows_contrib.append({"Scenario": scenario, "Group": "NAC", "CAT": cat, **contrib_nac[cat]})
+
+        weights_haz = w_h / w_h.sum()
+        keep_haz = (e_h > 0) & np.isin(cats_haz, cat_order)
+        l_h = l_h[keep_haz, :]
+        e_h = e_h[keep_haz]
+        cats_haz = cats_haz[keep_haz]
+
+        lr_haz = aggregate_lr_by_cat(e_h, l_h, cats_haz)
+        contrib_haz = contribution_by_cat(l_h, cats_haz, weights_haz)
+        for cat in cat_order:
+            rows_lr.append(
+                {
+                    "Scenario": scenario,
+                    "Group": "HAZ",
+                    "CAT": cat,
+                    **summarize_percentiles(100.0 * lr_haz[cat], weights_haz),
+                }
+            )
+            rows_contrib.append({"Scenario": scenario, "Group": "HAZ", "CAT": cat, **contrib_haz[cat]})
+
+    df_lr = pd.DataFrame(rows_lr)
+    df_contrib = pd.DataFrame(rows_contrib)
+    processed = GEN / "data" / "processed"
+    processed.mkdir(parents=True, exist_ok=True)
+    df_lr.to_csv(processed / "perdidas_materialidad_actualizada_lr.csv", index=False, encoding="utf-8")
+    df_contrib.to_csv(processed / "perdidas_materialidad_actualizada_contribucion.csv", index=False, encoding="utf-8")
+
+    axis_label_size = 11.8
+    tick_label_size = 10.6
+    panel_label_size = 12.8
+
+    fig = plt.figure(figsize=(12.15, 6.25))
+    gs = fig.add_gridspec(
+        2,
+        4,
+        height_ratios=[2.8, 2.05],
+        width_ratios=[1.0, 1.0, 1.0, 0.31],
+        left=0.082,
+        right=0.988,
+        top=0.94,
+        bottom=0.18,
+        wspace=0.17,
+        hspace=0.46,
+    )
+    axes_top = [fig.add_subplot(gs[0, i]) for i in range(3)]
+    axes_bottom = [fig.add_subplot(gs[1, i]) for i in range(3)]
+    ax_top_leg = fig.add_subplot(gs[0, 3])
+    ax_bottom_leg = fig.add_subplot(gs[1, 3])
+    ax_top_leg.axis("off")
+    ax_bottom_leg.axis("off")
+
+    y = np.arange(len(cat_order))
+    offset = 0.13
+    all_p84 = pd.to_numeric(df_lr["p84"], errors="coerce").dropna().to_numpy(float)
+    xmax = max(5.0, math.ceil(float(np.nanmax(all_p84)) / 10.0) * 10.0) if all_p84.size else 10.0
+
+    def draw_range(ax: mpl.axes.Axes, row: pd.Series, y_pos: float, color: str, marker: str) -> None:
+        p16 = float(row["p16"])
+        p50 = float(row["p50"])
+        p84 = float(row["p84"])
+        if not (np.isfinite(p16) and np.isfinite(p50) and np.isfinite(p84)):
+            return
+        ax.hlines(y_pos, p16, p84, color=color, linewidth=1.8, zorder=4)
+        ax.vlines([p16, p84], y_pos - 0.062, y_pos + 0.062, color=color, linewidth=1.8, zorder=4)
+        ax.plot(
+            p50,
+            y_pos,
+            marker=marker,
+            markersize=6.1,
+            markerfacecolor="white",
+            markeredgecolor=color,
+            markeredgewidth=1.6,
+            color=color,
+            zorder=5,
+        )
+
+    def add_panel_label(ax: mpl.axes.Axes, tag: str) -> None:
+        ax.text(
+            0.975,
+            0.965,
+            tag,
+            transform=ax.transAxes,
+            ha="right",
+            va="top",
+            fontsize=panel_label_size,
+            fontweight="bold",
+            color=TEXT_GRAY,
+            bbox=dict(facecolor="white", edgecolor="none", alpha=0.80, pad=1.5),
+            zorder=6,
+        )
+
+    panel_labels_top = ["(A)", "(B)", "(C)"]
+    panel_labels_bottom = ["(D)", "(E)", "(F)"]
+
+    for col_idx, (scenario, label) in enumerate(scenarios):
+        ax = axes_top[col_idx]
+        ax.set_title(label, fontsize=13.8, fontweight="bold", pad=8, color=TEXT_GRAY)
+        add_panel_label(ax, panel_labels_top[col_idx])
+        ax.grid(False)
+        for idx, yy in enumerate(y):
+            if idx % 2 == 0:
+                ax.axhspan(yy - 0.5, yy + 0.5, color="#F3F6F8", linewidth=0, zorder=0)
+        for idx, cat in enumerate(cat_order):
+            row_n = df_lr[(df_lr["Scenario"].eq(scenario)) & (df_lr["Group"].eq("NAC")) & (df_lr["CAT"].eq(cat))]
+            row_h = df_lr[(df_lr["Scenario"].eq(scenario)) & (df_lr["Group"].eq("HAZ")) & (df_lr["CAT"].eq(cat))]
+            if not row_n.empty:
+                draw_range(ax, row_n.iloc[0], idx - offset, model_colors["NAC"], "o")
+            if not row_h.empty:
+                draw_range(ax, row_h.iloc[0], idx + offset, model_colors["HAZ"], "s")
+        ax.set_xlim(0, xmax)
+        ax.set_ylim(-0.55, len(cat_order) - 0.45)
+        ax.invert_yaxis()
+        ax.set_yticks(y)
+        if col_idx == 0:
+            ax.set_yticklabels([cat_labels[cat] for cat in cat_order], fontsize=tick_label_size)
+        else:
+            ax.set_yticklabels([])
+            ax.tick_params(axis="y", length=0)
+        ax.tick_params(axis="x", labelsize=tick_label_size)
+        if col_idx == 1:
+            ax.set_xlabel("Pérdida agregada relativa [%]", labelpad=5, fontsize=axis_label_size)
+        if col_idx == 0:
+            ax.set_ylabel("Materialidad", labelpad=0, fontsize=axis_label_size)
+            ax.yaxis.set_label_coords(-0.44, 0.5)
+
+    x = np.arange(len(cat_order))
+    bar_w = 0.38
+    for col_idx, (scenario, label) in enumerate(scenarios):
+        ax = axes_bottom[col_idx]
+        add_panel_label(ax, panel_labels_bottom[col_idx])
+        ax.set_ylim(0, 105)
+        ax.grid(False)
+        ax.set_xlim(-0.55, len(cat_order) - 0.45)
+        for idx in range(len(cat_order)):
+            if idx % 2 == 0:
+                ax.axvspan(idx - 0.5, idx + 0.5, color="#F3F6F8", linewidth=0, zorder=0)
+        for idx, cat in enumerate(cat_order):
+            color = cat_colors[cat]
+            row_n = df_contrib[
+                (df_contrib["Scenario"].eq(scenario)) & (df_contrib["Group"].eq("NAC")) & (df_contrib["CAT"].eq(cat))
+            ]
+            row_h = df_contrib[
+                (df_contrib["Scenario"].eq(scenario)) & (df_contrib["Group"].eq("HAZ")) & (df_contrib["CAT"].eq(cat))
+            ]
+            if not row_n.empty and np.isfinite(float(row_n.iloc[0]["p50"])):
+                p16, p50, p84 = [float(row_n.iloc[0][col]) for col in ("p16", "p50", "p84")]
+                ax.bar(idx - bar_w / 2, p50, width=bar_w, color=color, edgecolor="white", linewidth=0.45, zorder=3)
+                ax.errorbar(
+                    idx - bar_w / 2,
+                    p50,
+                    yerr=np.array([[max(0.0, p50 - p16)], [max(0.0, p84 - p50)]]),
+                    fmt="none",
+                    ecolor="#333333",
+                    elinewidth=0.9,
+                    capsize=2.2,
+                    zorder=4,
+                )
+            if not row_h.empty and np.isfinite(float(row_h.iloc[0]["p50"])):
+                p16, p50, p84 = [float(row_h.iloc[0][col]) for col in ("p16", "p50", "p84")]
+                ax.bar(
+                    idx + bar_w / 2,
+                    p50,
+                    width=bar_w,
+                    color=color,
+                    edgecolor="white",
+                    linewidth=0.45,
+                    hatch="////",
+                    alpha=0.9,
+                    zorder=3,
+                )
+                ax.errorbar(
+                    idx + bar_w / 2,
+                    p50,
+                    yerr=np.array([[max(0.0, p50 - p16)], [max(0.0, p84 - p50)]]),
+                    fmt="none",
+                    ecolor="#333333",
+                    elinewidth=0.9,
+                    capsize=2.2,
+                    zorder=4,
+                )
+        ax.set_xticks(x)
+        ax.set_xticklabels([cat_labels[cat] for cat in cat_order], fontsize=tick_label_size, rotation=28, ha="right")
+        ax.tick_params(axis="y", labelsize=tick_label_size)
+        if col_idx == 0:
+            ax.set_ylabel("Contribución a pérdida total [%]", labelpad=0, fontsize=axis_label_size)
+            ax.yaxis.set_label_coords(-0.44, 0.5)
+        else:
+            ax.set_yticklabels([])
+            ax.tick_params(axis="y", length=0)
+        if col_idx == 1:
+            ax.set_xlabel("Materialidad", labelpad=6, fontsize=axis_label_size)
+
+    handles_top = [
+        Line2D([0], [0], marker="o", lw=0, markerfacecolor="white", markeredgecolor=model_colors["NAC"], markeredgewidth=1.5, color=model_colors["NAC"], label="NAC"),
+        Line2D([0], [0], marker="s", lw=0, markerfacecolor="white", markeredgecolor=model_colors["HAZ"], markeredgewidth=1.5, color=model_colors["HAZ"], label="HAZUS"),
+        Line2D([0], [0], color="#444444", lw=1.3, marker="o", markerfacecolor="white", markeredgecolor="#444444", markersize=5, label="p50; p16-p84"),
+    ]
+    handles_bottom = [
+        Patch(facecolor="#888888", edgecolor="white", linewidth=0.45, label="NAC"),
+        Patch(facecolor="#888888", edgecolor="white", linewidth=0.45, hatch="////", label="HAZUS"),
+        Patch(facecolor="none", edgecolor="none", label="Adobe: solo NAC"),
+    ]
+    legend_kwargs = dict(
+        loc="center left",
+        ncol=1,
+        frameon=False,
+        borderaxespad=0.0,
+        handlelength=1.55,
+        handletextpad=0.38,
+        labelspacing=0.62,
+        fontsize=9.7,
+    )
+    ax_top_leg.legend(handles=handles_top, **legend_kwargs)
+    ax_bottom_leg.legend(handles=handles_bottom, **legend_kwargs)
+
+    save_plot(
+        fig,
+        "perdidas_deterministas_por_materialidad_actualizada.pdf",
+        original_path="assets/figures/thesis/resultados_perdida_dsha/Perdida_por_materialidad.pdf",
+        slide="17",
+        change="Actualizada para separar las categorias de hormigon armado por rango de pisos, omitir HA >24 e incluir Adobe solo en NAC.",
+        source_data=(
+            f"{as_posix(base / 'calc_241.hdf5')}--{as_posix(base / 'calc_249.hdf5')}; "
+            f"{as_posix(csv_by_model['Cabrera'])}; {as_posix(csv_by_model['Junemann'])}; {as_posix(csv_by_model['HAZUS'])}"
+        ),
+        limitation="HAZUS no contiene taxonomia Adobe en el modelo de exposicion; por eso no se grafica marcador ni barra HAZUS para Adobe.",
+    )
+
+
 def plot_nlt_convergence(im: str, output_name: str, old: str) -> None:
     source = RESULTS / "hazard_psha_sensibilidad_N_ramas" / "04_tables" / "fraction_converged_vs_n_ALLPCTS.csv"
     df = read_csv_required(source)
@@ -4101,6 +4674,7 @@ def restyle_identified_sources() -> None:
         min_font_px=10.0,
         min_stroke_width=0.45,
     )
+    plot_deterministic_losses_by_materiality_updated()
 
     styled_svg_pdf(
         source=RESULTS / "risk_event_based" / "figA_oep_relativo_clean_square.svg",
