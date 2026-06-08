@@ -1249,6 +1249,325 @@ def generate_qgis_maps() -> None:
     run_checked([str(QGIS_PYTHON), str(QGIS_MAP_HELPER), str(REPO)], cwd=REPO, env=env)
 
 
+def load_dsha_bounds() -> list[float]:
+    bounds = pd.read_csv(QGIS_DATA_DIR / "dsha_pga_bounds.csv")["value"].to_numpy(float)
+    return [float(value) for value in bounds if np.isfinite(value)]
+
+
+def turbo_darkblue_start() -> mpl.colors.ListedColormap:
+    colors = mpl.colormaps["turbo"](np.linspace(0.05, 0.98, 256))
+    return mpl.colors.ListedColormap(colors, name="turbo_pga")
+
+
+def dsha_difference_cmap(vmin: float, vmax: float) -> mpl.colors.LinearSegmentedColormap:
+    zero_position = (0.0 - vmin) / (vmax - vmin)
+    return mpl.colors.LinearSegmentedColormap.from_list(
+        "dsha_difference",
+        [
+            (0.0, "#294C9B"),
+            (zero_position * 0.62, "#5CA7D9"),
+            (zero_position, "#F4F4F1"),
+            (zero_position + (1.0 - zero_position) * 0.48, "#F6B04D"),
+            (1.0, "#B2182B"),
+        ],
+        N=256,
+    )
+
+
+def write_dsha_difference_csv(output_name: str, minuend_csv: Path, subtrahend_csv: Path) -> Path:
+    minuend = pd.read_csv(minuend_csv)
+    subtrahend = pd.read_csv(subtrahend_csv)
+    minuend["custom_site_id"] = minuend["custom_site_id"].astype(str)
+    subtrahend["custom_site_id"] = subtrahend["custom_site_id"].astype(str)
+    merged = minuend[["custom_site_id", "lon", "lat", "value"]].merge(
+        subtrahend[["custom_site_id", "value"]].rename(columns={"value": "fsr_value"}),
+        on="custom_site_id",
+        how="inner",
+    )
+    merged["value"] = pd.to_numeric(merged["value"], errors="coerce") - pd.to_numeric(merged["fsr_value"], errors="coerce")
+    out = QGIS_DATA_DIR / output_name
+    merged[["custom_site_id", "lon", "lat", "value"]].to_csv(out, index=False)
+    return out
+
+
+def dsha_grid(csv_path: Path, extent: tuple[float, float, float, float]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    from scipy.interpolate import LinearNDInterpolator
+    from scipy.ndimage import gaussian_filter
+
+    df = pd.read_csv(csv_path)
+    lon = pd.to_numeric(df["lon"], errors="coerce").to_numpy(float)
+    lat = pd.to_numeric(df["lat"], errors="coerce").to_numpy(float)
+    value = pd.to_numeric(df["value"], errors="coerce").to_numpy(float)
+    valid = np.isfinite(lon) & np.isfinite(lat) & np.isfinite(value)
+    lon, lat, value = lon[valid], lat[valid], value[valid]
+    if value.size < 3:
+        raise RuntimeError(f"No hay suficientes puntos DSHA en {as_posix(csv_path)}")
+
+    gx = np.linspace(extent[0], extent[1], 430)
+    gy = np.linspace(extent[2], extent[3], 350)
+    xx, yy = np.meshgrid(gx, gy)
+    interpolator = LinearNDInterpolator(np.column_stack([lon, lat]), value, fill_value=np.nan)
+    zz = interpolator(xx, yy).astype(float)
+
+    nanmask = ~np.isfinite(zz)
+    if np.any(~nanmask):
+        fill = float(np.nanmedian(zz))
+        smoothed = zz.copy()
+        smoothed[nanmask] = fill
+        smoothed = gaussian_filter(smoothed, sigma=1.05, truncate=3.0)
+        smoothed[nanmask] = np.nan
+        zz = smoothed
+    return xx, yy, zz
+
+
+def draw_urban_boundary(ax: mpl.axes.Axes, extent: tuple[float, float, float, float]) -> None:
+    boundary_path = MODELOS_ACTUALES / "Amenaza" / "Geometrias_base" / "Comunas_reparado.shp"
+    try:
+        rings = read_shapefile_polygon_parts(boundary_path)
+    except FileNotFoundError:
+        return
+    xmin, xmax, ymin, ymax = extent
+    for ring in rings:
+        xs = np.asarray([point[0] for point in ring], dtype=float)
+        ys = np.asarray([point[1] for point in ring], dtype=float)
+        if xs.size == 0 or ys.size == 0:
+            continue
+        if xs.max() < xmin or xs.min() > xmax or ys.max() < ymin or ys.min() > ymax:
+            continue
+        ax.plot(
+            xs,
+            ys,
+            color="#7A8188",
+            linewidth=0.20,
+            alpha=0.48,
+            zorder=3.2,
+        )
+
+
+def draw_fsr_trace(ax: mpl.axes.Axes, extent: tuple[float, float, float, float]) -> None:
+    trace_path = MODELOS_ACTUALES / "Amenaza" / "Geometrias_base" / "FSR completo.kmz"
+    lines = read_kml_lines(trace_path)
+    xmin, xmax, ymin, ymax = extent
+    for idx, line in enumerate(lines):
+        xs = np.asarray([point[0] for point in line], dtype=float)
+        ys = np.asarray([point[1] for point in line], dtype=float)
+        if xs.size == 0 or ys.size == 0:
+            continue
+        if xs.max() < xmin or xs.min() > xmax or ys.max() < ymin or ys.min() > ymax:
+            continue
+        ax.plot(
+            xs,
+            ys,
+            color="#111417",
+            linewidth=1.70,
+            solid_capstyle="butt",
+            solid_joinstyle="round",
+            label="FSR" if idx == 0 else None,
+            zorder=8.5,
+            path_effects=[
+                pe.Stroke(linewidth=3.00, foreground="white", alpha=0.98),
+                pe.Normal(),
+            ],
+        )
+
+
+def add_dsha_scale_bar(ax: mpl.axes.Axes) -> None:
+    lat = -33.765
+    lon0 = -70.955
+    length_km = 10.0
+    dlon = length_km / (111.32 * math.cos(math.radians(abs(lat))))
+    lon1 = lon0 + dlon
+    tick = 0.0065
+    line_effect = [pe.Stroke(linewidth=3.1, foreground="white", alpha=0.96), pe.Normal()]
+    ax.plot([lon0, lon1], [lat, lat], color="#111417", linewidth=1.45, zorder=9.0, path_effects=line_effect)
+    ax.plot([lon0, lon0], [lat - tick, lat + tick], color="#111417", linewidth=1.15, zorder=9.0, path_effects=line_effect)
+    ax.plot([lon1, lon1], [lat - tick, lat + tick], color="#111417", linewidth=1.15, zorder=9.0, path_effects=line_effect)
+    ax.text(
+        0.5 * (lon0 + lon1),
+        lat + 0.014,
+        "10 km",
+        ha="center",
+        va="bottom",
+        fontsize=10.8,
+        color="#111417",
+        zorder=9.2,
+        path_effects=[pe.Stroke(linewidth=1.35, foreground="white", alpha=0.96), pe.Normal()],
+    )
+
+
+def add_dsha_panel_label(ax: mpl.axes.Axes, label: str) -> None:
+    ax.text(
+        0.035,
+        0.955,
+        label,
+        transform=ax.transAxes,
+        ha="left",
+        va="top",
+        fontsize=11.2,
+        fontweight="bold",
+        color="#111417",
+        zorder=9.4,
+        path_effects=[pe.Stroke(linewidth=2.4, foreground="white", alpha=0.96), pe.Normal()],
+    )
+
+
+def finish_dsha_axis(ax: mpl.axes.Axes, extent: tuple[float, float, float, float], *, show_ylabel: bool) -> None:
+    ax.set_xlim(extent[0], extent[1])
+    ax.set_ylim(extent[2], extent[3])
+    ax.set_aspect(1 / math.cos(math.radians(-33.55)), adjustable="box")
+    ax.set_xlabel("Longitud", fontsize=12.0, labelpad=1.1)
+    ax.set_ylabel("Latitud" if show_ylabel else "", fontsize=12.0, labelpad=1.1)
+    ax.set_xticks([-70.9, -70.7, -70.5])
+    ax.set_yticks([-33.8, -33.6, -33.4])
+    ax.xaxis.set_major_formatter(mpl.ticker.FuncFormatter(format_lon_w_compact))
+    ax.yaxis.set_major_formatter(mpl.ticker.FuncFormatter(format_lat_s_compact))
+    ax.tick_params(
+        axis="both",
+        labelsize=10.8,
+        colors=TEXT_GRAY,
+        length=3.8,
+        width=0.86,
+        top=True,
+        right=True,
+        labeltop=False,
+        labelright=False,
+        direction="out",
+        pad=1.7,
+    )
+    ax.tick_params(axis="y", labelleft=show_ylabel)
+    ax.grid(False)
+    set_four_sided_axis(ax, linewidth=0.82)
+
+
+def generate_dsha_pga_panel() -> None:
+    extent = (-71.01, -70.43, -33.81, -33.28)
+    specs = [
+        ("(A)", QGIS_DATA_DIR / "dsha_inter_pga.csv"),
+        ("(B)", QGIS_DATA_DIR / "dsha_fsr_pga.csv"),
+        ("(C)", QGIS_DATA_DIR / "dsha_intra_pga.csv"),
+    ]
+    cmap = turbo_darkblue_start()
+    norm = mpl.colors.Normalize(vmin=0.10, vmax=0.70, clip=True)
+
+    fig = plt.figure(figsize=(10.25, 3.45), constrained_layout=False)
+    grid = fig.add_gridspec(1, 4, width_ratios=[1.0, 1.0, 1.0, 0.065], wspace=0.10)
+    axes = [fig.add_subplot(grid[0, idx]) for idx in range(3)]
+    cax = fig.add_subplot(grid[0, 3])
+    fig.subplots_adjust(left=0.040, right=0.970, bottom=0.165, top=0.965, wspace=0.10)
+
+    for idx, (label, csv_path) in enumerate(specs):
+        ax = axes[idx]
+        ax.set_facecolor(FIG3_MAP_LAND)
+        plot_sober_land_background(ax, extent)
+        xx, yy, zz = dsha_grid(csv_path, extent)
+        ax.pcolormesh(xx, yy, zz, cmap=cmap, norm=norm, shading="auto", alpha=0.96, zorder=1.6, rasterized=True)
+        draw_urban_boundary(ax, extent)
+        draw_fsr_trace(ax, extent)
+        finish_dsha_axis(ax, extent, show_ylabel=idx == 0)
+        add_dsha_panel_label(ax, label)
+        if idx == 0:
+            add_dsha_scale_bar(ax)
+
+    sm = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
+    sm.set_array([])
+    cbar = fig.colorbar(sm, cax=cax, orientation="vertical")
+    cbar.set_label(r"PGA $p_{50}$ [g]", fontsize=12.0, labelpad=5.2, color=TEXT_GRAY)
+    cbar_ticks = [round(tick, 2) for tick in np.arange(0.10, 0.71, 0.10)]
+    cbar.set_ticks(cbar_ticks)
+    cbar.ax.set_yticklabels([f"{tick:.2f}" for tick in cbar_ticks])
+    cbar.ax.tick_params(labelsize=10.8, colors=TEXT_GRAY, length=0.0, width=0.75, pad=2.2)
+    cbar.outline.set_linewidth(0.75)
+    cbar.outline.set_edgecolor(TEXT_GRAY)
+
+    save_plot(
+        fig,
+        "dsha_pga_panel.pdf",
+        original_path="assets/figures/presentation/dsha_inter_pga.pdf + dsha_fsr_pga.pdf + dsha_intra_pga.pdf",
+        slide="15",
+        change=(
+            "Fusiona los tres mapas DSHA de PGA en un panel multipanel con extension comun, "
+            "estilo cartografico sobrio como la figura de referencia, colormap turbo compartido "
+            "entre 0.10 y 0.70 g, sin contornos de PGA y con traza FSR negra con halo blanco."
+        ),
+        source_data=(
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_inter_pga.csv')}; "
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_fsr_pga.csv')}; "
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_intra_pga.csv')}; "
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_pga_bounds.csv')}; "
+            f"{as_posix(MODELOS_ACTUALES / 'Amenaza' / 'Geometrias_base' / 'FSR completo.kmz')}; "
+            f"{as_posix(MODELOS_ACTUALES / 'Amenaza' / 'Geometrias_base' / 'Comunas_reparado.shp')}"
+        ),
+    )
+
+
+def generate_dsha_pga_difference_panel() -> None:
+    extent = (-71.01, -70.43, -33.81, -33.28)
+    fsr_csv = QGIS_DATA_DIR / "dsha_fsr_pga.csv"
+    inter_diff = write_dsha_difference_csv("dsha_fsr_minus_inter_pga.csv", fsr_csv, QGIS_DATA_DIR / "dsha_inter_pga.csv")
+    intra_diff = write_dsha_difference_csv("dsha_fsr_minus_intra_pga.csv", fsr_csv, QGIS_DATA_DIR / "dsha_intra_pga.csv")
+    specs = [
+        ("(A)", inter_diff),
+        ("(B)", intra_diff),
+    ]
+    diff_vmin, diff_vmax = -0.40, 0.20
+    cmap = dsha_difference_cmap(diff_vmin, diff_vmax)
+    norm = mpl.colors.Normalize(vmin=diff_vmin, vmax=diff_vmax, clip=True)
+
+    fig = plt.figure(figsize=(7.55, 3.45), constrained_layout=False)
+    grid = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.0, 0.065], wspace=0.10)
+    axes = [fig.add_subplot(grid[0, idx]) for idx in range(2)]
+    cax = fig.add_subplot(grid[0, 2])
+    fig.subplots_adjust(left=0.060, right=0.950, bottom=0.165, top=0.965, wspace=0.10)
+
+    for idx, (label, csv_path) in enumerate(specs):
+        ax = axes[idx]
+        ax.set_facecolor(FIG3_MAP_LAND)
+        plot_sober_land_background(ax, extent)
+        xx, yy, zz = dsha_grid(csv_path, extent)
+        ax.pcolormesh(xx, yy, zz, cmap=cmap, norm=norm, shading="auto", alpha=0.96, zorder=1.6, rasterized=True)
+        draw_urban_boundary(ax, extent)
+        draw_fsr_trace(ax, extent)
+        finish_dsha_axis(ax, extent, show_ylabel=idx == 0)
+        add_dsha_panel_label(ax, label)
+        if idx == 0:
+            add_dsha_scale_bar(ax)
+
+    sm = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
+    sm.set_array([])
+    cbar = fig.colorbar(sm, cax=cax, orientation="vertical")
+    cbar.set_label(r"$\Delta$PGA $p_{50}$ [g]", fontsize=12.0, labelpad=5.2, color=TEXT_GRAY)
+    cbar_ticks = [-0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20]
+    cbar.set_ticks(cbar_ticks)
+    cbar.ax.set_yticklabels([f"{tick:.2f}" for tick in cbar_ticks])
+    cbar.ax.tick_params(labelsize=10.8, colors=TEXT_GRAY, length=0.0, width=0.75, pad=2.2)
+    cbar.outline.set_linewidth(0.75)
+    cbar.outline.set_edgecolor(TEXT_GRAY)
+
+    save_plot(
+        fig,
+        "dsha_pga_difference_panel.pdf",
+        original_path=(
+            "assets/figures/thesis/resultados_amenaza/DSHA/INTER_93_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf + "
+            "assets/figures/thesis/resultados_amenaza/DSHA/INTRA_80_BASE_minus_NT_75_34_DIFF_PGA_p50_SHARED.pdf"
+        ),
+        slide="16",
+        change=(
+            "Recompone los paneles (a) y (b) de la Figura 5.10 de la tesis en formato de defensa: "
+            "diferencias de PGA p50 recalculadas como FSR menos interplaca y FSR menos intraplaca nominal, "
+            "con extension comun, fondo cartografico sobrio, comunas grises, traza FSR negra con halo blanco "
+            "y barra divergente compartida con azul en valores negativos y rojo en positivos."
+        ),
+        source_data=(
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_inter_pga.csv')}; "
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_intra_pga.csv')}; "
+            f"{as_posix(QGIS_DATA_DIR / 'dsha_fsr_pga.csv')}; "
+            f"{as_posix(inter_diff)}; {as_posix(intra_diff)}; "
+            f"{as_posix(MODELOS_ACTUALES / 'Amenaza' / 'Geometrias_base' / 'FSR completo.kmz')}; "
+            f"{as_posix(MODELOS_ACTUALES / 'Amenaza' / 'Geometrias_base' / 'Comunas_reparado.shp')}"
+        ),
+    )
+
+
 def parse_nrml_fault_geometry(nrml_file: Path) -> list[np.ndarray]:
     namespaces = {
         "gml": "http://www.opengis.net/gml",
@@ -3610,9 +3929,6 @@ def normalize_wrapped_figures() -> None:
     for name, slide, width in [
         ("exposicion_composicion.pdf", "9", "5.9in"),
         ("fig_4_2_escenarios_simulados.pdf", "12", "5.0in"),
-        ("dsha_inter_pga.pdf", "15", "3.55in"),
-        ("dsha_fsr_pga.pdf", "15", "3.55in"),
-        ("dsha_intra_pga.pdf", "15", "3.55in"),
         ("fig_5_18_psha_curvas_pga_poisson.pdf", "17", "5.9in"),
         ("fig_5_19_psha_curvas_pga_bpt.pdf", "Anexo", "5.9in"),
         ("fig_5_22_disagg_pga_poisson.pdf", "18", "5.9in"),
@@ -3697,41 +4013,8 @@ def restyle_identified_sources() -> None:
     generate_scenario_geometry_vector()
     prepare_qgis_map_inputs()
     generate_qgis_maps()
-
-    for output_name, original_path, source_csv, title in [
-        (
-            "dsha_inter_pga.pdf",
-            "assets/figures/presentation/dsha_inter_pga.pdf",
-            "dsha_inter_pga.csv",
-            "Interplaca Mw 9.3",
-        ),
-        (
-            "dsha_fsr_pga.pdf",
-            "assets/figures/presentation/dsha_fsr_pga.pdf",
-            "dsha_fsr_pga.csv",
-            "FSR Mw 7.5",
-        ),
-        (
-            "dsha_intra_pga.pdf",
-            "assets/figures/presentation/dsha_intra_pga.pdf",
-            "dsha_intra_pga.csv",
-            "Intraplaca Mw 8.0",
-        ),
-    ]:
-        remove_manifest_for_output(output_name)
-        add_manifest(
-            original_path=original_path,
-            new_path=PDF_DIR / output_name,
-            slide="15",
-            original_type="pdf",
-            new_type="pdf/svg/png",
-            change=f"Mapa DSHA {title} regenerado como layout QGIS, usando los mismos percentiles PGA p50, grilla, extents y traza FSR; se agrega fondo satelital, marco cebra, tipografia legible, colorbar y pesos de linea consistentes.",
-            source_data=(
-                f"{as_posix(MODELOS / 'hazard' / 'scenario' / 'resultados' / 'resultados_procesados' / 'out_gmf_maps_single_DEMhillshade' / 'tables')}; "
-                f"{as_posix(QGIS_DATA_DIR / source_csv)}; {as_posix(QGIS_DATA_DIR / 'dsha_pga_bounds.csv')}"
-            ),
-            script_or_source=f"{as_posix(Path(__file__))}; {as_posix(QGIS_MAP_HELPER)}",
-        )
+    generate_dsha_pga_panel()
+    generate_dsha_pga_difference_panel()
 
     remove_manifest_for_output("fig_5_41_aalr_cambio_rel_pct.pdf")
     add_manifest(
